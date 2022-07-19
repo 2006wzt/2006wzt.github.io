@@ -1,0 +1,236 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>机器学习实战（一）：机器学习导论 | My Brain</title>
+<link rel="shortcut icon" href="https://2006wzt.github.io/favicon.ico?v=1658248448600">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://2006wzt.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="机器学习实战（一）：机器学习导论 | My Brain - Atom Feed" href="https://2006wzt.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="机器学习导论
+一、什么是机器学习
+机器学习是人工智能的一个分支，涉及算法的设计和开发，允许计算机根据经验数据进化行为。由于智能需要知识，计算机必须获取知识。Tom Mtichell于1997年对机器学习的定义：一个计算机程序A，从经验E中学..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://2006wzt.github.io">
+  <img class="avatar" src="https://2006wzt.github.io/images/avatar.png?v=1658248448600" alt="">
+  </a>
+  <h1 class="site-title">
+    My Brain
+  </h1>
+  <p class="site-description">
+    There is no end to learning. 
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              机器学习实战（一）：机器学习导论
+            </h2>
+            <div class="post-info">
+              <span>
+                2022-07-20
+              </span>
+              <span>
+                5 min read
+              </span>
+              
+            </div>
+            
+              <img class="post-feature-image" src="https://2006wzt.github.io/post-images/ji-qi-xue-xi-shi-zhan-yi-ji-qi-xue-xi-dao-lun.png" alt="">
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h1 id="机器学习导论">机器学习导论</h1>
+<h2 id="一-什么是机器学习">一、什么是机器学习</h2>
+<p>机器学习是人工智能的一个分支，涉及算法的设计和开发，允许计算机根据经验数据进化行为。由于智能需要知识，计算机必须获取知识。Tom Mtichell于1997年对机器学习的定义：一个计算机程序A，从经验E中学习关于某个任务T的性能度量P，E有助于提高计算机在任务T上的性能表现，这是基于统计和优化的，而不是基于逻辑的。</p>
+<h2 id="二-ml-vs-cs">二、ML VS CS</h2>
+<p>机器学习的核心是程序，但是最终目标是结果。以垃圾邮件分类为例，我们所要研究的是进行分类的算法，但是我们的最终目标是邮件的类型。而传统的计算机科学则是根据一定的逻辑规则由输入得到正确的输出。</p>
+<img src="http://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/image-20220719223212512.png" alt="image-20220719223212512" style="zoom:70%;"/>
+<h2 id="三-基本分类">三、基本分类</h2>
+<h3 id="31-监督学习">3.1 监督学习</h3>
+<p>在监督学习（supervised learning）的过程中，算法从我们所提供的数据集中进行学习。<br>
+监督学习与非监督学习的最大区别在于我们知道用于训练的数据集的正确结果或期望输出，算法对验证集进行预测，由监督者对预测结果进行评估与纠正，进而优化算法，当算法达到可接受的性能水平时，则停止学习。</p>
+<p>监督学习有两种主要类型：分类与回归</p>
+<img src="http://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/image-20220719225615115.png" alt="image-20220719225615115" style="zoom:60%;"/>
+<h4 id="311-分类问题">3.1.1 分类问题</h4>
+<p>顾名思义，就是根据特征对事物进行分类，一些经典的分类问题例子：<br>
+①垃圾邮件过滤问题：根据邮件内容对邮件是否为垃圾邮件进行分类，这是一个二分类问题。</p>
+<img src="http://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/image-20220429112418400.png" alt="image-20220429112418400" style="zoom:40%;"/>
+<p>②人脸识别问题：显然这就是一个多分类问题，根据照片中所包含的数据判断出人脸所对应的身份</p>
+<img src="http://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/image-20220429112443122.png" alt="image-20220429112443122" style="zoom:40%;"/>
+<h4 id="312-回归问题">3.1.2 回归问题</h4>
+<p>回归用于预测输入和输出变量之间的关系，特别是当输入变量的值发生变化时，输出变量的值也随之发生变化，经典的回归问题如下：<br>
+①房价预测：根据所提供的相关特征对某个楼盘的房价进行预测<br>
+②天气预测：根据相关指标对未来的天气，例如PM2.5值进行预测</p>
+<img src="http://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/image-20220429112504552.png" alt="image-20220429112504552" style="zoom:40%;"/>
+<h3 id="32-非监督学习">3.2 非监督学习</h3>
+<p>无监督学习（unsupervised learning）是一类用于在数据中寻找模式的机器学习技术。无监督学习算法使用的输入数据都是没有标注过的，这意味着数据只给出了输入变量（自变量 X）而没有给出相应的输出变量（因变量y）。<br>
+在无监督学习中，算法本身将发掘数据中有趣的结构。人工智能研究的领军人物 Yann LeCun，解释道：无监督学习能够自己进行学习，而不需要被显式地告知他们所做的一切是否正确。</p>
+<p>非监督学习最为经典的例子便是聚类问题。</p>
+<h4 id="321-聚类问题">3.2.1 聚类问题</h4>
+<p>顾名思义，聚类就是根据所提供的相关数据，对具有相似特征的事物进行分类，比如照片的类型、网页主题的聚类。</p>
+<img src="http://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/image-20220429113111281.png" alt="image-20220429113111281" style="zoom:40%;"/>
+<p>在后期的学习中我们主要关注监督学习的相关算法。</p>
+<h3 id="33-强化学习">3.3 强化学习</h3>
+<p>强化学习（reinforcement learning）是指智能系统在与环境的连续互动中学习最优化行为策略的机器学习问题，强化学习的本质是学习最优的序贯决策。<br>
+智能系统与环境的互动如下图所示，在每一步t，智能系统从环境中观测到一个状态（state）<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>s</mi><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">s_t</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault">s</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2805559999999999em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>与一个奖励<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>r</mi><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">r_t</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2805559999999999em;"><span style="top:-2.5500000000000003em;margin-left:-0.02778em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>，采取一个动作（action）<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>a</mi><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">a_t</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2805559999999999em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>。环境根据只能系统选择的动作，决定下一步t+1的状态<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>s</mi><mrow><mi>t</mi><mo>+</mo><mn>1</mn></mrow></msub></mrow><annotation encoding="application/x-tex">s_{t+1}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.638891em;vertical-align:-0.208331em;"></span><span class="mord"><span class="mord mathdefault">s</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.301108em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">t</span><span class="mbin mtight">+</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.208331em;"><span></span></span></span></span></span></span></span></span></span>与奖励<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>r</mi><mrow><mi>t</mi><mo>+</mo><mn>1</mn></mrow></msub></mrow><annotation encoding="application/x-tex">r_{t+1}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.638891em;vertical-align:-0.208331em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.301108em;"><span style="top:-2.5500000000000003em;margin-left:-0.02778em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">t</span><span class="mbin mtight">+</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.208331em;"><span></span></span></span></span></span></span></span></span></span>。要学习的策略表示为给定的状态下采取的动作。<br>
+智能系统的目标不是短期奖励的最大化，而是长期累积奖励的最大化，强化学习的过程中系统不断试错，以达到学习最优策略的目的。</p>
+<img src="https://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/image-20220719235756674.png" alt="image-20220719235756674" style="zoom:67%;"/>
+<h3 id="34-半监督学习">3.4 半监督学习</h3>
+<p>半监督学习（semi-supervised learning）是指利用标注数据和未标注数据学习预测模型的机器学习问题。通常有少量标注数据、大量未标注数据，因为标注数据的构成往往需要人工，成本较高，未标注的数据的收集则不需要太多成本，半监督学习旨在利用未标注数据中的信息，辅助标注数据，进行监督学习，以较低的成本达到较好的学习效果。</p>
+<h2 id="四-经典的机器学习过程">四、经典的机器学习过程</h2>
+<p>如下图所示，这是一个属于监督学习的二分类问题的机器学习过程，通过所提供的训练数据使用学习算法训练出模型，再将我们所要预测的不带标签（label）的新数据样本输入到模型中去，进而预测出该样本所属的类别。</p>
+<img src="http://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/image-20220429113559867.png" alt="image-20220429113559867" style="zoom:45%;"/>
+<p>在后续的博客中，我将会介绍机器学习中的重要概念与相关算法，还请大家多多支持与关注😄！</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%AF%BC%E8%AE%BA">机器学习导论</a>
+<ul>
+<li><a href="#%E4%B8%80-%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0">一、什么是机器学习</a></li>
+<li><a href="#%E4%BA%8C-ml-vs-cs">二、ML VS CS</a></li>
+<li><a href="#%E4%B8%89-%E5%9F%BA%E6%9C%AC%E5%88%86%E7%B1%BB">三、基本分类</a>
+<ul>
+<li><a href="#31-%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0">3.1 监督学习</a>
+<ul>
+<li><a href="#311-%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98">3.1.1 分类问题</a></li>
+<li><a href="#312-%E5%9B%9E%E5%BD%92%E9%97%AE%E9%A2%98">3.1.2 回归问题</a></li>
+</ul>
+</li>
+<li><a href="#32-%E9%9D%9E%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0">3.2 非监督学习</a>
+<ul>
+<li><a href="#321-%E8%81%9A%E7%B1%BB%E9%97%AE%E9%A2%98">3.2.1 聚类问题</a></li>
+</ul>
+</li>
+<li><a href="#33-%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0">3.3 强化学习</a></li>
+<li><a href="#34-%E5%8D%8A%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0">3.4 半监督学习</a></li>
+</ul>
+</li>
+<li><a href="#%E5%9B%9B-%E7%BB%8F%E5%85%B8%E7%9A%84%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E8%BF%87%E7%A8%8B">四、经典的机器学习过程</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://2006wzt.github.io/post/python-ru-men-yu-shi-zhan/">
+              <h3 class="post-title">
+                Python入门与实战
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://2006wzt.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>
