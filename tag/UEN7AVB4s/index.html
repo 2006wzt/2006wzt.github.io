@@ -37,6 +37,30 @@
 
     <!--------- 数学公式👇---- -->
     
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/katex.min.css"
+        integrity="sha384-9tPv11A+glH/on/wEu99NVwDPwkMQESOocs/ZGXPoIiLE8MU/qkqUcZ3zzL+6DuH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/katex.min.js"
+        integrity="sha384-U8Vrjwb8fuHMt6ewaCy8uqeUXv4oitYACKdB0VziCerzt011iQ/0TqlSlv8MReCm" crossorigin="anonymous">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/contrib/auto-render.min.js"
+        integrity="sha384-aGfk5kvhIq5x1x5YdvCp4upKZYnA8ckafviDpmWEKp4afOZEqOli7gqSnh8I6enH" crossorigin="anonymous">
+    </script>
+    <script>
+        renderMathInElement(document.body, {
+            delimiters: [{
+                    left: "$$",
+                    right: "$$",
+                    display: true
+                },
+                {
+                    left: "$",
+                    right: "$",
+                    display: false
+                }
+            ]
+        });
+    </script>
+    
     <!--------- 数学公式👆----------------- -->
     <!--------- daovocie功能👇 ------------------->
     
@@ -88,7 +112,7 @@
                         src='https://2006wzt.github.io/media/images/music.png' alt="音乐播放器" class="musicbtn"></i></a>
         </div>
         <div class="avatar-border">
-            <img src="https://2006wzt.github.io/images/avatar.png?v=1659434745337" class="avatar">
+            <img src="https://2006wzt.github.io/images/avatar.png?v=1659435893299" class="avatar">
         </div>
         <div class="sitename">My Brain</div>
         <span class="description" data-text='["There is no end to learning. "]'>&nbsp;</span>
@@ -108,17 +132,26 @@
         </div>
         
     <div class="share-button">
-        <span></span>
+        <span>Know me</span>
+        
+        <a href="https://github.com/2006wzt" target="_blank"><i style="font-size: 20px;"><img class="icon"
+                    src="https://2006wzt.github.io/media/images/github.png" alt=""></i></a>
+        
+        
+        <a onclick="showqq()"><i style="font-size: 20px;"><img class="icon"
+                    src="https://2006wzt.github.io/media/images/QQ.png" alt=""></i></a>
         
         
         
+        <a href="https://space.bilibili.com/662167120" target="_blank"><i style="font-size: 20px;"><img class="icon"
+                    src="https://2006wzt.github.io/media/images/bilibili.png" alt=""></i></a>
         
         
         
         
         
     </div>
-    <div id="qq" style="display:none"></div>
+    <div id="qq" style="display:none">1335287851</div>
     <!------------ 加载菜单按钮👇 ------------------------->
     <div class="menucontainer">
         
@@ -979,35 +1012,125 @@ menulist.eq(i).show();
                         <div id="main" class="col-xs-12 col-sm-12 col-md-12 col-lg-7">
                             <link rel="stylesheet" href="https://2006wzt.github.io/media/css/font-awesome.css">
 
-<div id="post-container">
-    
-    <div class="postshow postlist">
+    <div style="display: none;">
         
-        <a data-pjax href="https://2006wzt.github.io/post/hello-gridea/" class="apost">
-            <div id="post" style="width:100%">
-                <img src="https://2006wzt.github.io/post-images/hello-gridea.png" class="postimage">
-                <div class="posttitlebox">
-                    <div class="posttitle">
-                        Hello Gridea
+            
+                <span name="plfeature">https://2006wzt.github.io/post-images/hello-gridea.png</span>
+                
+            <span name="pltitle">Hello Gridea</span>
+            <span name="pllink">https://2006wzt.github.io/post/hello-gridea/</span>
+            <span name="pldate">2018-12-12</span>
+            <span name="plstats">2 min read</span>
+            
+                <span name="pltag" alt="Hello Gridea">Gridea</span>
+                <span name="pltaglink" alt="Hello Gridea">https://2006wzt.github.io/tag/UEN7AVB4s/</span>
+            
+        
+    </div>
+
+    
+    <div id="post-container" class="eleg-allpostscontainer">
+        <div v-for="post in postinfo" class="eleg-posts">
+            <div v-if="post.elegcontainer=='eleg-postcontainer-left'">
+                    <div :class="post.elegcontainer">
+                        <img :src="post.feature" alt="" :class="post.imgclass">
+                        
+                        <div class="eleg-info">
+                            <span class="eleg-title">{{post.title}}</span>
+                            <div style="margin-top:15px;">
+                                <span class="postdate eleg-date"><i class="fa fa-calendar"></i>{{post.date}}</span>
+                                <span class="poststatus postdate eleg-stats"><i class="fa fa-clock-o"></i> {{post.stats}}</span>
+                            </div>
+                            <div style="margin-top:50px">
+                                <a :href="post.link" class="eleg-btn" data-pjax>阅读全文</a>
+                            </div>
+                        </div>
                     </div>
-                </div>
+                    <div class='eleg-tags'>
+                        <div v-for="tag in post.tags">
+                            <div class="posttag">
+                                <a data-pjax href="" class="postlink eleg-postlink">
+                                    <i class="fa fa-tag"></i>{{tag}}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
             </div>
-        </a>
-        <div class="postinfo">
-            <div class="postdate"><i class="fa fa-calendar"></i>2018-12-12</div>
-            <div class="poststatus postdate"><i class="fa fa-clock-o"></i> 2 min read</div>
-            <div class="posttag">
-                
-                <a data-pjax href="https://2006wzt.github.io/tag/UEN7AVB4s/" class="postlink">
-                    <i class="fa fa-tag"></i> Gridea
-                </a>
-                
+            <div v-else>
+                    <div :class="post.elegcontainer">
+                        <div class="eleg-info">
+                            <span class="eleg-title">{{post.title}}</span>
+                            <div style="margin-top:15px;">
+                                <span class="postdate eleg-date"><i class="fa fa-calendar"></i>{{post.date}}</span>
+                                <span class="poststatus postdate eleg-stats"><i class="fa fa-clock-o"></i> {{post.stats}}</span>
+                            </div>
+                            <div style="margin-top:50px">
+                                <a :href="post.link" class="eleg-btn" data-pjax>阅读全文</a>
+                            </div>
+                        </div>
+                        
+                        <img :src="post.feature" alt="" :class="post.imgclass">
+                    </div>
+                    <div class='eleg-tags'>
+                        <div v-for="tag in post.tags">
+                            <div class="posttag">
+                                <a data-pjax href="" class="postlink eleg-postlink">
+                                    <i class="fa fa-tag"></i>{{tag}}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
             </div>
         </div>
-        
-</div>
+    </div>
 
-</div>
+    
+    <script>
+    var app2 = new Vue({
+      el: '#post-container',
+      mounted:function(){
+        this.getpostInfo();
+      },
+      methods:{
+         getpostInfo:function(){
+             var plflist = $("span[name='plfeature']");
+             var pltlist = $("span[name='pltitle']");
+             var plllist = $("span[name='pllink']");
+             var pldlist = $("span[name='pldate']");
+             var plslist = $("span[name='plstats']");
+             var pltaglist = $("span[name='pltag']");
+             for(var i=0;i<this.pagesize&&i<plflist.length;i++){
+                 var d = {};
+                 var tags = []
+                 d["feature"] = plflist.eq(i).html();
+                 d["title"] = pltlist.eq(i).html();
+                 d["link"] = plllist.eq(i).html();
+                 d["date"] = pldlist.eq(i).html();
+                 d['stats'] = plslist.eq(i).html();
+                 for(var j=0;j<pltaglist.length;j++){
+                     if(pltaglist.eq(j).attr('alt')==d['title'])
+                        tags.push(pltaglist.eq(j).html())
+                 }
+                 d["tags"] = tags;
+                 if(i%2==0)
+                 {
+                     d['elegcontainer'] = 'eleg-postcontainer-left';
+                     d['imgclass'] = 'eleg-img-left'
+                 }
+                 else{
+                    d['elegcontainer'] = 'eleg-postcontainer-right';
+                    d['imgclass'] = 'eleg-img-right' 
+                 }
+                 this.postinfo.push(d);
+             }
+         }
+      },
+      data: {
+        pagesize: "10",
+        postinfo:[],
+      }
+    })
+    </script>
 
                             <div>
                                 <div class="pcpagi">
@@ -1076,10 +1199,10 @@ menulist.eq(i).show();
         <div id="bg">
         </div>
         <!------- 背景图加载方式👇----- -->
-        <div id="bgchoice" style="display: none">link
+        <div id="bgchoice" style="display: none">default
                     </div>
                     
-                    <div id="bgurl" style="display:none"></div>
+                    <div id="bgurl" style="display:none">/media/images/custom-bgimage.png</div>
                        
         </div>
         <!------- 背景图加载方式👆 --------------->
@@ -1110,7 +1233,7 @@ menulist.eq(i).show();
 
 <!------------ 加载全局背景图功能👇（开始时没有写好，这功能有点鸡肋/(ㄒoㄒ)/~~） -->
 <script>
-    var bgchoice = "link"
+    var bgchoice = "default"
     var bg = $('#bg');
     var bgurl = document.getElementById("bgurl").innerHTML;
     if (bgchoice == 'default')
