@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://2006wzt.github.io</id>
     <title>My Brain</title>
-    <updated>2022-08-03T04:46:47.251Z</updated>
+    <updated>2022-08-03T12:28:52.968Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://2006wzt.github.io"/>
     <link rel="self" href="https://2006wzt.github.io/atom.xml"/>
@@ -279,8 +279,9 @@ class Naive_Bayes(object):
 
 '''读取数据'''
 df=pd.read_csv(&quot;data/spam_count.csv&quot;)
-X=df._values
 y=df['label'].values
+df.drop(&quot;label&quot;,axis=1,inplace=True)
+X=df.values
 '''数据划分'''
 X_train,X_test,y_train,y_test=train_test_split(X,y,test_size=0.2)#选取20%的数据作为测试集
 naive_bayes=Naive_Bayes(1)
@@ -298,7 +299,7 @@ df=pd.DataFrame(data=X)
 df[&quot;label&quot;]=y
 df.to_csv(&quot;data/spam_tfidf.csv&quot;,index=False)
 </code></pre>
-<p>我们直接利用sklearn所提供的朴素贝叶斯分类器，观察分类情况，可以发现调库的准确率达到了1.0，非常准确。</p>
+<p>我们直接利用sklearn所提供的朴素贝叶斯分类器，观察分类情况，可以发现调库的准确率达到了0.9596412556053812，也较为准确。</p>
 <pre><code class="language-python">'''屏蔽warning'''
 import warnings
 warnings.filterwarnings(&quot;ignore&quot;)
@@ -316,14 +317,15 @@ from sklearn.naive_bayes import MultinomialNB
 
 '''读取数据'''
 df=pd.read_csv(&quot;data/spam_tfidf.csv&quot;)
-X=df._values
 y=df['label'].values
+df.drop(&quot;label&quot;,axis=1,inplace=True)
+X=df.values
 '''数据划分'''
 X_train,X_test,y_train,y_test=train_test_split(X,y,test_size=0.2)#选取20%的数据作为测试集
 naive_bayes=MultinomialNB()
 naive_bayes.fit(X_train,y_train)
 y_pred=naive_bayes.predict(X_test)
-print(accuracy_score(y_test,y_pred))	#1.0
+print(accuracy_score(y_test,y_pred))	#0.9596412556053812
 </code></pre>
 ]]></content>
     </entry>
