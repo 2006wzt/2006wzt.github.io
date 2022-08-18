@@ -117,7 +117,7 @@
                         src='https://2006wzt.github.io/media/images/music.png' alt="音乐播放器" class="musicbtn"></i></a>
         </div>
         <div class="avatar-border">
-            <img src="https://2006wzt.github.io/images/avatar.png?v=1660792621913" class="avatar">
+            <img src="https://2006wzt.github.io/images/avatar.png?v=1660830135939" class="avatar">
         </div>
         <div class="sitename">My Brain</div>
         <span class="description" data-text='["There is no end to learning. "]'>&nbsp;</span>
@@ -237,10 +237,6 @@
                 href="https://github.com/850552586/gridea-theme-fog">Fog</a>
             <div>
                 
-                <div id="sitegotimeDate">载入天数...</div>
-                <div id="sitegotimes">载入时分秒...</div>
-                <div id="cussitetime" style="display:none">07/18/2022</div>
-                
             </div>
             <div>
                 
@@ -253,38 +249,6 @@
 
     </div>
 </body>
-
-<script>
-    //----------------------站点运行时间
-    var now = new Date();
-
-    function createtime() {
-        var sitegotime = document.getElementById("cussitetime").innerHTML + " 00:00:00";
-        var grt = new Date(sitegotime); //此处修改你的建站时间或者网站上线时间 
-        now.setTime(now.getTime() + 250);
-        days = (now - grt) / 1000 / 60 / 60 / 24;
-        dnum = Math.floor(days);
-        hours = (now - grt) / 1000 / 60 / 60 - (24 * dnum);
-        hnum = Math.floor(hours);
-        if (String(hnum).length == 1) {
-            hnum = "0" + hnum;
-        }
-        minutes = (now - grt) / 1000 / 60 - (24 * 60 * dnum) - (60 * hnum);
-        mnum = Math.floor(minutes);
-        if (String(mnum).length == 1) {
-            mnum = "0" + mnum;
-        }
-        seconds = (now - grt) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum);
-        snum = Math.round(seconds);
-        if (String(snum).length == 1) {
-            snum = "0" + snum;
-        }
-        document.getElementById("sitegotimeDate").innerHTML = "本站已安全运行 " + dnum + " 天 ";
-        document.getElementById("sitegotimes").innerHTML = hnum + " 小时 " + mnum + " 分 " + snum + " 秒";
-    }
-
-    let intervalId = setInterval("createtime()", 250);
-</script>
 
     </div>
 
@@ -1115,13 +1079,13 @@ menulist.eq(i).show();
                         <!-- 移动端欢迎页 -->
 <div class="welcome">
     <div class="avatar-border">
-        <img src="https://2006wzt.github.io/images/avatar.png?v=1660792621913" class="avatar">
+        <img src="https://2006wzt.github.io/images/avatar.png?v=1660830135939" class="avatar">
     </div>
     <span class="mobiledescribtion"></span>
 </div>
 
 
-<div id="mobilebgurl" style="display:none">\media\images\custom-mobilebgimage.png</div>
+    <div id="mobilebgurl" style="display:none">https://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/phone.png</div>
 
 <script>
     var welcome = $('.welcome');
@@ -1191,9 +1155,9 @@ menulist.eq(i).show();
 </script>
                         <img src="" alt="" class="plbg">
 <script>
-    var bgchoice = "default";
+    var bgchoice = "link";
     if(bgchoice=='default')
-        var plbgurl = "\media\images\custom-mobileplbgimage.png"
+        var plbgurl = "/media/images/custom-mobilebg.jpg"
     else  
         var plbgurl = "https://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/phone_bg.png"
     $(".plbg").attr("src",plbgurl);
@@ -1539,10 +1503,10 @@ menulist.eq(i).show();
             <div id="bg">
             </div>
             <!------- 背景图加载方式👇----- -->
-            <div id="bgchoice" style="display: none">default
+            <div id="bgchoice" style="display: none">link
             </div>
             
-            <div id="bgurl" style="display:none">\media\images\custom-bgimage.png</div>
+            <div id="bgurl" style="display:none">https://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/background.png</div>
             
             <!------- 背景图加载方式👆----- --> 
         <div id="landlord">
@@ -1570,7 +1534,7 @@ menulist.eq(i).show();
 
 <!------------ 加载全局背景图功能👇（开始时没有写好，这功能有点鸡肋/(ㄒoㄒ)/~~） -->
 <script>
-    var bgchoice = "default"
+    var bgchoice = "link"
     var bg = $('#bg');
     var bgurl = document.getElementById("bgurl").innerHTML;
     if (bgchoice == 'default')
