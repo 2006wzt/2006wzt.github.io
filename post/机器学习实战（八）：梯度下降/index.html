@@ -305,7 +305,7 @@
                         src='https://2006wzt.github.io/media/images/music.png' alt="音乐播放器" class="musicbtn"></i></a>
         </div>
         <div class="avatar-border">
-            <img src="https://2006wzt.github.io/images/avatar.png?v=1662127786760" class="avatar">
+            <img src="https://2006wzt.github.io/images/avatar.png?v=1662897171686" class="avatar">
         </div>
         <div class="sitename">My Brain</div>
         <span class="description" data-text='["There is no end to learning. "]'>&nbsp;</span>
@@ -315,7 +315,7 @@
         </div>
         <div class="siteinfocontainer">
             <span class="siteinfo" id="siteinfo-postsnum"></span>
-            <span class="siteinfo">4</span>
+            <span class="siteinfo">5</span>
         </div>
         
         <div class="search">
@@ -425,6 +425,10 @@
                 href="https://github.com/850552586/gridea-theme-fog">Fog</a>
             <div>
                 
+                <div id="sitegotimeDate">载入天数...</div>
+                <div id="sitegotimes">载入时分秒...</div>
+                <div id="cussitetime" style="display:none">07/18/2022</div>
+                
             </div>
             <div>
                 
@@ -437,6 +441,38 @@
 
     </div>
 </body>
+
+<script>
+    //----------------------站点运行时间
+    var now = new Date();
+
+    function createtime() {
+        var sitegotime = document.getElementById("cussitetime").innerHTML + " 00:00:00";
+        var grt = new Date(sitegotime); //此处修改你的建站时间或者网站上线时间 
+        now.setTime(now.getTime() + 250);
+        days = (now - grt) / 1000 / 60 / 60 / 24;
+        dnum = Math.floor(days);
+        hours = (now - grt) / 1000 / 60 / 60 - (24 * dnum);
+        hnum = Math.floor(hours);
+        if (String(hnum).length == 1) {
+            hnum = "0" + hnum;
+        }
+        minutes = (now - grt) / 1000 / 60 - (24 * 60 * dnum) - (60 * hnum);
+        mnum = Math.floor(minutes);
+        if (String(mnum).length == 1) {
+            mnum = "0" + mnum;
+        }
+        seconds = (now - grt) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum);
+        snum = Math.round(seconds);
+        if (String(snum).length == 1) {
+            snum = "0" + snum;
+        }
+        document.getElementById("sitegotimeDate").innerHTML = "本站已安全运行 " + dnum + " 天 ";
+        document.getElementById("sitegotimes").innerHTML = hnum + " 小时 " + mnum + " 分 " + snum + " 秒";
+    }
+
+    let intervalId = setInterval("createtime()", 250);
+</script>
 
     </div>
 
@@ -515,6 +551,13 @@
     
     <script>let postsnum = 0;</script>
     <div id="side-posttitle" style="display: none;">
+    
+    
+    深度学习导论
+    <script>
+        postsnum += 1
+    </script>
+    
     
     
     算法刷题小记
