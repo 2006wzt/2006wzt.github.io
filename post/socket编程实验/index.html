@@ -1,0 +1,3349 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="description" content="Socket编程实验
+一、实验要求
+1.1 实验目标和内容
+1.1.1 实验目的
+● 了解应用层和运输层的作用及相关协议的工作原理和机制。
+● 掌握 SOCKET 编程的基本方法。
+1.1.2 实验环境
+● 操作系统：Windows
+● 语..." />
+    <meta name="keywords" content="C/C++" />
+    <link rel="stylesheet" href="https://2006wzt.github.io/media/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://2006wzt.github.io/styles/main.css">
+    <!-- 代码渲染风格css -->
+    
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.18.1/build/styles/dracula.min.css">
+    
+    <!-- 代码高亮插件 -->
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.18.1/build/highlight.min.js"></script>
+    <!-- 代码复制插件 -->
+    <script src="https://cdn.jsdelivr.net/gh/850552586/ericamcdn@0.1/js/clipboard.min.js"></script>
+    <!-- live2d插件 -->
+    <link rel="stylesheet" href="https://2006wzt.github.io/media/css/live2d.css">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js"></script>
+    <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+    <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/5.13.1/css/all.min.css" rel="stylesheet">
+    <!-- 数学公式 -->
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/katex.min.css"
+        integrity="sha384-9tPv11A+glH/on/wEu99NVwDPwkMQESOocs/ZGXPoIiLE8MU/qkqUcZ3zzL+6DuH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/katex.min.js"
+        integrity="sha384-U8Vrjwb8fuHMt6ewaCy8uqeUXv4oitYACKdB0VziCerzt011iQ/0TqlSlv8MReCm" crossorigin="anonymous">
+        </script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/contrib/auto-render.min.js"
+        integrity="sha384-aGfk5kvhIq5x1x5YdvCp4upKZYnA8ckafviDpmWEKp4afOZEqOli7gqSnh8I6enH" crossorigin="anonymous">
+        </script>
+    <script>
+        renderMathInElement(document.body, {
+            delimiters: [{
+                left: "$$",
+                right: "$$",
+                display: true
+            },
+            {
+                left: "$",
+                right: "$",
+                display: false
+            }
+            ]
+        });
+    </script>
+    
+    <title>Socket编程实验</title>
+
+    <!-- 大纲索引css调整 -->
+    
+    <style>
+        .markdownIt-TOC {
+            margin-left: 28%;
+            padding-left: 2px;
+            width: 80%;
+        }
+
+        .markdownIt-TOC li {
+            padding-left: 8%;
+        }
+    </style>
+    
+</head>
+
+<body>
+    <div id="landlord">
+        <div class="message" style="opacity:0"></div>
+        <canvas id="live2d" width="240" height="250" class="live2d"></canvas>
+    </div>
+    <div id="domainname" style="display:none">https://2006wzt.github.io</div>
+    <div id="content">
+        <div>
+            <!----------- 移动端导航栏👇 ----------------->
+            <div id="bar">
+                <style>
+  .navmobile {
+    z-index: 15;
+    max-height: 40vh;
+    overflow-y: scroll;
+    overflow-x: hidden;
+  }
+
+  @media screen and (max-width: 1200px) {
+    .navbar {
+      max-width: 100vw;
+    }
+  }
+
+  @media screen and (max-width:1200px) and (min-width: 768px) {
+    @media (min-width: 768px) {
+      .navbar-nav {
+        float: right;
+        margin: 0;
+      }
+    }
+  }
+
+  @media screen and (max-width:768px) {
+    .mbapspan {
+      padding: 0;
+    }
+  }
+</style>
+<div class="pjaxloading"  onclick="pjaxloadingClose()">
+  <div class="loadingbackground"></div>
+  <div id="loading">
+    <div class="loading">
+    </div>
+  </div>
+</div>
+<nav class="navbar navbar-inverse navbar-fixed-top navmobile">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#barmenu"
+        aria-expanded="false" id="barbutton">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a data-pjax class="navbar-brand" style="color:white" href="https://2006wzt.github.io">My Brain&nbsp;&nbsp;|</a>
+      <span class="navbar-brand mbapspan"><i id="mbaplayer" class="fa fa-play-circle-o" aria-hidden="true"
+          style="font-size: 28px;top: 12px;position: absolute;" onclick="aplayerPlay();"></i></span>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="barmenu">
+      <ul class="nav navbar-nav">
+        
+        
+        <li>
+          <a data-pjax href="/" style="color:white">
+            首页
+          </a>
+        </li>
+        
+        
+        
+        <li>
+          <a data-pjax href="/archives" style="color:white">
+            归档
+          </a>
+        </li>
+        
+        
+        
+        <li>
+          <a data-pjax href="/tags" style="color:white">
+            标签
+          </a>
+        </li>
+        
+        
+        
+        <li>
+          <a data-pjax href="/post/about" style="color:white">
+            关于
+          </a>
+        </li>
+        
+        
+        
+        
+          
+        <li><a data-pjax href="https://2006wzt.github.io/friends" style="color:white">友链</a></li>
+
+        
+        </ul>
+      </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+  </nav>
+
+
+  <!-- 引入jQuery核心js文件 -->
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js"></script>
+  <script>
+    let btstate = false;
+    var bt = $("#barbutton");
+    var bm = $("#barmenu");
+    bt.click(function () {
+      dropdown();
+    })
+    function dropdown() {
+      console.log(btstate);
+      //下拉
+      if (btstate == false) {
+        bt.removeClass("collapsed");
+        bt.attr("aria-expanded", "true");
+        bm.attr("aria-expanded", "true")
+        bm.fadeIn(700);
+        btstate = true;
+      }
+      else {
+        bt.addClass("collapsed");
+        bt.attr("aria-expanded", "false");
+        bm.removeClass("in");
+        bm.hide();
+        bm.attr("aria-expanded", "false");
+        btstate = false;
+      }
+    }
+  </script> 
+            </div>
+            <!----------- 移动端导航栏👆 ----------------->
+
+            <!--------------- pc端菜单栏👇 ---------------->
+            <div class="side"><head>
+    <link rel="stylesheet" href="https://2006wzt.github.io/media/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://2006wzt.github.io/styles/main.css">
+    
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.18.1/build/styles/dracula.min.css">
+    
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.18.1/build/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/850552586/ericamcdn@0.1/js/clipboard.min.js"></script>
+    <link rel="stylesheet" href="https://2006wzt.github.io/media/css/live2d.css">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
+    <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+    <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/5.13.1/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <!-- fancybox -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+    <script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+
+
+    <!--------- 数学公式👇---- -->
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/katex.min.css"
+        integrity="sha384-9tPv11A+glH/on/wEu99NVwDPwkMQESOocs/ZGXPoIiLE8MU/qkqUcZ3zzL+6DuH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/katex.min.js"
+        integrity="sha384-U8Vrjwb8fuHMt6ewaCy8uqeUXv4oitYACKdB0VziCerzt011iQ/0TqlSlv8MReCm" crossorigin="anonymous">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/contrib/auto-render.min.js"
+        integrity="sha384-aGfk5kvhIq5x1x5YdvCp4upKZYnA8ckafviDpmWEKp4afOZEqOli7gqSnh8I6enH" crossorigin="anonymous">
+    </script>
+    <script>
+        renderMathInElement(document.body, {
+            delimiters: [{
+                    left: "$$",
+                    right: "$$",
+                    display: true
+                },
+                {
+                    left: "$",
+                    right: "$",
+                    display: false
+                }
+            ]
+        });
+    </script>
+    
+    <!--------- 数学公式👆----------------- -->
+    <!--------- daovocie功能👇 ------------------->
+    
+    <!--------- daovocie功能👆 ------------------->
+    <!-- -----------------twikoo评论系统引入👇 --------->
+    <script src="https://cdn.jsdelivr.net/npm/twikoo@1.3.1/dist/twikoo.all.min.js"></script>
+    <!-- -----------------twikoo评论系统引入👆 --------->
+    <!---------------- leancloud api 功能依赖引入👇 -------->
+    <script src="https://cdn.jsdelivr.net/npm/leancloud-storage@3.13.0/dist/av-min.js"></script>
+    <!---------------- leancloud api 功能依赖引入👆 -------->
+    <!------------------ valine评论系统引入👇 ------------------>
+    <script src="https://2006wzt.github.io/media/js/valine.min.js"></script>
+    <!------------------ valine评论系统引入👆 ------------------>
+    <!---------------- 今日诗词api功能依赖👇 ----------------------->
+    <script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>
+    <!---------------- 今日诗词api功能依赖👆 ----------------------->
+    <!---------------- 今日诗词api功能依赖👇 ----------------------->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/ispeak-bber/ispeak-bber.min.js" charset="utf-8"></script>
+    <!---------------- 哔哔功能依赖👆 ----------------------->
+
+
+</head>
+
+<style>
+    body {
+        overflow-x: hidden;
+        height: 100vh;
+        overflow-y: scroll;
+        cursor: url("https://2006wzt.github.io/media/images/mouse_cursor.png"), auto
+    }
+</style>
+
+<body>
+    <!--=------ 页面加载动态画面👇 --------------->
+    <div class="pjaxloading" onclick="pjaxloadingClose()">
+        <div class="loadingbackground"></div>
+        <div id="loading-aname">
+            <div class="loading-aname">
+            </div>
+        </div>
+    </div>
+    <!--=------ 页面加载动态画面👆 --------------->
+
+    <!--------------- 左侧菜单栏👇 ------------------------>
+    
+    <div id=side>
+        <div class="r_m_div">
+            <a onclick="showAaplayer()"><i style="font-size: 20px;"><img
+                        src='https://2006wzt.github.io/media/images/music.png' alt="音乐播放器" class="musicbtn"></i></a>
+        </div>
+        <div class="avatar-border">
+            <img src="https://2006wzt.github.io/images/avatar.png?v=1667657863442" class="avatar">
+        </div>
+        <div class="sitename">My Brain</div>
+        <span class="description" data-text='["There is no end to learning. "]'>&nbsp;</span>
+        <div class="siteinfocontainer">
+            <span class="siteinfo">文章</span>
+            <span class="siteinfo">标签</span>
+        </div>
+        <div class="siteinfocontainer">
+            <span class="siteinfo" id="siteinfo-postsnum"></span>
+            <span class="siteinfo">5</span>
+        </div>
+        
+        <div class="search">
+            <!-- <input type="text" class="search-input" placeholder="标题搜索(●'◡'●)" /> -->
+            <input type="text" class="search-input" placeholder="标题搜索 ⚆_⚆ つ♡">
+            <div class="search-results"></div>
+        </div>
+        
+    <div class="share-button">
+        <span>Know me😊</span>
+        
+        <a href="https://github.com/2006wzt" target="_blank"><i style="font-size: 20px;"><img class="icon"
+                    src="https://2006wzt.github.io/media/images/github.png" alt=""></i></a>
+        
+        
+        <a onclick="showqq()"><i style="font-size: 20px;"><img class="icon"
+                    src="https://2006wzt.github.io/media/images/QQ.png" alt=""></i></a>
+        
+        
+        
+        <a href="https://space.bilibili.com/662167120" target="_blank"><i style="font-size: 20px;"><img class="icon"
+                    src="https://2006wzt.github.io/media/images/bilibili.png" alt=""></i></a>
+        
+        
+        
+        
+        
+    </div>
+    <div id="qq" style="display:none">1335287851</div>
+    <!------------ 加载菜单按钮👇 ------------------------->
+    <div class="menucontainer">
+        
+        
+        <div class="mchocie description">
+            <a data-pjax href="/" class="menubutton" style="margin-right: 15px;">
+                <i><img class="icon menuicon" src="" alt="首页"></i>&nbsp;<span
+                    data-text="首页">首页</span>
+            </a>
+        </div>
+        
+        
+        
+        <div class="mchocie description">
+            <a data-pjax href="/archives" class="menubutton" style="margin-right: 15px;">
+                <i><img class="icon menuicon" src="" alt="归档"></i>&nbsp;<span
+                    data-text="归档">归档</span>
+            </a>
+        </div>
+        
+        
+        
+        <div class="mchocie description">
+            <a data-pjax href="/tags" class="menubutton" style="margin-right: 15px;">
+                <i><img class="icon menuicon" src="" alt="标签"></i>&nbsp;<span
+                    data-text="标签">标签</span>
+            </a>
+        </div>
+        
+        
+        
+        <div class="mchocie description">
+            <a data-pjax href="/post/about" class="menubutton" style="margin-right: 15px;">
+                <i><img class="icon menuicon" src="" alt="关于"></i>&nbsp;<span
+                    data-text="关于">关于</span>
+            </a>
+        </div>
+        
+        
+
+        
+        
+        
+        <div class="mchocie description">
+            <a data-pjax href="https://2006wzt.github.io/friends" class="menubutton" style="margin-right: 15px;">
+                <i><img class="icon menuicon" src="" alt="友人帐"></i>&nbsp;<span data-text="友人帐">友人帐</span>
+            </a>
+        </div>
+        
+        <!--  -->
+    </div>
+    <!------------ 加载菜单按钮👆 ------------------------->
+    <hr>
+    <style>
+    .copyright {
+        font-size: 15px;
+        color: #d9d9d9;
+    }
+
+
+    @media screen and (min-width: 1200px) {
+        .foot {
+            width: 100%;
+            height: 130px;
+        }
+    }
+
+    @media screen and (max-width: 1200px) {
+        .foot {
+            display: none;
+        }
+    }
+</style>
+
+<body>
+    <div class="foot">
+        <div id="footinfo">Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | Theme: <a
+                href="https://github.com/850552586/gridea-theme-fog">Fog</a>
+            <div>
+                
+                <div id="sitegotimeDate">载入天数...</div>
+                <div id="sitegotimes">载入时分秒...</div>
+                <div id="cussitetime" style="display:none">07/18/2022</div>
+                
+            </div>
+            <div>
+                
+            </div>
+            <div class="copyright" style="color:white;text-align: center;">
+            </div>
+        </div>
+
+
+
+    </div>
+</body>
+
+<script>
+    //----------------------站点运行时间
+    var now = new Date();
+
+    function createtime() {
+        var sitegotime = document.getElementById("cussitetime").innerHTML + " 00:00:00";
+        var grt = new Date(sitegotime); //此处修改你的建站时间或者网站上线时间 
+        now.setTime(now.getTime() + 250);
+        days = (now - grt) / 1000 / 60 / 60 / 24;
+        dnum = Math.floor(days);
+        hours = (now - grt) / 1000 / 60 / 60 - (24 * dnum);
+        hnum = Math.floor(hours);
+        if (String(hnum).length == 1) {
+            hnum = "0" + hnum;
+        }
+        minutes = (now - grt) / 1000 / 60 - (24 * 60 * dnum) - (60 * hnum);
+        mnum = Math.floor(minutes);
+        if (String(mnum).length == 1) {
+            mnum = "0" + mnum;
+        }
+        seconds = (now - grt) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum);
+        snum = Math.round(seconds);
+        if (String(snum).length == 1) {
+            snum = "0" + snum;
+        }
+        document.getElementById("sitegotimeDate").innerHTML = "本站已安全运行 " + dnum + " 天 ";
+        document.getElementById("sitegotimes").innerHTML = hnum + " 小时 " + mnum + " 分 " + snum + " 秒";
+    }
+
+    let intervalId = setInterval("createtime()", 250);
+</script>
+
+    </div>
+
+    <img class="moon" src="https://2006wzt.github.io/media/images/moon.png" onclick="moonlight()">
+    <script src="https://2006wzt.github.io/media/js/wordshow.js"></script>
+    
+    <!--------------- 左侧菜单栏👆 ------------------------>
+
+    <!----------------- 顶部菜单栏👇 ------------------------>
+    
+    <!----------------- 顶部菜单栏👆 ------------------------>
+
+<!--核心功能加载-->
+<script src="https://2006wzt.github.io/media/js/mainfunc.js"></script>
+
+<!------------- Fog1.0版本彩蛋👇 -------------->
+    <!-- <section id="terrestrial" class="popup">
+        <a href="#" class="back">&lt; back</a>
+    </section>
+
+    <div class="flycontainer">
+        <div class="flyword">御风飞行中...</div>
+    </div>
+
+    <script>
+        $("#fog_go").click(function(){fog_go()});
+        async function fog_go(){
+            $(".bars").hide()
+            $("#live2d").hide()
+            await sleep(3000);
+            $(".flycontainer").css("display","flex");
+            $(".popup").fadeOut(500)
+            await sleep(2000);
+            var sitename = "My Brain";
+            getFogUser(sitename);
+        }
+
+        function fog_goregis(){
+            var sitename = "My Brain";
+            var siteurl = "https://2006wzt.github.io";
+            regisFogUser(sitename,siteurl);
+        }
+        fog_goregis();
+    </script> -->
+<!------------- Fog1.0版本彩蛋👆 -------------->
+<script>
+    function change_topmenu(){
+        tmcolor = "antiquewhite"
+        tsnamecolor = "antiquewhite"
+        $(".navbar-inverse .navbar-nav>li>a").css("color",tmcolor)
+        $(".navbar-inverse .navbar-brand").css("color",tsnamecolor)
+        $(".navbar-fixed-top").css("border-radius","0 0 10px 10px")
+    }
+</script>
+
+<!------ 根据自定义配置声明变量👇 --------------------->
+    
+    <script>
+        var postnumChoice = false
+    </script>
+    
+    
+    <script>
+        var shareChoice = true
+    </script>
+    
+    
+    <script>
+        var donateChoice = false
+    </script>
+    
+    
+    <script>
+        var searchChoice = true
+    </script>
+    
+    <script>let postsnum = 0;</script>
+    <div id="side-posttitle" style="display: none;">
+    
+    
+    Socket编程实验
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    CSP-精炼
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    深度学习实战（二）：知识回顾
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    深度学习实战（一）：深度学习导论
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    算法刷题小记
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    机器学习实战（十四）：树模型
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    机器学习实战（十三）：核函数
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    机器学习实战（十二）：参数权衡
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    机器学习实战（十一）：经验风险最小化
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    机器学习实战（十）：支持向量机
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    机器学习实战（九）：线性回归
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    机器学习实战（八）：梯度下降
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    机器学习实战（七）：逻辑回归
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    机器学习实战（六）：朴素贝叶斯
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    机器学习实战（五）：概率估计
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    机器学习实战（四）：感知机算法
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    机器学习实战（三）：KNN算法
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    机器学习实战（二）：监督学习
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    机器学习实战（一）：机器学习导论
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    Python入门与实战
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    
+    
+    
+    </div>
+    
+        <script>
+            var menupos = 'left';
+            $("#siteinfo-postsnum").html(postsnum);
+        </script>
+    
+    <script>
+        let commentsHide = false
+    </script>
+    <!------ 根据自定义配置声明变量👆 --------------------->
+
+
+    <!----------根据自定义配置设置图标信息👇---------->
+    <script>
+        var icondict = new Array();
+    </script>
+    
+        
+    
+    <!----------根据自定义配置设置图标信息👆---------->
+</body>
+
+<script src="https://2006wzt.github.io/media/share/dist/Share.js"></script>
+<!-- 页面pjax测试 -->
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery.pjax/2.0.1/jquery.pjax.js"></script>
+<!--确保jQuery已经在此之前加载-->
+<!-- <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script> -->
+<script src="https://2006wzt.github.io/media/js/all-pjax.js"></script>
+<script>
+    //-------------------------------说说功能👇--------------------------------------
+    let talksall = [];
+    let talks = [];
+    let talkindex = 0;
+    get();
+
+    function get() {
+        var t = JSON.parse('[]');
+        talkindex = t.length - 1;
+        for (var i = 0; i <= t.length - 1; i++) {
+            var d = {};
+            d["time"] = t[i].time;
+            d["author"] = t[i].author;
+            d["text"] = t[i].text;
+            d["img"] = t[i].img;
+            talksall.push(d);
+        }
+    }
+
+    function add() {
+        for (var i = talkindex; i >= 0 && i > talkindex - 3; i--) {
+            talks.push(talksall[i]);
+        }
+        talkindex = (talkindex - 3) >= 0 ? (talkindex - 3) : -1;
+        if (talkindex < 0) $("#getmorebt").hide();
+        show();
+    }
+
+    function show() {
+        var talkT = document.getElementById("talkContainer");
+        talkT.innerHTML = "";
+        for (var i = 0; i < talks.length; i++) {
+            if (talks[i].img != '') {
+                talkT.innerHTML += '\
+            <div class="talk" v-for="t in talks"> \
+                <span data-fancybox="images" href="' + talks[i].img + '"><img src="' + talks[i].img + '" class="talkimg"></span> \
+                <div class="ainfo">\
+                    <div class="ainfo-intro">\
+                        <div class="author">' + talks[i].author + '</div>·\
+                        <div class="time">' + talks[i].time + '</div>\
+                    </div>\
+                </div>\
+                <div class="talkcontent">' + talks[i].text + '\
+                </div\>\
+            ';
+            } else {
+                talkT.innerHTML += '\
+            <div class="talk" v-for="t in talks"> \
+                <div class="ainfo">\
+                    <div class="ainfo-intro">\
+                        <div class="author">' + talks[i].author + '</div>·\
+                        <div class="time">' + talks[i].time + '</div>\
+                    </div>\
+                </div>\
+                <div class="talkcontent">' + talks[i].text + '\
+                </div\>\
+            ';
+            }
+        }
+    }
+    //-------------------------------说说功能👆--------------------------------------
+</script>
+
+<!---->
+<script>
+    function replaceAvatar() {
+        twikoo_avatar = $(".tk-avatar-img");
+        for (var i = 0; i < twikoo_avatar.length; i++) {
+            var asrc = twikoo_avatar.eq(i).attr('src');
+            if (asrc.search('cn.gravatar.com') != -1) {
+                twikoo_avatar.eq(i).attr('src', 'https://2006wzt.github.io/media/images/comavatar.png');
+            }
+        }
+    }
+
+    function showWechat() {
+        var wechat = '';
+        alert("博主微信号：" + wechat);
+        return false;
+    }
+</script>
+
+<script>
+    /**
+     * https://github.com/tangkaichuan/gridea-search
+     */
+    // 检查缓存是否最新
+    function checkCache() {
+        var caches_postsnum = localStorage.getItem("postsnum");
+        var pt = document.getElementById("side-posttitle").innerHTML;
+        pt = pt.replace(/\s+/g, '').replace(/<script>.*?<\/script>/gi, "")
+        var ptlen = pt.length;
+        var ptlen_storage = localStorage.getItem("poststitlelen");
+        if (caches_postsnum != postsnum || ptlen != ptlen_storage) {
+            console.log("更新缓存");
+            return false
+        }
+        return true;
+    }
+
+    (function () {
+        var CACHES = checkCache()
+        if (!CACHES) {
+            var NOW = Date.now()
+            var API_CONTENT = '../api-content/index.html' + '?_=' + NOW
+            preload(API_CONTENT);
+            getContents(show_getContentresult);
+        }
+
+        function show_getContentresult(data) {
+            console.log("获取成功");
+            var postslen = data["posts"].length;
+            localStorage.setItem('postsnum', postslen);
+            var poststitlelen = 0;
+            var pt = document.getElementById("side-posttitle").innerHTML;
+            pt = pt.replace(/\s+/g, '').replace(/<script>.*?<\/script>/gi, "");
+            localStorage.setItem('poststitlelen', pt.length);
+        }
+
+
+
+        // preload
+        function preload(url) {
+            var preloadLink = document.createElement('link')
+            preloadLink.href = url
+            preloadLink.rel = 'preload'
+            preloadLink.as = 'fetch'
+            preloadLink.crossOrigin = 'anonymous'
+            document.head.appendChild(preloadLink)
+        }
+
+        // 异步 GET 请求
+        function get(obj) {
+            var xhr = new XMLHttpRequest()
+            xhr.open('get', obj.url, true)
+            xhr.send(null)
+            xhr.onreadystatechange = function () {
+                // 异步请求：响应状态为4，数据加载完毕
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        obj.success(xhr.responseText)
+                    } else {
+                        obj.error(xhr.status)
+                    }
+                }
+            }
+        }
+
+        // 获取博客全文 api
+        function getContents(callback) {
+            if (CACHES) {
+                callback(CACHES.contents)
+            } else {
+                get({
+                    url: API_CONTENT,
+                    success: function (data) {
+                        callback(JSON.parse(data));
+                        localStorage.setItem('ContentsCache', data);
+                        getStorageContent();
+                    }
+                })
+            }
+        }
+    })()
+    //------------------------核心功能--pjax全局渲染👇-------------------
+    let talkinit = false;
+    $(document).pjax('a[data-pjax]', '#main', {
+        fragment: '#main',
+        timeout: 8000
+    }).on('pjax:complete', function () {
+        //代码块高亮渲染
+        document.querySelectorAll('pre code').forEach((block) => {
+            hljs.highlightBlock(block);
+        });
+        //文章热度
+        if(postnumChoice){
+            getHotnum();
+        }
+        //文章索引
+        toginit();
+        //清空搜索栏
+        if (searchChoice) {
+            searchInit();
+            searchInput.value = "";
+        }
+        var pl = window.location.pathname;
+        //说说更新
+        if (pl.search("talk") != -1 && !talkinit) {
+            add();
+            talkinit = true;
+        } else if (pl.search("talk") != -1) {
+            show();
+        }
+        if (pl.search("post") != -1) {
+            if (shareChoice)
+                shareInit();
+            if (donateChoice)
+                donateInit();
+            if ("default" == "default"&&!commentsHide) {
+                $("#comment").hide()
+                commentsHide = true
+            }
+            lazyload();
+            codeinit();
+            if ("default" == "twikoo") {
+                //twikoo头像更换
+                setTimeout(replaceAvatar, 3000);
+                setTimeout(replaceAvatar, 8000); //部分博主站点速度加载过慢，再添加一个延迟
+            }
+        }
+        if (btstate == true)
+            dropdown();
+    }).on('pjax:start', function () {
+        $(".pjaxloading").fadeIn(50);
+    }).on('pjax:end', function () {
+        $(".pjaxloading").fadeOut(50);
+    });
+    //------------------------核心功能--pjax全局渲染👆-------------------
+
+    //-------------------------------------------------搜索
+    // 获取搜索框、搜索按钮、清空搜索、结果输出对应的元素
+    if (searchChoice) {
+        var searchInput = document.querySelector('.search-input');
+        var searchResults = document.querySelector('.search-results');
+    }
+    // 申明保存文章的标题、链接、内容的数组变量
+    var searchValue = '',
+        arrItems = [],
+        arrLinks = [],
+        arrTitles = [],
+        arrContents = [],
+        arrResults = [],
+        indexItem = [],
+        itemLength = 0;
+    var tmpDiv = document.createElement('div');
+    tmpDiv.className = 'result-item';
+
+
+    function getStorageContent() {
+        var data = localStorage.getItem('ContentsCache');
+        data = JSON.parse(data);
+        posts = data["posts"];
+        for (var i = 0; i < posts.length; i++) {
+            arrLinks[i] = posts[i].link;
+            arrTitles[i] = posts[i].title;
+            arrContents[i] = posts[i].content;
+            itemLength++;
+        }
+    }
+    if (checkCache())
+        getStorageContent();
+    // 输入框内容变化后就开始匹配，可以不用点按钮
+    // 经测试，onkeydown, onchange 等方法效果不太理想，
+    // 存在输入延迟等问题，最后发现触发 input 事件最理想，
+    // 并且可以处理中文输入法拼写的变化
+    searchInput.oninput = function () {
+        setTimeout(searchConfirm, 0);
+    }
+    searchInput.onfocus = function () {
+        searchResults.style.display = 'block';
+    }
+
+    function searchConfirm() {
+        if (searchInput.value == '') {
+            searchResults.style.display = 'none';
+        } else if (searchInput.value.search(/^\s+$/) >= 0) {
+            // 检测输入值全是空白的情况
+            searchInit();
+            var itemDiv = tmpDiv.cloneNode(true);
+            itemDiv.innerText = '请输入有效内容...';
+            searchResults.appendChild(itemDiv);
+        } else {
+            // 合法输入值的情况
+            searchInit();
+            searchValue = searchInput.value;
+            // 在标题、内容中查找
+            searchMatching(arrTitles, arrContents, searchValue);
+        }
+    }
+
+    // 每次搜索完成后的初始化
+    function searchInit() {
+        arrResults = [];
+        indexItem = [];
+        searchResults.innerHTML = '';
+        searchResults.style.display = 'block';
+    }
+
+    function searchMatching(arr1, arr2, input) {
+        // 忽略输入大小写
+        input = new RegExp(input, 'i');
+        var step = 10;
+        // 在所有文章标题、内容中匹配查询值
+        for (i = 0; i < itemLength; i++) {
+            var indexContent = arr2[i].search(input);
+            //标题匹配
+            if (arr1[i].search(input) != -1) {
+                indexItem.push(i); // 保存匹配值的索引
+                if (indexContent != -1) {
+                    startindex = (indexContent - step) >= 0 ? (indexContent - step) : 0;
+                    var searchcontent = arr2[i].slice(indexContent - step, indexContent + 5)
+                    arrResults.push("....." + searchcontent + ".....");
+                } else
+                    arrResults.push("");
+            }
+            //内容匹配
+            else if (indexContent != -1) {
+                indexItem.push(i); // 保存匹配值的索引
+
+                startindex = (indexContent - step) >= 0 ? (indexContent - step) : 0;
+                var searchcontent = arr2[i].slice(indexContent - step, indexContent + 5)
+                arrResults.push("....." + searchcontent + ".....");
+            }
+        }
+
+        // 输出总共匹配到的数目
+        var totalDiv = tmpDiv.cloneNode(true);
+        totalDiv.innerHTML = '<b>总匹配：' + indexItem.length + ' 项<hr></b>';
+        searchResults.appendChild(totalDiv);
+
+        // 未匹配到内容的情况
+        if (indexItem.length == 0) {
+            var itemDiv = tmpDiv.cloneNode(true);
+            itemDiv.innerText = '未匹配到内容...';
+            searchResults.appendChild(itemDiv);
+        }
+
+        // 将所有匹配内容进行组合
+        for (i = 0; i < arrResults.length; i++) {
+            var itemDiv = tmpDiv.cloneNode(true);
+            itemDiv.innerHTML = '<a data-pjax class="searchresults" href="' + arrLinks[indexItem[i]] + '"><b>[' +
+                arrTitles[indexItem[i]] +
+                ']</b><p>' + arrResults[i] + '</p></a><hr />';
+            searchResults.appendChild(itemDiv);
+        }
+    }
+</script>
+
+
+
+<!--------------------- 菜单栏图标加载功能👇 ----------------------->
+<script>
+var menulist = $(".menuicon");
+var menulength = menulist.length;
+for (var i = 0; i < menulength; i++) {
+    var altname = menulist.eq(i).attr("alt");
+    var iconurl = icondict[altname];
+    if (iconurl == undefined || iconurl == '')
+        continue;
+    if (iconurl == 'Home') {
+        menulist.eq(i).attr("src", "https://2006wzt.github.io/media/images/Home.png");
+menulist.eq(i).show();
+} else if (iconurl == 'Archive') {
+menulist.eq(i).attr("src", "https://2006wzt.github.io/media/images/Archive.png");
+menulist.eq(i).show();
+} else if (iconurl == 'Tag') {
+menulist.eq(i).attr("src", "https://2006wzt.github.io/media/images/Tag.png");
+menulist.eq(i).show();
+} else if (iconurl == 'About') {
+menulist.eq(i).attr("src", "https://2006wzt.github.io/media/images/About.png");
+menulist.eq(i).show();
+} else if (iconurl == 'Talk') {
+menulist.eq(i).attr("src", "https://2006wzt.github.io/media/images/Talk.png");
+menulist.eq(i).show();
+} else if (iconurl == 'Friends') {
+menulist.eq(i).attr("src", "https://2006wzt.github.io/media/images/Friends.png");
+menulist.eq(i).show();
+} else if (iconurl == 'Fly') {
+menulist.eq(i).attr("src", "https://2006wzt.github.io/media/images/wind.png");
+menulist.eq(i).show();
+} else {
+menulist.eq(i).attr("src", iconurl);
+menulist.eq(i).show();
+}
+}
+</script>
+<!--------------------- 菜单栏图标加载功能👆 ----------------------->
+
+<script>
+    //--------------------bber-onetalk加载👇--------------------------------
+    function bberonetalkLoad(){
+        bberjsonurl = '';
+        if ( $("#bber-talk").length > 0 ) {
+        jsonUrl = bberjsonurl
+        $.getJSON(jsonUrl+"?t="+Date.parse( new Date()),function(res){
+        var bberHtml = ''
+        $.each(res.data, function(i, item){
+            d = new Date(item.date)
+            date = d.getFullYear()+'/'+(d.getMonth()+1)+'/'+d.getDate() +' '+d.getHours()+':'+d.getMinutes()+':'+d.getSeconds()
+            dataTime = '<span class="datatime">'+date+'</span>'
+            bberHtml += '<li class="item item-'+(i+1)+'">'+dataTime+'： <a data-pjax href="https://2006wzt.github.io/bber">'+item.content+'</a></li>'
+        });
+        $('#bber-talk').append('<span class="index-talk-icon"><svg viewBox="0 0 1024 1024" width="21" height="21"><path d="M184.32 891.667692c-12.603077 0-25.206154-2.363077-37.809231-7.876923-37.021538-14.966154-59.864615-49.624615-59.864615-89.009231v-275.692307c0-212.676923 173.292308-385.969231 385.969231-385.969231h78.76923c212.676923 0 385.969231 173.292308 385.969231 385.969231 0 169.353846-137.846154 307.2-307.2 307.2H289.083077l-37.021539 37.021538c-18.904615 18.116923-43.323077 28.356923-67.741538 28.356923zM472.615385 195.347692c-178.018462 0-322.953846 144.935385-322.953847 322.953846v275.692308c0 21.267692 15.753846 29.144615 20.48 31.507692 4.726154 2.363077 22.055385 7.876923 37.021539-7.08923l46.473846-46.473846c6.301538-6.301538 14.178462-9.452308 22.055385-9.452308h354.461538c134.695385 0 244.184615-109.489231 244.184616-244.184616 0-178.018462-144.935385-322.953846-322.953847-322.953846H472.615385z"></path><path d="M321.378462 512m-59.076924 0a59.076923 59.076923 0 1 0 118.153847 0 59.076923 59.076923 0 1 0-118.153847 0Z"></path><path d="M518.301538 512m-59.076923 0a59.076923 59.076923 0 1 0 118.153847 0 59.076923 59.076923 0 1 0-118.153847 0Z"></path><path d="M715.224615 512m-59.076923 0a59.076923 59.076923 0 1 0 118.153846 0 59.076923 59.076923 0 1 0-118.153846 0Z"></path></svg></span><ul class="talk-list">'+bberHtml+'</ul>')
+        //Lately({ 'target': '#bber-talk .datatime' });
+        });
+        function Roll (){
+        var list_li = $('.talk-list li'),cur_li = list_li.first(),last_li = list_li.last();
+        last_li.after(cur_li);
+        };
+        setInterval(Roll,3000);
+    }
+    }
+  //--------------------bber-onetalk加载👆--------------------------------
+</script>
+
+<script>
+    var ClicksideState = 1
+    var cur_readingmode = false
+    function readingmode(){
+        if (!cur_readingmode){
+            if(menupos == 'left'){
+                if(ClicksideState==1)
+                menu_openclose1()
+            }
+            $("#tab1").fadeOut(50)
+            $("#bg").fadeOut(50)
+            $(".navbar").fadeOut(50)
+            $(".markdownIt-TOC li a").css("color","black")
+            cur_readingmode = true
+        }else{
+            if(menupos == 'left'){
+                if(ClicksideState==0)
+                    menu_openclose1()
+            }
+            $("#tab1").fadeIn(50)
+            $("#bg").fadeIn(50)
+            $(".navbar").fadeIn(50)
+            $(".markdownIt-TOC li a").css("color","antiquewhite")
+            cur_readingmode = false  
+        }
+    }
+</script>
+
+
+<!----夜间模式👇-->
+<script>
+    var moonlightState = false
+    function moonlight(){
+        if(!moonlightState){
+            $("#bg").fadeOut(200)
+            $('body').css("background","rgba(0,0,0,0.8)")
+            $(".markdownIt-TOC li a").css("color","white")
+            $(".text p, .text ul").css("color","white")
+            $("#articlecontent").css("color","white")
+            $(".post-copyright").css("background","rgba(10,10,10,0.5)")
+            $('blockquote').css("background","rgba(10,10,10,0.6)")
+            $("#articlecontent").css("background","rgba(10,10,10,0.5)")
+            moonlightState = true
+            $(".moon").attr("src","https://2006wzt.github.io/media/images/sun.png")
+        }else{
+            $("#bg").show()
+            $(".markdownIt-TOC li a").css("color","antiquewhite")
+            $(".text p, .text ul").css("color","rgba(0, 0, 0, 0.7)")
+            $("#articlecontent").css("color","black")
+            $(".post-copyright").css("background","#f9f9f9")
+            $('blockquote').css("background","#eff8f0")
+            $("#articlecontent").css("background","white")
+            $(".moon").attr("src","https://2006wzt.github.io/media/images/moon.png")
+            $('body').css("background","white")
+            moonlightState = false
+        }
+    }
+</script>
+<!----夜间模式👆--></div>
+            <!--------------- pc端菜单栏👆 ---------------->
+
+            <!-- ----------------左侧菜单栏html 👇-------------------------------------->
+            
+            <div>
+                <div id="tab1" class="tab">
+                    <div class="bars">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                    <div class="close"></div>
+                </div>
+                <div class="col-md-1 col-lg-3"></div>
+                <!-- main标签，pjax渲染时加载以下内容👇 -->
+                <div id="main" class="col-xs-12 col-sm-12 col-md-12 col-lg-7" style="padding:0;">
+                    <div class="readingmode" onclick="readingmode()">阅</div>
+                    <link rel="stylesheet" href="https://2006wzt.github.io/media/css/font-awesome.css">
+
+<body>
+    <div class="allcontent" id="postdetail">
+        <div class="postshow postpadding" style="padding-bottom: 0;">
+            
+            <div class="postdetailimg">
+                <img src="https://2006wzt.github.io/post-images/socket编程实验.png" class="postimage" style="cursor:auto">
+            </div>
+            <div class="postinfo-detail">
+                <div class="postdate"><i class="fa fa-calendar"></i>2022-11-05</div>
+                <div class="poststatus postdate"><i class="fa fa-clock-o"></i> 69 min read</div>
+                <div class="posttag">
+                    
+                    <a data-pjax href="https://2006wzt.github.io/tag/ebXlXX0IT/" class="postlink">
+                        <i class="fa fa-tag"></i> C/C++
+                    </a>
+                    
+                </div>
+            </div>
+            
+        <div id="articlecontent">
+            <div id="texttitle" style="text-align: center">
+                <h2 id="ptitle">Socket编程实验</h2>
+                <!-- id 将作为查询条件 -->
+                <div id="pl" style="display:none">https://2006wzt.github.io/post/socket编程实验/</div>
+                <div id="rootaddr" style="display:none">https://2006wzt.github.io</div>
+                
+            </div>
+            <div class="text ">
+                <h1 id="socket编程实验">Socket编程实验</h1>
+<h2 id="一-实验要求">一、实验要求</h2>
+<h3 id="11-实验目标和内容">1.1 实验目标和内容</h3>
+<h4 id="111-实验目的">1.1.1 实验目的</h4>
+<p>● 了解应用层和运输层的作用及相关协议的工作原理和机制。<br>
+● 掌握 SOCKET 编程的基本方法。</p>
+<h4 id="112-实验环境">1.1.2 实验环境</h4>
+<p>● 操作系统：Windows<br>
+● 语言：C++<br>
+● 编程开发环境：Visual Studio 2008-2019 皆可</p>
+<h4 id="113-实验内容">1.1.3 实验内容</h4>
+<p>**题目：**编写一个 Web 服务器软件，要求如下：</p>
+<p><strong>基本要求：</strong><br>
+● 可配置 Web 服务器的监听地址、监听端口和主目录（不得写在代码里面，不能每配置一次都要重编译代码）；<br>
+● 能够单线程处理一个请求。当一个客户（浏览器,输入 URL：http://202.103.2.3/index.html）连接时创建一个连接套接字；<br>
+● 从连接套接字接收 http 请求报文，并根据请求报文的确定用户请求的网页文件；<br>
+● 从服务器的文件系统获得请求的文件。 创建一个由请求的文件组成的 http 响应报文。；<br>
+● 经 TCP 连接向请求的浏览器发送响应，浏览器可以正确显示网页的内容；</p>
+<p><strong>高级要求：</strong><br>
+● 能够传输包含多媒体（如图片）的网页给客户端，并能在客户端正确显示；<br>
+● 在服务器端的屏幕上输出请求的来源（IP 地址、端口号和 HTTP 请求命令行）；<br>
+● 在服务器端的屏幕上能够输出对每一个请求处理的结果；<br>
+● 对于无法成功定位文件的请求，根据错误原因，作相应错误提示，并具备一定的异常情况处理能力。</p>
+<h3 id="12-检查表">1.2 检查表</h3>
+<img src="http://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/20221025201531.png" style="zoom:67%;" />
+<h2 id="二-功能实现">二、功能实现</h2>
+<h3 id="21-server和client简单demo">2.1 Server和Client简单Demo</h3>
+<img src="https://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/20221025202916.png" style="zoom:65%;" />
+<h4 id="211-server">2.1.1 Server</h4>
+<pre><code class="language-c++">#pragma once
+#include &quot;winsock2.h&quot;
+#include &lt;stdio.h&gt;
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;list&gt;
+using namespace std;
+
+#pragma comment(lib,&quot;ws2_32.lib&quot;)
+
+//当chrome浏览器打开一个网页时，除了请求网页本身外，还会发出另外一个请求 /favicon.ico，请求谷歌浏览器的图标
+//因此Server实际上打开了多个会话Socket，需要一个List来保存这些会话Socket
+//保存打开的当前的会话socket
+
+list&lt;SOCKET&gt; sessionSockets;
+
+void main(){
+	WSADATA wsaData;//描述了关于 Windows Sockects 底层实现的相关信息
+	fd_set rfds;//用于检查socket是否有数据到来的的文件描述符，用于socket非阻塞模式下等待网络事件通知（有数据到来）
+	fd_set wfds;//用于检查socket是否可以发送的文件描述符，用于socket非阻塞模式下等待网络事件通知（可以发送数据）
+
+	/* 底层初始化 */
+	int nRc = WSAStartup(0x0202, &amp;wsaData);//初始化
+	if (nRc) {//初始化失败
+		printf(&quot;Winsock  startup failed with error!\n&quot;);
+	}
+	if (wsaData.wVersion != 0x0202) {//版本号错误
+		printf(&quot;Winsock version is not correct!\n&quot;);
+	}
+	printf(&quot;Winsock  startup Ok!\n&quot;);
+
+	/* Socket初始化 */
+	//用到的变量：监听Socket、会话Socket、服务器地址、客户端地址、IP地址长度
+	SOCKET srvSocket;//监听socket	
+	sockaddr_in addr, clientAddr;//服务器地址和客户端地址
+	SOCKET sessionSocket;//会话socket，负责和client进程通信
+	int addrLen;//ip地址长度
+	//创建监听Socket
+	srvSocket = socket(AF_INET, SOCK_STREAM, 0);
+	if (srvSocket != INVALID_SOCKET)
+		printf(&quot;Socket create Ok!\n&quot;);
+	//设置服务器的端口和地址
+	addr.sin_family = AF_INET;
+	addr.sin_port = htons(5050);
+	addr.sin_addr.S_un.S_addr = htonl(INADDR_ANY); //主机上任意一块网卡的IP地址
+	//将监听Socket与主机地址绑定
+	int rtn = bind(srvSocket, (LPSOCKADDR)&amp;addr, sizeof(addr));
+	if (rtn != SOCKET_ERROR)
+		printf(&quot;Socket bind Ok!\n&quot;);
+
+	/* 监听 */
+	rtn = listen(srvSocket, 5);
+	if (rtn != SOCKET_ERROR)
+		printf(&quot;Socket listen Ok!\n&quot;);
+	clientAddr.sin_family = AF_INET;
+	addrLen = sizeof(clientAddr);
+
+	/* 设置接收缓冲区 */
+	char recvBuf[4096];
+	u_long blockMode = 1;//将srvSock设为非阻塞模式以监听客户连接请求
+	//调用ioctlsocket，将srvSocket改为非阻塞模式，改成反复检查fd_set元素的状态，看每个元素对应的句柄是否可读或可写
+	if ((rtn = ioctlsocket(srvSocket, FIONBIO, &amp;blockMode) == SOCKET_ERROR)) {
+		//FIONBIO：允许或禁止套接口s的非阻塞模式
+		cout &lt;&lt; &quot;ioctlsocket() failed with error!\n&quot;;
+		return;
+	}
+	cout &lt;&lt; &quot;ioctlsocket() for server socket ok!	Waiting for client connection and data\n&quot;;
+
+	/* 监听Client数据 */
+	while (true) {
+		//清空rfds和wfds数组
+		FD_ZERO(&amp;rfds);
+		FD_ZERO(&amp;wfds);
+
+		//将srvSocket加入rfds数组
+		//即：当客户端连接请求到来时，rfds数组里srvSocket对应的的状态为可读
+		//因此这条语句的作用就是：设置等待客户连接请求
+		FD_SET(srvSocket, &amp;rfds);
+
+
+
+		for (list&lt;SOCKET&gt;::iterator itor = sessionSockets.begin(); itor != sessionSockets.end(); itor++) {
+			//将sessionSockets里的每个会话socket加入rfds数组和wfds数组
+			//即：当客户端发送数据过来时，rfds数组里sessionSocket的对应的状态为可读；
+			//当可以发送数据到客户端时，wfds数组里sessionSocket的对应的状态为可写
+			//因此下面二条语句的作用就是：
+			//设置等待所有会话SOKCET可接受数据或可发送数据
+			FD_SET(*itor, &amp;rfds);
+			FD_SET(*itor, &amp;wfds);
+		}
+
+		/*
+			select工作原理：传入要监听的文件描述符集合（可读、可写，有异常）开始监听，select处于阻塞状态。
+			当有可读写事件发生或设置的等待时间timeout到了就会返回
+			返回之前自动去除集合中无事件发生的文件描述符，返回时传出有事件发生的文件描述符集合。
+			但select传出的集合并没有告诉用户集合中包括哪几个就绪的文件描述符，
+			需要用户后续进行遍历操作(通过FD_ISSET检查每个句柄的状态)。
+		*/
+		//开始等待，等待rfds里是否有输入事件，wfds里是否有可写事件
+		/*
+			The select function returns the total number of socket handles
+			that are ready and contained in the fd_set structure
+		*/
+		//返回总共可以读或写的句柄个数
+		int nTotal = select(0, &amp;rfds, &amp;wfds, NULL, NULL);
+		//如果srvSock收到连接请求，接受客户连接请求
+		if (FD_ISSET(srvSocket, &amp;rfds)) {
+			nTotal--;
+			//因为客户端请求到来也算可读事件，因此-1，剩下的就是真正有可读事件的句柄个数（即有多少个socket收到了数据）
+			//产生会话SOCKET
+			sessionSocket = accept(srvSocket, (LPSOCKADDR)&amp;clientAddr, &amp;addrLen);
+			if (sessionSocket != INVALID_SOCKET)
+				printf(&quot;Socket listen one client request!\n&quot;);
+			//把会话SOCKET设为非阻塞模式
+			if ((rtn = ioctlsocket(sessionSocket, FIONBIO, &amp;blockMode) == SOCKET_ERROR)) {
+				//FIONBIO：允许或禁止套接口s的非阻塞模式。
+				cout &lt;&lt; &quot;ioctlsocket() failed with error!\n&quot;;
+				return;
+			}
+			cout &lt;&lt; &quot;ioctlsocket() for session socket ok!	Waiting for client connection and data\n&quot;;
+			//设置等待会话SOKCET可接受数据或可发送数据
+			FD_SET(sessionSocket, &amp;rfds);
+			FD_SET(sessionSocket, &amp;wfds);
+
+			//把新的会话socket加入会话socket列表
+			sessionSockets.push_back(sessionSocket);
+		}
+
+		//检查会话SOCKET是否有数据到来
+		if (nTotal &gt; 0) { //如果还有可读事件，说明是会话socket有数据到来
+			//遍历所有会话socket，如果会话socket有数据到来，则接受客户的数据
+			for (list&lt;SOCKET&gt;::iterator itor = sessionSockets.begin(); itor != sessionSockets.end(); itor++) {
+				if (FD_ISSET(*itor, &amp;rfds)) { //如果遍历到的当前socket有数据到来
+					//receiving data from client
+					memset(recvBuf, '\0', 4096);
+					rtn = recv(*itor, recvBuf, 4096, 0);
+					if (rtn &gt; 0) {
+						printf(&quot;Received %d bytes from client: \n%s\n&quot;, rtn, recvBuf);
+						//新增加的：2022-10-26
+						//向服务器发送响应
+						if (FD_ISSET(*itor, &amp;wfds)) {//遍如果历到的当前socket可发送数据
+							//构建响应报文
+							std::string content = &quot;Welcome to VerySimpleServer&quot;;
+							std::string resp;
+							resp.append(&quot;HTTP/1.1 200 OK\r\n&quot;);
+							resp.append(&quot;Server: VerySimpleServer\r\n&quot;);
+							resp.append(&quot;Content-Type: text/html; charset=ISO-8859-1\r\n&quot;);
+							resp.append(&quot;Content-Length: &quot;).append(std::to_string(content.length())).append(&quot;\r\n&quot;);
+							resp.append(&quot;\r\n&quot;);
+							resp.append(content);
+							rtn = send(*itor, resp.c_str(), resp.length(), 0);
+							if (rtn &gt; 0) {
+								printf(&quot;Send %d bytes to client: %s\n&quot;, rtn, resp.c_str());
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+</code></pre>
+<p>上述搭建的服务器支持网页的访问请求，访问网址 http://127.0.0.1，会向该服务器请求网页资源，然后该服务器会发送响应报文，向浏览器推送网页，使用IP地址127.0.0.1是因为该IP地址指向的是本主机，而不会参与到公共网络的访问中去。</p>
+<h4 id="212-client">2.1.2 Client</h4>
+<pre><code class="language-c++">#pragma once
+#include &quot;winsock2.h&quot;
+#include &lt;Ws2tcpip.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+using namespace std;
+#pragma comment(lib,&quot;ws2_32.lib&quot;)
+
+void main() {
+	/* 底层初始化 */
+	WSADATA wsaData;
+	string input;
+	int nRc = WSAStartup(0x0202, &amp;wsaData);
+	if (nRc) {
+		printf(&quot;Winsock  startup failed with error!\n&quot;);
+	}
+	if (wsaData.wVersion != 0x0202) {
+		printf(&quot;Winsock version is not correct!\n&quot;);
+	}
+	printf(&quot;Winsock  startup Ok!\n&quot;);
+
+	/* Client的Socket初始化 */
+	SOCKET clientSocket;
+	sockaddr_in serverAddr, clientAddr;
+	int addrLen;
+	//create socket
+	clientSocket = socket(AF_INET, SOCK_STREAM, 0);
+	if (clientSocket != INVALID_SOCKET)
+		printf(&quot;Socket create Ok!\n&quot;);
+	//set client port and ip
+	clientAddr.sin_family = AF_INET;
+	clientAddr.sin_port = htons(0);
+	clientAddr.sin_addr.S_un.S_addr = htonl(INADDR_ANY);
+	//binding
+	int rtn = bind(clientSocket, (LPSOCKADDR)&amp;clientAddr, sizeof(clientAddr));
+	if (rtn != SOCKET_ERROR)
+		printf(&quot;Socket bind Ok!\n&quot;);
+
+	/* Server的Socket初始化 */
+	//set server's ip and port
+	serverAddr.sin_family = AF_INET;
+	serverAddr.sin_port = htons(5050);
+	inet_pton(AF_INET, &quot;127.0.0.1&quot;, &amp;serverAddr.sin_addr.s_addr);
+	rtn = connect(clientSocket, (LPSOCKADDR)&amp;serverAddr, sizeof(serverAddr));
+	if (rtn == SOCKET_ERROR)
+		printf(&quot;Connect to server error!\n&quot;);
+	printf(&quot;Connect to server ok!&quot;);
+
+	do {
+		cout &lt;&lt; &quot;\nPlease input your message:&quot;;
+		cin &gt;&gt; input;
+		//send data to server
+		rtn = send(clientSocket, input.c_str(), input.length(), 0);
+		if (rtn == SOCKET_ERROR) {
+			printf(&quot;Send to server failed\n&quot;);
+			closesocket(clientSocket);
+			WSACleanup();
+			return;
+		}
+	} while (input != &quot;quit&quot;);
+	closesocket(clientSocket);
+	WSACleanup();
+}
+</code></pre>
+<p>该客户端模拟一个向服务器发送消息的进程。</p>
+<h3 id="22-配置监听地址-端口和主目录">2.2 配置监听地址、端口和主目录</h3>
+<p>配置监听IP地址、端口和主目录，改变上述配置之后不允许重新编译，那么我们可以通过添加一个配置文件，将Server的监听地址、端口和主目录存储在配置文件中，通过读文件的方式来获取设置的监听地址、端口和主目录。</p>
+<h4 id="221-server">2.2.1 Server</h4>
+<p>配置文件的存储格式如下：</p>
+<img src="https://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/20221030171816.png"/>
+<p>读取配置文件并解析的代码如下：</p>
+<pre><code class="language-c++">//读取配置文件，对监听地址、端口、主目录进行配置
+string IP;//服务器IP地址
+string catalogue;//主目录
+short port;//端口
+ifstream config;
+config.open(&quot;E:/Lab1_Server/config.txt&quot;, ios::in);
+if (!config.is_open()) {//打开配置文件失败
+    cout &lt;&lt; &quot;Open config file failed! &quot; &lt;&lt; endl;
+}
+else {
+    cout &lt;&lt; &quot;Start to analyse the config file...&quot;&lt;&lt;endl;
+    char buf[1024];
+    memset(buf, '\0', 1024);
+    while(config.getline(buf, sizeof(buf))){
+        string s(buf);
+        if (s.find(&quot;IP&quot;) != string::npos) {//IP配置行
+            IP.assign(s,3);
+        }
+        else if (s.find(&quot;port&quot;) != string::npos) {//端口port配置行
+            port = short(atoi(s.substr(5).c_str()));
+        }
+        else if (s.find(&quot;catalogue&quot;) != string::npos) {//主目录配置行
+            catalogue.assign(s, 10);
+        }
+    }
+}
+</code></pre>
+<p>在配置监听地址与端口处，将我们解析得到的IP与port设置为服务器的IP与port</p>
+<pre><code class="language-c++">//设置服务器的端口和地址
+addr.sin_family = AF_INET;
+addr.sin_port = htons(port);
+inet_pton(AF_INET, IP.c_str(), &amp;addr.sin_addr.s_addr);
+addr.sin_addr.S_un.S_addr = htonl(INADDR_ANY);
+cout &lt;&lt; &quot;Set Server IP success:&quot; &lt;&lt; IP &lt;&lt; endl;
+cout &lt;&lt; &quot;Set Server port success:&quot; &lt;&lt; port &lt;&lt; endl;
+</code></pre>
+<p>经过测试，edge浏览器可以正确得获得网页。</p>
+<img src="http://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/20221030201125.png" style="zoom: 33%;" />
+<p>我们修改配置文件 <code>config.txt</code> 中的IP地址和端口号，同样可以实现网页的请求，因此也实现了在监听端口上进行监听的功能，同时网页正常得显式也说明了我们当前的服务器可以在收到客户端请求时创建连接套接字</p>
+<h3 id="23-响应客户端请求定位相应的html文件">2.3 响应客户端请求，定位相应的html文件</h3>
+<p>我们之前反馈给网页的是一个字符串，因此网页只能显示这一句话，注意到网页内容的请求报文为（以edge浏览器为例）：</p>
+<pre><code class="language-http">GET / HTTP/1.1
+Host: 127.0.0.1:5050
+Connection: keep-alive
+sec-ch-ua: &quot;Chromium&quot;;v=&quot;106&quot;, &quot;Microsoft Edge&quot;;v=&quot;106&quot;, &quot;Not;A=Brand&quot;;v=&quot;99&quot;
+sec-ch-ua-mobile: ?0
+sec-ch-ua-platform: &quot;Windows&quot;
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36 Edg/106.0.1370.52
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9
+Sec-Fetch-Site: none
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Accept-Encoding: gzip, deflate, br
+Accept-Language: zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6
+</code></pre>
+<p>网页请求网页图标的请求报文为：</p>
+<pre><code class="language-http">GET /favicon.ico HTTP/1.1
+Host: 127.0.0.1:5050
+Connection: keep-alive
+sec-ch-ua: &quot;Chromium&quot;;v=&quot;106&quot;, &quot;Microsoft Edge&quot;;v=&quot;106&quot;, &quot;Not;A=Brand&quot;;v=&quot;99&quot;
+sec-ch-ua-mobile: ?0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36 Edg/106.0.1370.52
+sec-ch-ua-platform: &quot;Windows&quot;
+Accept: image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Dest: image
+Referer: http://127.0.0.1:5050/
+Accept-Encoding: gzip, deflate, br
+Accept-Language: zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6
+</code></pre>
+<p>浏览器并不会明确得告诉我们它所要请求的html网页是什么，根据 <code>Accept</code> 语句，它希望得到的是text文本或html文件，因此我们希望将一个存储在主目录下的html文件反馈给网页，首先设计好主目录下的文件结构，如下图所示：</p>
+<img src="https://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/20221031155912.png" style="zoom:60%;" />
+<p>我们将html文件存储在主目录下的 <code>file</code> 文件夹中，将网页中用到的图片存储在 <code>image</code> 文件夹中，实现一个简单的网页：</p>
+<pre><code class="language-html">&lt;html&gt;
+	&lt;head&gt;
+		&lt;title&gt;Test Web&lt;/title&gt;
+	&lt;/head&gt;
+
+	&lt;body&gt;
+		&lt;div style=&quot;text-align: center; width: 100%;&quot;&gt;
+			This is a test HTML
+			&lt;img src=&quot;../image/icon.jpg&quot; /&gt;
+		&lt;/div&gt;
+	&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<img src="https://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/20221031160327.png" style="zoom: 33%;" />
+<h4 id="231-server">2.3.1 Server</h4>
+<p>为了解析请求报文，我们将请求报文按照 <code>\r\n</code> 分割成若干行，存储在全局 <code>vector</code> 中，分割函数如下：</p>
+<pre><code class="language-c++">void split(string recvData) {//切割响应报文，按照\r\n分割
+	string seg(&quot;\r\n&quot;);//分隔符
+	int pos = 0;
+	int size = recvData.size();
+	for (int i = 0; i &lt; size; ++i) {
+		pos = recvData.find(seg, i);
+		if (pos != -1) {
+			string s = recvData.substr(i, pos - i);
+			if (s.size() &gt; 0) message.push_back(s);//message为全局vector
+			i = pos + seg.size() - 1;
+		}
+		else break;
+	}
+}
+</code></pre>
+<p>初步编写构造响应报文的函数如下，可以构造相关的html报文：</p>
+<pre><code class="language-c++">string create_reponse(string recvData,string catalogue) {//创建响应报文
+	/*
+	recvData:  请求报文
+	catalogue: 主目录
+	return:    响应报文
+	*/
+	string resp;//响应报文
+	//初始化状态行
+	const string OK(&quot;HTTP/1.1 200 OK\r\n&quot;);
+	const string NOT_FOUND(&quot;HTTP/1.1 404 NOT FOUND\r\n&quot;);
+	const string FORBIDDEN(&quot;HTTP/1.1 403 FORBIDDEN\r\n&quot;);
+	const string MOVED(&quot;HTTP/1.1 301 Moved Permanently\r\n&quot;);
+	const string BAD_REQUEST(&quot;HTTP/1.1 400 Bad Request\r\n&quot;);
+	const string WRONG_VERSION(&quot;HTTP/1.1 505 HTTP Version Not Supported\r\n&quot;);
+
+
+	split(recvData);//将请求报文的每一行分割存储到message中
+	bool target = false;//请求报文是否指明了请求的信息的相对路径
+
+	for (int i = 0; i &lt; message.size(); ++i) {
+		if (message[i].find(&quot;GET&quot;) != -1  ||
+			message[i].find(&quot;POST&quot;) != -1 ||
+			message[i].find(&quot;HEAD&quot;) != -1 ||
+			message[i].find(&quot;PUT&quot;) != -1  ||
+			message[i].find(&quot;DELETE&quot;) != -1) {//分析请求行中的相对路径
+			if (message[i].find(&quot;/ HTTP/1.1&quot;) != -1) {//未指明请求的文件的目录，此时发送我们的默认html网页
+				target = false;
+			}
+			else {//分析出相对路径，结合主目录形成绝对路径
+
+			}
+		}
+		if (message[i].find(&quot;Accept:&quot;) != -1) {//分析Accept请求字符串
+			if (message[i].find(&quot;text/html&quot;) != -1) {//请求html网页或文本
+				if (!target) {//发送默认html网页
+					//读取本地html文件
+					string content;
+					ifstream web;
+					web.open(&quot;file/web.html&quot;, ios::in);
+					char buf[1024];
+					memset(buf, '\0', 1024);
+					while (web.getline(buf, sizeof(buf))) {
+						content.append(buf);
+					}
+					//构造响应报文
+					resp.append(OK);
+					resp.append(&quot;Server: VerySimpleServer\r\n&quot;);
+					resp.append(&quot;Content-Type: text/html; charset=ISO-8859-1\r\n&quot;);
+					resp.append(&quot;Content-Length: &quot;).append(to_string(content.length())).append(&quot;\r\n&quot;);
+					resp.append(&quot;\r\n&quot;);
+					resp.append(content);
+					break;
+				}
+				else {//发送指定的html网页
+                    
+				}
+			}
+			else if (message[i].find(&quot;image&quot;) != -1) {//请求图片
+
+			}
+		}
+	}
+	return resp;
+}
+</code></pre>
+<p>当我们向浏览器发送构造的响应报文时，我们收到的请求报文中多了这样一条：</p>
+<pre><code class="language-http">GET /image/icon.jpg HTTP/1.1
+Host: 127.0.0.1:5050
+Connection: keep-alive
+sec-ch-ua: &quot;Chromium&quot;;v=&quot;106&quot;, &quot;Microsoft Edge&quot;;v=&quot;106&quot;, &quot;Not;A=Brand&quot;;v=&quot;99&quot;
+sec-ch-ua-mobile: ?0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36 Edg/106.0.1370.52
+sec-ch-ua-platform: &quot;Windows&quot;
+Accept: image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Dest: image
+Referer: http://127.0.0.1:5050/
+Accept-Encoding: gzip, deflate, br
+Accept-Language: zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6
+</code></pre>
+<p>显然，这正是请求我们html网页中图片的请求报文，说明我们发送html文件的响应报文被浏览器正确接收并解析了，于是我们进一步完善构造响应报文的函数，使其能够发送图片给浏览器，如下：</p>
+<pre><code class="language-c++">
+		html = true;
+	}
+	else {//分析出相对路径，结合主目录形成绝对路径
+		int pos_begin = message[0].find(&quot;/&quot;);
+		int pos_end = message[0].find(&quot; HTTP/1.1&quot;);
+		route = message[0].substr(pos_begin, pos_end - pos_begin);
+		if (route.compare(&quot;/favicon.ico&quot;) == 0) {//单独处理网页图标
+			route = &quot;/image&quot; + route;
+		}
+		route = catalogue + route;
+		target = true;
+		cout &lt;&lt; &quot;Get the request route:&quot; &lt;&lt; route &lt;&lt; endl;
+
+		if (route.find(&quot;html&quot;) != -1) {//根据请求的文件名判断浏览器想要什么类型的文件
+			html = true;
+		}
+		else if (route.find(&quot;jpg&quot;) != -1 ||
+			route.find(&quot;png&quot;) != -1 ||
+			route.find(&quot;webp&quot;) != -1 ||
+			route.find(&quot;ico&quot;) != -1) {
+			image = true;
+		}
+	}
+
+	//遍历message,找到Accept:行，解析浏览器可接受的文件类型
+	for (int i = 0; i &lt; message.size(); ++i) {
+		if (message[i].find(&quot;Accept:&quot;) != -1) {//分析Accept请求字符串
+			if ((message[i].find(&quot;text/html&quot;) != -1|| message[i].find(&quot;*/*&quot;)!= -1)&amp;&amp; html) {//请求html网页或文本
+				if (!target) {//发送默认html网页
+					//读取本地html文件
+					string content;
+					ifstream web;
+					web.open(&quot;file/web.html&quot;, ios::in);
+					char buf[1024];
+					memset(buf, '\0', 1024);
+					while (web.getline(buf, sizeof(buf))) {
+						content.append(buf);
+					}
+					//构造响应报文
+					resp.append(OK);
+					resp.append(&quot;Server: VerySimpleServer\r\n&quot;);
+					resp.append(&quot;Content-Type: text/html; charset=ISO-8859-1\r\n&quot;);
+					resp.append(&quot;Content-Length: &quot;).append(to_string(content.length())).append(&quot;\r\n&quot;);
+					resp.append(&quot;\r\n&quot;);
+					resp.append(content);
+
+					int rtn = send(s, resp.c_str(), resp.length(), 0);
+					if (rtn &gt; 0) {
+						printf(&quot;\nSend %d bytes to client: \n%s\n&quot;, rtn, resp.c_str());
+					}
+					break;
+				}
+				else {//发送指定的html网页
+					break;
+				}
+			}
+			else if ((message[i].find(&quot;image/&quot;) != -1||message[i].find(&quot;*/*&quot;) != -1)&amp;&amp;image) {//请求图片
+				//读取图片文件
+				string content;
+				FILE* fp = fopen(route.c_str(), &quot;rb&quot;);
+				fseek(fp, 0, SEEK_END);
+				int length = ftell(fp);
+				fseek(fp, 0, SEEK_SET);
+				//根据图像数据长度分配内存buffer
+				char* buf = (char*)malloc(length + 1);
+				memset(buf, '\0', length + 1);
+				fread(buf, length, 1, fp);
+				fclose(fp);
+
+				//构造响应报文
+				resp.append(OK);
+				resp.append(&quot;Server: VerySimpleServer\r\n&quot;);
+				resp.append(&quot;Content-Type: image/*\r\n&quot;);
+				resp.append(&quot;Content-Length: &quot;).append(to_string(length)).append(&quot;\r\n&quot;);
+				resp.append(&quot;\r\n&quot;);
+				int rtn = send(s, resp.c_str(), resp.length(), 0);
+				if (rtn &gt; 0) {
+					printf(&quot;\nSend %d bytes to client: \n%s\n&quot;, rtn, resp.c_str());
+				}
+				rtn = send(s, buf, length, 0);
+				if (rtn &gt; 0) {
+					printf(&quot;\nSend %d bytes to client: \n%s\n&quot;, rtn, buf);
+				}
+				break;
+			}
+		}
+	}
+	message.clear();//注意返回前一定要清空message，以便下次使用
+	return;
+}
+</code></pre>
+<p>可见我们上述的函数大改，从创建报文变为了创建并发送报文，主要是因为image发送一直失败，最后在这个函数中将首部和content分开发送才成功传输了图片，可能是因为缺少了</p>
+<h3 id="24-支持多种类型的文件传输">2.4 支持多种类型的文件传输</h3>
+<p>在上述html网页中已经实现了html文本和图片的传输，我们首先完善一下浏览器请求访问特定网页的请求，网页内容如下：</p>
+<pre><code class="language-html">&lt;html&gt;
+&lt;head&gt;
+ 
+&lt;/head&gt;
+&lt;body&gt;
+&lt;script&gt;
+function clickEffect() {
+  let balls = [];
+  let longPressed = false;
+  let longPress;
+  let multiplier = 0;
+  let width, height;
+  let origin;
+  let normal;
+  let ctx;
+  const colours = [&quot;#F73859&quot;, &quot;#14FFEC&quot;, &quot;#00E0FF&quot;, &quot;#FF99FE&quot;, &quot;#FAF15D&quot;];
+  const canvas = document.createElement(&quot;canvas&quot;);
+  document.body.appendChild(canvas);
+  canvas.setAttribute(&quot;style&quot;, &quot;width: 100%; height: 100%; top: 0; left: 0; z-index: 99999; position: fixed; pointer-events: none;&quot;);
+  const pointer = document.createElement(&quot;span&quot;);
+  pointer.classList.add(&quot;pointer&quot;);
+  document.body.appendChild(pointer);
+ 
+  if (canvas.getContext &amp;&amp; window.addEventListener) {
+    ctx = canvas.getContext(&quot;2d&quot;);
+    updateSize();
+    window.addEventListener('resize', updateSize, false);
+    loop();
+    window.addEventListener(&quot;mousedown&quot;, function(e) {
+      pushBalls(randBetween(10, 20), e.clientX, e.clientY);
+      document.body.classList.add(&quot;is-pressed&quot;);
+      longPress = setTimeout(function(){
+        document.body.classList.add(&quot;is-longpress&quot;);
+        longPressed = true;
+      }, 500);
+    }, false);
+    window.addEventListener(&quot;mouseup&quot;, function(e) {
+      clearInterval(longPress);
+      if (longPressed == true) {
+        document.body.classList.remove(&quot;is-longpress&quot;);
+        pushBalls(randBetween(50 + Math.ceil(multiplier), 100 + Math.ceil(multiplier)), e.clientX, e.clientY);
+        longPressed = false;
+      }
+      document.body.classList.remove(&quot;is-pressed&quot;);
+    }, false);
+    window.addEventListener(&quot;mousemove&quot;, function(e) {
+      let x = e.clientX;
+      let y = e.clientY;
+      pointer.style.top = y + &quot;px&quot;;
+      pointer.style.left = x + &quot;px&quot;;
+    }, false);
+  } else {
+    console.log(&quot;canvas or addEventListener is unsupported!&quot;);
+  }
+ 
+ 
+  function updateSize() {
+    canvas.width = window.innerWidth * 2;
+    canvas.height = window.innerHeight * 2;
+    canvas.style.width = window.innerWidth + 'px';
+    canvas.style.height = window.innerHeight + 'px';
+    ctx.scale(2, 2);
+    width = (canvas.width = window.innerWidth);
+    height = (canvas.height = window.innerHeight);
+    origin = {
+      x: width / 2,
+      y: height / 2
+    };
+    normal = {
+      x: width / 2,
+      y: height / 2
+    };
+  }
+  class Ball {
+    constructor(x = origin.x, y = origin.y) {
+      this.x = x;
+      this.y = y;
+      this.angle = Math.PI * 2 * Math.random();
+      if (longPressed == true) {
+        this.multiplier = randBetween(14 + multiplier, 15 + multiplier);
+      } else {
+        this.multiplier = randBetween(6, 12);
+      }
+      this.vx = (this.multiplier + Math.random() * 0.5) * Math.cos(this.angle);
+      this.vy = (this.multiplier + Math.random() * 0.5) * Math.sin(this.angle);
+      this.r = randBetween(8, 12) + 3 * Math.random();
+      this.color = colours[Math.floor(Math.random() * colours.length)];
+    }
+    update() {
+      this.x += this.vx - normal.x;
+      this.y += this.vy - normal.y;
+      normal.x = -2 / window.innerWidth * Math.sin(this.angle);
+      normal.y = -2 / window.innerHeight * Math.cos(this.angle);
+      this.r -= 0.3;
+      this.vx *= 0.9;
+      this.vy *= 0.9;
+    }
+  }
+ 
+  function pushBalls(count = 1, x = origin.x, y = origin.y) {
+    for (let i = 0; i &lt; count; i++) {
+      balls.push(new Ball(x, y));
+    }
+  }
+ 
+  function randBetween(min, max) {
+    return Math.floor(Math.random() * max) + min;
+  }
+ 
+  function loop() {
+    ctx.fillStyle = &quot;rgba(255, 255, 255, 0)&quot;;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (let i = 0; i &lt; balls.length; i++) {
+      let b = balls[i];
+      if (b.r &lt; 0) continue;
+      ctx.fillStyle = b.color;
+      ctx.beginPath();
+      ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2, false);
+      ctx.fill();
+      b.update();
+    }
+    if (longPressed == true) {
+      multiplier += 0.2;
+    } else if (!longPressed &amp;&amp; multiplier &gt;= 0) {
+      multiplier -= 0.4;
+    }
+    removeBall();
+    requestAnimationFrame(loop);
+  }
+ 
+  function removeBall() {
+    for (let i = 0; i &lt; balls.length; i++) {
+      let b = balls[i];
+      if (b.x + b.r &lt; 0 || b.x - b.r &gt; width || b.y + b.r &lt; 0 || b.y - b.r &gt; height || b.r &lt; 0) {
+        balls.splice(i, 1);
+      }
+    }
+  }
+}
+clickEffect();//调用特效函数
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<p>👆网上白嫖的简单炫酷的代码，并不重要，重要的是能否进行传输，完善的代码如下：去掉了target的标识（<s>当时搞的时候没想到多此一举</s>），由此我们基本实现了传输网页与图片的功能。</p>
+<pre><code class="language-c++">void send_reponse(string recvData,string catalogue,SOCKET s) {//创建响应报文，并发送
+	/*
+	recvData:  请求报文
+	catalogue: 主目录
+	return:    响应报文
+	*/
+	string resp;//响应报文
+	//初始化状态行
+	const string OK(&quot;HTTP/1.1 200 OK\r\n&quot;);
+	const string NOT_FOUND(&quot;HTTP/1.1 404 NOT FOUND\r\n&quot;);
+	const string FORBIDDEN(&quot;HTTP/1.1 403 FORBIDDEN\r\n&quot;);
+	const string MOVED(&quot;HTTP/1.1 301 Moved Permanently\r\n&quot;);
+	const string BAD_REQUEST(&quot;HTTP/1.1 400 Bad Request\r\n&quot;);
+	const string WRONG_VERSION(&quot;HTTP/1.1 505 HTTP Version Not Supported\r\n&quot;);
+
+	split(recvData);//将请求报文的每一行分割存储到message中
+	string route;//请求报文请求的文件路径
+
+	//根据请求行判断浏览器请求的是什么类型的文件
+	bool html = false;
+	bool image = false;
+
+	//解析请求行，即message[0]
+	if (message[0].find(&quot;/ HTTP/1.1&quot;) != -1) {//未指明路径,发送默认网页
+		route = route + catalogue + &quot;/file/web.html&quot;;
+		html = true;
+	}
+	else {//分析出相对路径，结合主目录形成绝对路径
+		int pos_begin = message[0].find(&quot;/&quot;);
+		int pos_end = message[0].find(&quot; HTTP/1.1&quot;);
+		route = message[0].substr(pos_begin, pos_end - pos_begin);
+		if (route.compare(&quot;/favicon.ico&quot;) == 0) {//单独处理网页图标
+			route = &quot;/image&quot; + route;
+		}
+		route = catalogue + route;
+		cout &lt;&lt; &quot;Get the request route:&quot; &lt;&lt; route &lt;&lt; endl;
+
+		if (route.find(&quot;html&quot;) != -1) {//根据请求的文件名判断浏览器想要什么类型的文件
+			html = true;
+		}
+		else if (route.find(&quot;jpg&quot;) != -1 ||
+			route.find(&quot;png&quot;) != -1 ||
+			route.find(&quot;webp&quot;) != -1 ||
+			route.find(&quot;ico&quot;) != -1) {
+			image = true;
+		}
+	}
+
+	//遍历message,找到Accept:行，解析浏览器可接受的文件类型
+	for (int i = 0; i &lt; message.size(); ++i) {
+		if (message[i].find(&quot;Accept:&quot;) != -1) {//分析Accept请求字符串
+			if ((message[i].find(&quot;text/html&quot;) != -1|| message[i].find(&quot;*/*&quot;)!= -1)&amp;&amp; html) {//请求html网页或文本
+				//读取本地html文件
+				string content;
+				ifstream web;
+				web.open(route.c_str(), ios::in);
+				char buf[1024];
+				memset(buf, '\0', 1024);
+				while (web.getline(buf, sizeof(buf))) {
+					content.append(buf);
+				}
+				//构造响应报文
+				resp.append(OK);
+				resp.append(&quot;Server: VerySimpleServer\r\n&quot;);
+				resp.append(&quot;Content-Type: text/html; charset=ISO-8859-1\r\n&quot;);
+				resp.append(&quot;Content-Length: &quot;).append(to_string(content.length())).append(&quot;\r\n&quot;);
+				resp.append(&quot;\r\n&quot;);
+				resp.append(content);
+
+				int rtn = send(s, resp.c_str(), resp.length(), 0);
+				if (rtn &gt; 0) {
+					printf(&quot;\nSend %d bytes to client: \n%s\n&quot;, rtn, resp.c_str());
+				}
+				break;
+			}
+			else if ((message[i].find(&quot;image/&quot;) != -1||message[i].find(&quot;*/*&quot;) != -1)&amp;&amp;image) {//请求图片
+				//读取图片文件
+				string content;
+				FILE* fp = fopen(route.c_str(), &quot;rb&quot;);
+				fseek(fp, 0, SEEK_END);
+				int length = ftell(fp);
+				fseek(fp, 0, SEEK_SET);
+				//根据图像数据长度分配内存buffer
+				char* buf = (char*)malloc(length + 1);
+				memset(buf, '\0', length + 1);
+				fread(buf, length, 1, fp);
+				fclose(fp);
+
+				//构造响应报文
+				resp.append(OK);
+				resp.append(&quot;Server: VerySimpleServer\r\n&quot;);
+				resp.append(&quot;Content-Type: image/*\r\n&quot;);
+				resp.append(&quot;Content-Length: &quot;).append(to_string(length)).append(&quot;\r\n&quot;);
+				resp.append(&quot;\r\n&quot;);
+				int rtn = send(s, resp.c_str(), resp.length(), 0);
+				if (rtn &gt; 0) {
+					printf(&quot;\nSend %d bytes to client: \n%s\n&quot;, rtn, resp.c_str());
+				}
+				rtn = send(s, buf, length, 0);
+				if (rtn &gt; 0) {
+					printf(&quot;\nSend %d bytes to client: \n%s\n&quot;, rtn, buf);
+				}
+				break;
+			}
+		}
+	}
+	message.clear();//注意返回前一定要清空message，以便下次使用
+	return;
+}
+</code></pre>
+<p>我们访问以下网址即可得到特定的html文件：<a href="http://127.0.0.1:5050/file/effect.html">烟花特效</a></p>
+<p>为了完善多类型文件的传输，我希望能正确得传输流媒体文件，因此参考一下网络上的视频传输报文：</p>
+<img src="https://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/web1.jpg" style="zoom:67%;" />
+<h4 id="241-server">2.4.1 Server</h4>
+<p>参考网络上的报文请求格式，我们也可以实现传输mp4文件的响应报文：</p>
+<pre><code class="language-c++">void send_reponse(string recvData,string catalogue,SOCKET s) {//创建响应报文，并发送
+	/*
+	recvData:  请求报文
+	catalogue: 主目录
+	return:    响应报文
+	*/
+	string resp;//响应报文
+	//初始化状态行
+	const string OK(&quot;HTTP/1.1 200 OK\r\n&quot;);
+	const string NOT_FOUND(&quot;HTTP/1.1 404 NOT FOUND\r\n&quot;);
+	const string FORBIDDEN(&quot;HTTP/1.1 403 FORBIDDEN\r\n&quot;);
+	const string MOVED(&quot;HTTP/1.1 301 Moved Permanently\r\n&quot;);
+	const string BAD_REQUEST(&quot;HTTP/1.1 400 Bad Request\r\n&quot;);
+	const string WRONG_VERSION(&quot;HTTP/1.1 505 HTTP Version Not Supported\r\n&quot;);
+
+	split(recvData);//将请求报文的每一行分割存储到message中
+	string route;//请求报文请求的文件路径
+
+	//根据请求行判断浏览器请求的是什么类型的文件
+	bool html = false;
+	bool image = false;
+	bool video = false;
+
+	//解析请求行，即message[0]
+	if (message[0].find(&quot;/ HTTP/1.1&quot;) != -1) {//未指明路径,发送默认网页
+		route = route + catalogue + &quot;/file/web.html&quot;;
+		html = true;
+	}
+	else {//分析出相对路径，结合主目录形成绝对路径
+		int pos_begin = message[0].find(&quot;/&quot;);
+		int pos_end = message[0].find(&quot; HTTP/1.1&quot;);
+		route = message[0].substr(pos_begin, pos_end - pos_begin);
+		if (route.compare(&quot;/favicon.ico&quot;) == 0) {//单独处理网页图标
+			route = &quot;/image&quot; + route;
+		}
+		route = catalogue + route;
+		cout &lt;&lt; &quot;Get the request route:&quot; &lt;&lt; route &lt;&lt; endl;
+
+		if (route.find(&quot;html&quot;) != -1) {//根据请求的文件名判断浏览器想要什么类型的文件
+			html = true;
+		}
+		else if (route.find(&quot;jpg&quot;) != -1 ||
+			route.find(&quot;png&quot;) != -1 ||
+			route.find(&quot;webp&quot;) != -1 ||
+			route.find(&quot;ico&quot;) != -1) {
+			image = true;
+		}
+		else if (route.find(&quot;mp4&quot;)!=-1) {
+			video = true;
+		}
+	}
+
+	//遍历message,找到Accept:行，解析浏览器可接受的文件类型
+	for (int i = 0; i &lt; message.size(); ++i) {
+		if (message[i].find(&quot;Accept:&quot;) != -1) {//分析Accept请求字符串
+			if ((message[i].find(&quot;text/html&quot;) != -1|| message[i].find(&quot;*/*&quot;)!= -1)&amp;&amp; html) {//请求html网页或文本
+				//读取本地html文件
+				string content;
+				ifstream web;
+				web.open(route.c_str(), ios::in);
+				char buf[1024];
+				memset(buf, '\0', 1024);
+				while (web.getline(buf, sizeof(buf))) {
+					content.append(buf);
+				}
+				//构造响应报文
+				resp.append(OK);
+				resp.append(&quot;Server: VerySimpleServer\r\n&quot;);
+				resp.append(&quot;Content-Type: text/html; charset=ISO-8859-1\r\n&quot;);
+				resp.append(&quot;Content-Length: &quot;).append(to_string(content.length())).append(&quot;\r\n&quot;);
+				resp.append(&quot;\r\n&quot;);
+				resp.append(content);
+
+				int rtn = send(s, resp.c_str(), resp.length(), 0);
+				if (rtn &gt; 0) {
+					printf(&quot;\nSend %d bytes to client: \n%s\n&quot;, rtn, resp.c_str());
+				}
+				break;
+			}
+			else if ((message[i].find(&quot;image/&quot;) != -1||message[i].find(&quot;*/*&quot;) != -1)&amp;&amp;image) {//请求图片
+				//读取图片文件
+				string content;
+				FILE* fp = fopen(route.c_str(), &quot;rb&quot;);
+				fseek(fp, 0, SEEK_END);
+				int length = ftell(fp);
+				fseek(fp, 0, SEEK_SET);
+				//根据图像数据长度分配内存buffer
+				char* buf = (char*)malloc(length + 1);
+				memset(buf, '\0', length + 1);
+				fread(buf, length, 1, fp);
+				fclose(fp);
+
+				//构造响应报文
+				resp.append(OK);
+				resp.append(&quot;Server: VerySimpleServer\r\n&quot;);
+				resp.append(&quot;Content-Type: image/*\r\n&quot;);
+				resp.append(&quot;Content-Length: &quot;).append(to_string(length)).append(&quot;\r\n&quot;);
+				resp.append(&quot;\r\n&quot;);
+				int rtn = send(s, resp.c_str(), resp.length(), 0);
+				if (rtn &gt; 0) {
+					printf(&quot;\nSend %d bytes to client: \n%s\n&quot;, rtn, resp.c_str());
+				}
+				rtn = send(s, buf, length, 0);
+				if (rtn &gt; 0) {
+					printf(&quot;\nSend %d bytes to client: \n%s\n&quot;, rtn, buf);
+				}
+				break;
+			}
+			else if ((message[i].find(&quot;video/&quot;) != -1 || message[i].find(&quot;*/*&quot;) != -1) &amp;&amp; video) {
+				//读取视频文件
+				string content;
+				FILE* fp = fopen(route.c_str(), &quot;rb&quot;);
+				fseek(fp, 0, SEEK_END);
+				int length = ftell(fp);
+				fseek(fp, 0, SEEK_SET);
+				//根据图像数据长度分配内存buffer
+				char* buf = (char*)malloc(length + 1);
+				memset(buf, '\0', length + 1);
+				fread(buf, length, 1, fp);
+				fclose(fp);
+
+				//构造响应报文
+				resp.append(OK);
+				resp.append(&quot;Server: VerySimpleServer\r\n&quot;);
+				resp.append(&quot;Content-Type: video/mp4\r\n&quot;);
+				resp.append(&quot;Content-Length: &quot;).append(to_string(length)).append(&quot;\r\n&quot;);
+				resp.append(&quot;\r\n&quot;);
+				int rtn = send(s, resp.c_str(), resp.length(), 0);
+				if (rtn &gt; 0) {
+					printf(&quot;\nSend %d bytes to client: \n%s\n&quot;, rtn, resp.c_str());
+				}
+				rtn = send(s, buf, length, 0);
+				if (rtn &gt; 0) {
+					printf(&quot;\nSend %d bytes to client: \n%s\n&quot;, rtn, buf);
+				}
+				break;
+			}
+		}
+	}
+	message.clear();//注意返回前一定要清空message，以便下次使用
+	return;
+}
+</code></pre>
+<img src="http://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/image.png" style="zoom:67%;" />
+<p>发现传输文件的过程存在很大部分的共性，不妨整合一下3个部分的传输代码，并添加以下功能：</p>
+<blockquote>
+<p>● 对于一些私人文件（文件名中有private字样），它们可以被路径找到，但是不允许发送，发送403响应报文<br>
+● 打开文件失败时应该发送404响应报文<br>
+● HTTP版本不为HTTP1.1时应该发送505响应报文<br>
+● 服务器未从请求行中解析出有效路径时，说明读不懂报文，发送400响应报文</p>
+</blockquote>
+<pre><code class="language-c++">void send_reponse(string recvData,string catalogue,SOCKET s) {//创建响应报文，并发送
+	/*
+	recvData:  请求报文
+	catalogue: 主目录
+	return:    响应报文
+	*/
+	string resp;//响应报文
+	//初始化状态行
+	const string OK(&quot;HTTP/1.1 200 OK\r\n&quot;);
+	const string NOT_FOUND(&quot;HTTP/1.1 404 NOT FOUND\r\n&quot;);
+	const string FORBIDDEN(&quot;HTTP/1.1 403 FORBIDDEN\r\n&quot;);
+	const string MOVED(&quot;HTTP/1.1 301 Moved Permanently\r\n&quot;);
+	const string BAD_REQUEST(&quot;HTTP/1.1 400 Bad Request\r\n&quot;);
+	const string WRONG_VERSION(&quot;HTTP/1.1 505 HTTP Version Not Supported\r\n&quot;);
+
+	split(recvData);//将请求报文的每一行分割存储到message中
+	string route;//请求报文请求的文件路径
+	bool forbidden = false;//请求的文件是否为私有的不可访问的文件
+
+	//根据请求行判断浏览器请求的是什么类型的文件
+	bool html = false;
+	bool image = false;
+	bool video = false;
+
+	//解析请求行，即message[0]
+	if (message[0].find(&quot;/ HTTP/1.1&quot;) != -1) {//未指明路径,发送默认网页
+		route = route + catalogue + &quot;/file/web.html&quot;;
+		html = true;
+	}
+	else if (message[0].find(&quot;HTTP/1.1&quot;) == -1) {//HTTP版本不对，我只支持HTTP1.1
+		resp.append(WRONG_VERSION);
+		int rtn = send(s, resp.c_str(), resp.length(), 0);
+		if (rtn == SOCKET_ERROR) {//显示处理结果
+			cout &lt;&lt; &quot;Failed to send!&quot; &lt;&lt; endl;
+		}
+		cout &lt;&lt; &quot;505 HTTP Version Not Supported! &quot;&lt;&lt; endl;
+		if (rtn &gt; 0) {
+			printf(&quot;\nSend %d bytes to client: \n%s\n&quot;, rtn, resp.c_str());
+		}
+		message.clear();//注意返回前一定要清空message，以便下次使用
+		return;
+	}
+	else {//分析出相对路径，结合主目录形成绝对路径
+		int pos_begin = message[0].find(&quot;/&quot;);
+		int pos_end = message[0].find(&quot; HTTP/1.1&quot;);
+		route = message[0].substr(pos_begin, pos_end - pos_begin);
+		if (route.compare(&quot;/favicon.ico&quot;) == 0) {//单独处理网页图标
+			route = &quot;/image&quot; + route;
+		}
+		route = catalogue + route;
+		cout &lt;&lt; &quot;Get the request route:&quot; &lt;&lt; route &lt;&lt; endl;
+
+		if (route.find(&quot;html&quot;) != -1) {//根据请求的文件名判断浏览器想要什么类型的文件
+			html = true;
+		}
+		else if (route.find(&quot;jpg&quot;) != -1 ||
+			route.find(&quot;png&quot;) != -1 ||
+			route.find(&quot;webp&quot;) != -1 ||
+			route.find(&quot;ico&quot;) != -1) {
+			image = true;
+		}
+		else if (route.find(&quot;mp4&quot;)!=-1) {
+			video = true;
+		}
+	}
+	bool understand = html | image | video;//判断是否读懂了请求报文
+	if (understand) {//正确解析出了报文中的路径
+		//根据route打开文件：
+		FILE* fp = fopen(route.c_str(), &quot;rb&quot;);
+
+		if (fp == NULL) {//未找到文件
+			resp.append(NOT_FOUND);
+			int rtn = send(s, resp.c_str(), resp.length(), 0);
+			if (rtn == SOCKET_ERROR) {//显示处理结果
+				cout &lt;&lt; &quot;Failed to send!&quot; &lt;&lt; endl;
+			}
+			cout &lt;&lt; &quot;404 NOT FOUND, Can't find the file whose route is:&quot; &lt;&lt; route &lt;&lt; endl;
+			if (rtn &gt; 0) {
+				printf(&quot;\nSend %d bytes to client: \n%s\n&quot;, rtn, resp.c_str());
+			}
+		}
+		else {//找到了文件
+			if (route.find(&quot;private&quot;) != -1) {//请求的是私人的不可发送的文件，403
+				resp.append(FORBIDDEN);
+				int rtn = send(s, resp.c_str(), resp.length(), 0);
+				if (rtn == SOCKET_ERROR) {//显示处理结果
+					cout &lt;&lt; &quot;Failed to send!&quot; &lt;&lt; endl;
+				}
+				cout &lt;&lt; &quot;403 FORBIDDEN, The request is forbidden!&quot; &lt;&lt; endl;
+				if (rtn &gt; 0) {
+					printf(&quot;\nSend %d bytes to client: \n%s\n&quot;, rtn, resp.c_str());
+				}
+			}
+			else {//判断了这么多次终于可以发送了
+
+				//获取文件大小
+				fseek(fp, 0, SEEK_END);
+				int length = ftell(fp);
+				fseek(fp, 0, SEEK_SET);
+
+				//将文件内容存储至缓冲区
+				char* buf = (char*)malloc(length + 1);
+				memset(buf, '\0', length + 1);
+				fread(buf, length, 1, fp);
+				fclose(fp);
+
+				//构造响应报文
+				resp.append(OK);
+				resp.append(&quot;Server: VerySimpleServer\r\n&quot;);
+				if (html) resp.append(&quot;Content-Type: text/html; charset=ISO-8859-1\r\n&quot;);
+				else if(image) resp.append(&quot;Content-Type: image/*\r\n&quot;);
+				else if(video) resp.append(&quot;Content-Type: video/mp4\r\n&quot;);
+				resp.append(&quot;Content-Length: &quot;).append(to_string(length)).append(&quot;\r\n&quot;);
+				resp.append(&quot;\r\n&quot;);
+
+				//发送首部
+				int rtn = send(s, resp.c_str(), resp.length(), 0);
+				if (rtn == SOCKET_ERROR) {//显示处理结果
+					cout &lt;&lt; &quot;Failed to send!&quot; &lt;&lt; endl;
+				}
+				if (rtn &gt; 0) {
+					printf(&quot;\nSend %d bytes to client: \n%s\n&quot;, rtn, resp.c_str());
+				}
+
+				//发送文件内容
+				rtn = send(s, buf, length, 0);
+				if (rtn == SOCKET_ERROR) {//显示处理结果
+					cout &lt;&lt; &quot;Failed to send!&quot; &lt;&lt; endl;
+				}
+				cout &lt;&lt; &quot;200 OK, Success to send the file!&quot; &lt;&lt; endl;
+				if (rtn &gt; 0) {
+					printf(&quot;\nSend %d bytes to client: \n%s\n&quot;, rtn, buf);
+				}
+			}
+		}
+	}
+	else {//未读懂报文，我只能发html,image,mp4，你请求的文件不是我能读懂的
+		resp.append(BAD_REQUEST);
+		int rtn = send(s, resp.c_str(), resp.length(), 0);
+		if (rtn == SOCKET_ERROR) {//显示处理结果
+			cout &lt;&lt; &quot;Failed to send!&quot; &lt;&lt; endl;
+		}
+		cout &lt;&lt; &quot;400 Bad Request, Can't understand the recvData!&quot;&lt;&lt; endl;
+		if (rtn &gt; 0) {
+			printf(&quot;\nSend %d bytes to client: \n%s\n&quot;, rtn, resp.c_str());
+		}
+	}
+	message.clear();//注意返回前一定要清空message，以便下次使用
+	return;
+}
+</code></pre>
+<h3 id="25-服务器屏幕上显示请求来源">2.5 服务器屏幕上显示请求来源</h3>
+<p>我们只需要输出会话Socket的IP地址与端口号即可，请求报文已经输出过了，因此不再单独显示http的请求行</p>
+<h4 id="251-server">2.5.1 Server</h4>
+<pre><code class="language-c++">//如果srvSock收到连接请求，接受客户连接请求
+if (FD_ISSET(srvSocket, &amp;rfds)) {
+    nTotal--;
+    sessionSocket = accept(srvSocket, (LPSOCKADDR)&amp;clientAddr, &amp;addrLen);
+    if (sessionSocket != INVALID_SOCKET) {
+        printf(&quot;Socket listen one client request!\n&quot;);
+        char str[4096];
+        cout &lt;&lt; &quot;Client IP:&quot; &lt;&lt; inet_ntop(AF_INET,&amp;clientAddr.sin_addr,str,sizeof(str)) &lt;&lt; endl;
+        cout &lt;&lt; &quot;Client port:&quot; &lt;&lt; htons(clientAddr.sin_port) &lt;&lt; endl;
+    }
+    if ((rtn = ioctlsocket(sessionSocket, FIONBIO, &amp;blockMode) == SOCKET_ERROR)) {
+        cout &lt;&lt; &quot;ioctlsocket() failed with error!\n&quot;;
+        return;
+    }
+    cout &lt;&lt; &quot;ioctlsocket() for session socket ok!	Waiting for client connection and data\n\n&quot;;
+    //设置等待会话SOKCET可接受数据或可发送数据
+    FD_SET(sessionSocket, &amp;rfds);
+    FD_SET(sessionSocket, &amp;wfds);
+
+    //把新的会话socket加入会话socket列表
+    sessionSockets.push_back(sessionSocket);
+}
+</code></pre>
+<h3 id="26-请求处理结果与错误提示">2.6 请求处理结果与错误提示</h3>
+<p>我们在上述的代码中已经基本实现了请求处理结果和错误提示的显示，希望进一步得完善此部分：</p>
+<blockquote>
+<p>● 底层初始化错误时，也进行报错，并展示错误代码：</p>
+<pre><code class="language-c++">/* 底层初始化 */
+int nRc = WSAStartup(0x0202, &amp;wsaData);
+if (nRc) {
+    printf(&quot;Winsock  startup failed with error!\n&quot;);
+    WSAGetLastError();
+}
+if (wsaData.wVersion != 0x0202) {
+    printf(&quot;Winsock version is not correct!\n&quot;);
+    WSAGetLastError();
+}
+printf(&quot;Winsock  startup Ok!\n&quot;);
+</code></pre>
+<p>● 初始化Server Socket时，也进行报错，并展示错误代码：</p>
+<pre><code class="language-c++">/* Socket初始化 */
+SOCKET srvSocket;
+sockaddr_in addr, clientAddr;
+SOCKET sessionSocket;
+int addrLen;
+//创建监听Socket
+srvSocket = socket(AF_INET, SOCK_STREAM, 0);
+if (srvSocket != INVALID_SOCKET)
+    printf(&quot;Socket create Ok!\n&quot;);
+else {
+    cout &lt;&lt; &quot;Server Socket create failed with error!&quot; &lt;&lt; endl;
+    WSAGetLastError();
+}
+</code></pre>
+<p>● Socket与地址和端口绑定时，也进行报错，并展示错误代码：</p>
+<pre><code class="language-c++">//将监听Socket与主机地址绑定
+int rtn = bind(srvSocket, (LPSOCKADDR)&amp;addr, sizeof(addr));
+if (rtn != SOCKET_ERROR)
+    printf(&quot;Socket bind Ok!\n&quot;);
+else {
+    cout &lt;&lt; &quot;Socket bind failed with error!&quot; &lt;&lt; endl;
+    WSAGetLastError();
+}
+</code></pre>
+<p>● 与客户端连接失败时，也进行报错，并展示错误代码：</p>
+<pre><code class="language-c++">sessionSocket = accept(srvSocket, (LPSOCKADDR)&amp;clientAddr, &amp;addrLen);
+if (sessionSocket != INVALID_SOCKET) {
+    printf(&quot;Socket listen one client request!\n&quot;);
+    char str[4096];
+    cout &lt;&lt; &quot;Client IP:&quot; &lt;&lt; inet_ntop(AF_INET,&amp;clientAddr.sin_addr,str,sizeof(str)) &lt;&lt; endl;
+    cout &lt;&lt; &quot;Client port:&quot; &lt;&lt; htons(clientAddr.sin_port) &lt;&lt; endl;
+}
+else {//与客户端连接失败
+    cout &lt;&lt; &quot;Failed to connect the client!&quot; &lt;&lt; endl;
+    WSAGetLastError();
+}
+</code></pre>
+<p>● 针对可复现的404（NOT FOUND）、403（FORBIDDEN）、400（Bad Request）三种错误情况，在发送请求响应报文之后再向客户端反馈一张提示当前遇到的错误的图片，进行错误提示：（没错，我又对函数大改了一下，将处理这三个错误的部分的报文构造封装成了一个函数 <code>error_tips()</code> ）</p>
+<pre><code class="language-c++">void send_reponse(string recvData,string catalogue,SOCKET s) {//创建响应报文，并发送
+	/*
+	recvData:  请求报文
+	catalogue: 主目录
+	return:    响应报文
+	*/
+	string resp;//响应报文
+	//初始化状态行
+	const string OK(&quot;HTTP/1.1 200 OK\r\n&quot;);
+	const string NOT_FOUND(&quot;HTTP/1.1 404 NOT FOUND\r\n&quot;);
+	const string FORBIDDEN(&quot;HTTP/1.1 403 FORBIDDEN\r\n&quot;);
+	const string MOVED(&quot;HTTP/1.1 301 Moved Permanently\r\n&quot;);
+	const string BAD_REQUEST(&quot;HTTP/1.1 400 Bad Request\r\n&quot;);
+	const string WRONG_VERSION(&quot;HTTP/1.1 505 HTTP Version Not Supported\r\n&quot;);
+
+	split(recvData);//将请求报文的每一行分割存储到message中
+	string route;//请求报文请求的文件路径
+	bool forbidden = false;//请求的文件是否为私有的不可访问的文件
+
+	//根据请求行判断浏览器请求的是什么类型的文件
+	bool html = false;
+	bool image = false;
+	bool video = false;
+
+	//解析请求行，即message[0]
+	if (message[0].find(&quot;/ HTTP/1.1&quot;) != -1) {//未指明路径,发送默认网页
+		route = route + catalogue + &quot;/file/web.html&quot;;
+		html = true;
+	}
+	else if (message[0].find(&quot;HTTP/1.1&quot;) == -1) {//HTTP版本不对，我只支持HTTP1.1
+		resp.append(WRONG_VERSION);
+		int rtn = send(s, resp.c_str(), resp.length(), 0);
+		if (rtn == SOCKET_ERROR) {//显示处理结果
+			cout &lt;&lt; &quot;Failed to send!&quot; &lt;&lt; endl;
+		}
+		cout &lt;&lt; &quot;505 HTTP Version Not Supported! &quot;&lt;&lt; endl;
+		if (rtn &gt; 0) {
+			printf(&quot;\nSend %d bytes to client: \n%s\n&quot;, rtn, resp.c_str());
+		}
+		message.clear();//注意返回前一定要清空message，以便下次使用
+		return;
+	}
+	else {//分析出相对路径，结合主目录形成绝对路径
+		int pos_begin = message[0].find(&quot;/&quot;);
+		int pos_end = message[0].find(&quot; HTTP/1.1&quot;);
+		route = message[0].substr(pos_begin, pos_end - pos_begin);
+		if (route.compare(&quot;/favicon.ico&quot;) == 0) {//单独处理网页图标
+			route = &quot;/image&quot; + route;
+		}
+		route = catalogue + route;
+		cout &lt;&lt; &quot;Get the request route:&quot; &lt;&lt; route &lt;&lt; endl;
+
+		if (route.find(&quot;html&quot;) != -1) {//根据请求的文件名判断浏览器想要什么类型的文件
+			html = true;
+		}
+		else if (route.find(&quot;jpg&quot;) != -1 ||
+			route.find(&quot;png&quot;) != -1 ||
+			route.find(&quot;webp&quot;) != -1 ||
+			route.find(&quot;ico&quot;) != -1) {
+			image = true;
+		}
+		else if (route.find(&quot;mp4&quot;)!=-1) {
+			video = true;
+		}
+	}
+	bool understand = html | image | video;//判断是否读懂了请求报文
+	if (understand) {//正确解析出了报文中的路径
+		//根据route打开文件：
+		FILE* fp = fopen(route.c_str(), &quot;rb&quot;);
+
+		if (fp == NULL) {//未找到文件
+			error_tips(s, 404);//反馈错误提示，服务器输出404错误
+		}
+		else {//找到了文件
+			if (route.find(&quot;private&quot;) != -1) {//请求的是私人的不可发送的文件，403
+				error_tips(s, 403);
+			}
+			else {//判断了这么多次终于可以发送了
+
+				//获取文件大小
+				fseek(fp, 0, SEEK_END);
+				int length = ftell(fp);
+				fseek(fp, 0, SEEK_SET);
+
+				//将文件内容存储至缓冲区
+				char* buf = (char*)malloc(length + 1);
+				memset(buf, '\0', length + 1);
+				fread(buf, length, 1, fp);
+				fclose(fp);
+
+				//构造响应报文
+				resp.append(OK);
+				resp.append(&quot;Server: VerySimpleServer\r\n&quot;);
+				if (html) resp.append(&quot;Content-Type: text/html; charset=ISO-8859-1\r\n&quot;);
+				else if(image) resp.append(&quot;Content-Type: image/*\r\n&quot;);
+				else if(video) resp.append(&quot;Content-Type: video/mp4\r\n&quot;);
+				resp.append(&quot;Content-Length: &quot;).append(to_string(length)).append(&quot;\r\n&quot;);
+				resp.append(&quot;\r\n&quot;);
+
+				//发送首部
+				int rtn = send(s, resp.c_str(), resp.length(), 0);
+				if (rtn == SOCKET_ERROR) {//显示处理结果
+					cout &lt;&lt; &quot;Failed to send!&quot; &lt;&lt; endl;
+				}
+				if (rtn &gt; 0) {
+					printf(&quot;\nSend %d bytes to client: \n%s\n&quot;, rtn, resp.c_str());
+				}
+
+				//发送文件内容
+				rtn = send(s, buf, length, 0);
+				if (rtn == SOCKET_ERROR) {//显示处理结果
+					cout &lt;&lt; &quot;Failed to send!&quot; &lt;&lt; endl;
+				}
+				cout &lt;&lt; &quot;200 OK, Success to send the file!&quot; &lt;&lt; endl;
+				if (rtn &gt; 0) {
+					printf(&quot;\nSend %d bytes to client: \n%s\n&quot;, rtn, buf);
+				}
+			}
+		}
+	}
+	else {//未读懂报文，我只能发html,image,mp4，你请求的文件不是我能读懂的
+		error_tips(s, 400);
+	}
+	message.clear();//注意返回前一定要清空message，以便下次使用
+	return;
+}
+</code></pre>
+<pre><code class="language-c++">void error_tips(SOCKET s,int problem) {
+	//错误提示
+	const string NOT_FOUND(&quot;HTTP/1.1 404 NOT FOUND\r\n&quot;);
+	const string FORBIDDEN(&quot;HTTP/1.1 403 FORBIDDEN\r\n&quot;);
+	const string BAD_REQUEST(&quot;HTTP/1.1 400 Bad Request\r\n&quot;);
+	//发送错误提示图片——即发送一个包含图片的html网页
+	string error;
+	string route;
+
+	if (problem == 404) {
+		route = route + &quot;file/404.html&quot;;
+		cout &lt;&lt; &quot;404 NOT FOUND, Can't find the file whose route is:&quot; &lt;&lt; route &lt;&lt; endl;
+		error.append(NOT_FOUND);
+	}
+	else if (problem == 403) {
+		route = route + &quot;file/403.html&quot;;
+		cout &lt;&lt; &quot;403 FORBIDDEN, The request is forbidden!&quot; &lt;&lt; endl;
+		error.append(FORBIDDEN);
+	}
+	else if (problem == 400) {
+		route = route + &quot;file/400.html&quot;;
+		cout &lt;&lt; &quot;400 Bad Request, Can't understand the recvData!&quot; &lt;&lt; endl;
+		error.append(BAD_REQUEST);
+	}
+
+	FILE* fp = fopen(route.c_str(), &quot;rb&quot;);
+	//获取文件大小
+	fseek(fp, 0, SEEK_END);
+	int length = ftell(fp);
+	fseek(fp, 0, SEEK_SET);
+	//将文件内容存储至缓冲区
+	char* buf = (char*)malloc(length + 1);
+	memset(buf, '\0', length + 1);
+	fread(buf, length, 1, fp);
+	fclose(fp);
+	error.append(&quot;Server: VerySimpleServer\r\n&quot;);
+	error.append(&quot;Content-Type: text/html\r\n&quot;);
+	error.append(&quot;Content-Length: &quot;).append(to_string(length)).append(&quot;\r\n&quot;);
+	error.append(&quot;\r\n&quot;);
+	//发送首部
+	int rtn = send(s, error.c_str(), error.length(), 0);
+	if (rtn == SOCKET_ERROR) {//显示处理结果
+		cout &lt;&lt; &quot;Failed to send!&quot; &lt;&lt; endl;
+	}
+	if (rtn &gt; 0) {
+		printf(&quot;\nSend %d bytes to client: \n%s\n&quot;, rtn, error.c_str());
+	}
+	//发送文件内容
+	rtn = send(s, buf, length, 0);
+	if (rtn == SOCKET_ERROR) {//显示处理结果
+		cout &lt;&lt; &quot;Failed to send!&quot; &lt;&lt; endl;
+	}
+	if (rtn &gt; 0) {
+		printf(&quot;\nSend %d bytes to client: \n%s\n&quot;, rtn, buf);
+	}
+	return;
+}
+</code></pre>
+</blockquote>
+<p>最终优化效果如下：</p>
+<ul>
+<li>
+<p>404：路径无效，找不到文件</p>
+<pre><code class="language-http">127.0.0.1:5050/invalid.png
+</code></pre>
+<img src="http://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/404.png" style="zoom: 23%;" />
+</li>
+<li>
+<p>403：路径有效，但请求的是非法文件</p>
+<pre><code class="language-http">127.0.0.1:5050/image/private.png
+</code></pre>
+<img src="http://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/403.png" style="zoom:23%;" />
+</li>
+<li>
+<p>400：请求的文件不是html、image、video中的一个（此处设定的是400优先级高于404）</p>
+<pre><code class="language-http">127.0.0.1:5050/file/web.css
+</code></pre>
+<img src="http://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/400.png" style="zoom:23%;" />
+</li>
+</ul>
+<h3 id="27-异常处理">2.7 异常处理</h3>
+<p>我们还希望服务器有一定的异常处理能力，我此处关注到的是当前代码中的warning部分：</p>
+<img src="http://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/IZM660X_3GEYEILL)G7~J[Y.png" style="zoom:50%;" />
+<p>因此添加一个分支以避免溢出：</p>
+<pre><code class="language-c++">//获取文件大小
+fseek(fp, 0, SEEK_END);
+long long length = ftell(fp);
+fseek(fp, 0, SEEK_SET);
+
+if (length &gt;= 4294967295) {//文件过大，告知浏览器申请的文件过大，无法发送，避免溢出
+    cout &lt;&lt; &quot;The file which has been requested is too big!&quot; &lt;&lt; endl;
+    string content(&quot;The file which has been requested is too big!&quot;);
+    resp.append(FORBIDDEN);
+    resp.append(&quot;Server: VerySimpleServer\r\n&quot;);
+    resp.append(&quot;Content-Type: text/html; charset=ISO-8859-1\r\n&quot;);
+    resp.append(&quot;Content-Length: &quot;).append(to_string(content.length())).append(&quot;\r\n&quot;);
+    resp.append(&quot;\r\n&quot;);
+    resp.append(content);
+    int rtn = send(s, resp.c_str(), resp.length(), 0);
+    if (rtn &gt; 0) {
+        printf(&quot;\nSend %d bytes to client: \n%s\n&quot;, rtn, resp.c_str());
+    }
+    message.clear();//注意返回前一定要清空message，以便下次使用
+    return;
+}
+
+//将文件内容存储至缓冲区
+char* buf = (char*)malloc(length + 1);
+memset(buf, '\0', length + 1);
+fread(buf, length, 1, fp);
+fclose(fp);
+</code></pre>
+<h3 id="28-服务器完善">2.8 服务器完善</h3>
+<p>最终对我们的服务器进行一定的完善，为各个提示添加颜色，使其更加直观，最终得到的服务器代码如下：</p>
+<pre><code class="language-c++">#define _CRT_SECURE_NO_WARNINGS
+#pragma once
+#include &quot;winsock2.h&quot;
+#include &lt;windows.h&gt;
+#include &lt;Ws2tcpip.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;list&gt;
+#include &lt;vector&gt;
+#include &lt;fstream&gt;
+using namespace std;
+
+#pragma comment(lib,&quot;ws2_32.lib&quot;)
+
+list&lt;SOCKET&gt; sessionSockets;//会话Socket列表
+vector&lt;string&gt; message;//响应报文按照/r/n分割后存储在message中
+
+void color(int x);//设置字体颜色
+void split(string recvData);//划分请求报文
+void send_reponse(string recvData, string catalogue,SOCKET s);//创建并发送响应报文
+void error_tips(SOCKET s, int problem);//错误提示
+
+void main(){
+	system(&quot;color F0&quot;);
+	WSADATA wsaData;
+	fd_set rfds;//用于检查socket是否有数据到来的的文件描述符
+	fd_set wfds;//用于检查socket是否可以发送的文件描述符
+
+	/* 底层初始化 */
+	int nRc = WSAStartup(0x0202, &amp;wsaData);
+	if (nRc) {
+		color(252); printf(&quot;Winsock  startup failed with error!\n&quot;);
+		WSAGetLastError();
+	}
+	if (wsaData.wVersion != 0x0202) {
+		color(252); printf(&quot;Winsock version is not correct!\n&quot;);
+		WSAGetLastError();
+	}
+	color(242); printf(&quot;Winsock  startup Ok!\n&quot;);
+
+	//读取配置文件，对监听地址、端口、主目录进行配置
+	string IP;//服务器IP地址
+	string catalogue;//主目录
+	short port = 0;//端口
+	ifstream config;
+	config.open(&quot;E:/Lab1_Server/config.txt&quot;, ios::in);
+	if (!config.is_open()) {//打开配置文件失败
+		color(252); cout &lt;&lt; &quot;Open config file failed! &quot; &lt;&lt; endl;
+		return;
+	}
+	else {
+		color(242); cout &lt;&lt; &quot;Open config file success! &quot;&lt;&lt;endl;
+		char buf[1024];
+		memset(buf, '\0', 1024);
+		while(config.getline(buf, sizeof(buf))){
+			string s(buf);
+			if (s.find(&quot;IP&quot;) != string::npos) {//IP配置行
+				IP.assign(s,3);
+			}
+			else if (s.find(&quot;port&quot;) != string::npos) {//端口port配置行
+				port = short(atoi(s.substr(5).c_str()));
+			}
+			else if (s.find(&quot;catalogue&quot;) != string::npos) {//主目录配置行
+				catalogue.assign(s, 10);
+			}
+		}
+	}
+	color(242); cout &lt;&lt; &quot;Analyse config file success!&quot; &lt;&lt; endl;
+
+	/* Socket初始化 */
+	SOCKET srvSocket;
+	sockaddr_in addr, clientAddr;
+	SOCKET sessionSocket;
+	int addrLen;
+	//创建监听Socket
+	srvSocket = socket(AF_INET, SOCK_STREAM, 0);
+	if (srvSocket != INVALID_SOCKET) {
+		color(242); printf(&quot;Socket create Ok!\n&quot;);
+	}
+	else {
+		color(252); cout &lt;&lt; &quot;Server Socket create failed with error!&quot; &lt;&lt; endl;
+		WSAGetLastError();
+	}
+
+
+	//设置服务器的端口和地址
+	addr.sin_family = AF_INET;
+	addr.sin_port = htons(port);
+	inet_pton(AF_INET, IP.c_str(), &amp;addr.sin_addr.s_addr);
+	addr.sin_addr.S_un.S_addr = htonl(INADDR_ANY);
+	color(241); cout &lt;&lt; &quot;Set Server IP success:&quot; &lt;&lt; IP &lt;&lt; endl;
+	color(241); cout &lt;&lt; &quot;Set Server port success:&quot; &lt;&lt; port &lt;&lt; endl;
+
+	//将监听Socket与主机地址绑定
+	int rtn = bind(srvSocket, (LPSOCKADDR)&amp;addr, sizeof(addr));
+	if (rtn != SOCKET_ERROR) {
+		color(242); printf(&quot;Socket bind Ok!\n&quot;);
+	}
+	else {
+		color(252); cout &lt;&lt; &quot;Socket bind failed with error!&quot; &lt;&lt; endl;
+		WSAGetLastError();
+	}
+
+	/* 监听 */
+	rtn = listen(srvSocket, 5);
+	if (rtn != SOCKET_ERROR) {
+		color(242); printf(&quot;Socket listen Ok!\n&quot;);
+	}
+	else {
+		color(252); cout &lt;&lt; &quot;Socket listen failed with error!&quot; &lt;&lt; endl;
+		WSAGetLastError();
+	}
+	clientAddr.sin_family = AF_INET;
+	addrLen = sizeof(clientAddr);
+	char recvBuf[4096];
+	u_long blockMode = 1;
+	if ((rtn = ioctlsocket(srvSocket, FIONBIO, &amp;blockMode) == SOCKET_ERROR)) {
+		color(252); cout &lt;&lt; &quot;ioctlsocket() failed with error!\n&quot;;
+		WSAGetLastError();
+		return;
+	}
+	color(242); cout &lt;&lt; &quot;ioctlsocket() for server socket ok!	Waiting for client connection and data\n\n&quot;;
+
+
+	/* 监听Client数据 */
+	while (true) {
+		//清空rfds和wfds数组，并等待客户请求
+		FD_ZERO(&amp;rfds);
+		FD_ZERO(&amp;wfds);
+		FD_SET(srvSocket, &amp;rfds);
+
+
+		for (list&lt;SOCKET&gt;::iterator itor = sessionSockets.begin(); itor != sessionSockets.end(); itor++) {
+			//设置等待所有会话SOKCET可接受数据或可发送数据
+			FD_SET(*itor, &amp;rfds);
+			FD_SET(*itor, &amp;wfds);
+		}
+
+		//返回总共可以读或写的句柄个数
+		int nTotal = select(0, &amp;rfds, &amp;wfds, NULL, NULL);
+		//如果srvSock收到连接请求，接受客户连接请求
+		if (FD_ISSET(srvSocket, &amp;rfds)) {
+			nTotal--;
+			sessionSocket = accept(srvSocket, (LPSOCKADDR)&amp;clientAddr, &amp;addrLen);
+			if (sessionSocket != INVALID_SOCKET) {
+				color(242); printf(&quot;Socket listen one client request!\n&quot;);
+				char str[4096];
+				color(241); cout &lt;&lt; &quot;Client IP:&quot; &lt;&lt; inet_ntop(AF_INET,&amp;clientAddr.sin_addr,str,sizeof(str)) &lt;&lt; endl;
+				color(241); cout &lt;&lt; &quot;Client port:&quot; &lt;&lt; htons(clientAddr.sin_port) &lt;&lt; endl;
+			}
+			else {//与客户端连接失败
+				color(252); cout &lt;&lt; &quot;Failed to connect the client!&quot; &lt;&lt; endl;
+				WSAGetLastError();
+			}
+			if ((rtn = ioctlsocket(sessionSocket, FIONBIO, &amp;blockMode) == SOCKET_ERROR)) {
+				color(252); cout &lt;&lt; &quot;ioctlsocket() failed with error!\n&quot;;
+				WSAGetLastError();
+				return;
+			}
+			color(242); cout &lt;&lt; &quot;ioctlsocket() for session socket ok!	Waiting for client connection and data\n\n&quot;;
+			//设置等待会话SOKCET可接受数据或可发送数据
+			FD_SET(sessionSocket, &amp;rfds);
+			FD_SET(sessionSocket, &amp;wfds);
+
+			//把新的会话socket加入会话socket列表
+			sessionSockets.push_back(sessionSocket);
+		}
+
+		//检查会话SOCKET是否有数据到来
+		if (nTotal &gt; 0) {
+			for (list&lt;SOCKET&gt;::iterator itor = sessionSockets.begin(); itor != sessionSockets.end(); itor++) {
+				if (FD_ISSET(*itor, &amp;rfds)) { //如果遍历到的当前socket有数据到来
+					//receiving data from client
+					memset(recvBuf, '\0', 4096);
+					rtn = recv(*itor, recvBuf, 4096, 0);
+					if (rtn &gt; 0) {
+						color(242); printf(&quot;\nReceived %d bytes from client: \n&quot;, rtn);
+						color(244); cout &lt;&lt; recvBuf &lt;&lt; endl;
+						//向服务器发送响应
+						if (FD_ISSET(*itor, &amp;wfds)) {//遍如果历到的当前socket可发送数据
+							string recvData(recvBuf);//请求报文
+							send_reponse(recvData,catalogue,*itor);//构建响应报文并发送
+						}
+					}
+				}
+			}
+		}
+	}
+}
+void color(int x){
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), x);//设置不同数字的颜色
+}
+
+void split(string recvData) {//切割响应报文，按照\r\n分割
+	string seg(&quot;\r\n&quot;);//分隔符
+	int pos = 0;
+	int size = recvData.size();
+	for (int i = 0; i &lt; size; ++i) {
+		pos = recvData.find(seg, i);
+		if (pos != -1) {
+			string s = recvData.substr(i, pos - i);
+			if (s.size() &gt; 0) message.push_back(s);
+			i = pos + seg.size() - 1;
+		}
+		else break;
+	}
+}
+
+void send_reponse(string recvData,string catalogue,SOCKET s) {//创建响应报文，并发送
+	/*
+	recvData:  请求报文
+	catalogue: 主目录
+	return:    响应报文
+	*/
+	string resp;//响应报文
+	//初始化状态行
+	const string OK(&quot;HTTP/1.1 200 OK\r\n&quot;);
+	const string NOT_FOUND(&quot;HTTP/1.1 404 NOT FOUND\r\n&quot;);
+	const string FORBIDDEN(&quot;HTTP/1.1 403 FORBIDDEN\r\n&quot;);
+	const string MOVED(&quot;HTTP/1.1 301 Moved Permanently\r\n&quot;);
+	const string BAD_REQUEST(&quot;HTTP/1.1 400 Bad Request\r\n&quot;);
+	const string WRONG_VERSION(&quot;HTTP/1.1 505 HTTP Version Not Supported\r\n&quot;);
+
+	split(recvData);//将请求报文的每一行分割存储到message中
+	string route;//请求报文请求的文件路径
+	bool forbidden = false;//请求的文件是否为私有的不可访问的文件
+
+	//根据请求行判断浏览器请求的是什么类型的文件
+	bool html = false;
+	bool image = false;
+	bool video = false;
+
+	//解析请求行，即message[0]
+	if (message[0].find(&quot;/ HTTP/1.1&quot;) != -1) {//未指明路径,发送默认网页
+		route = route + catalogue + &quot;/file/web.html&quot;;
+		html = true;
+	}
+	else if (message[0].find(&quot;HTTP/1.1&quot;) == -1) {//HTTP版本不对，我只支持HTTP1.1
+		resp.append(WRONG_VERSION);
+		int rtn = send(s, resp.c_str(), resp.length(), 0);
+		if (rtn == SOCKET_ERROR) {//显示处理结果
+			color(252); cout &lt;&lt; &quot;Failed to send!&quot; &lt;&lt; endl;
+		}
+		color(252); cout &lt;&lt; &quot;505 HTTP Version Not Supported! &quot;&lt;&lt; endl;
+		if (rtn &gt; 0) {
+			color(242); printf(&quot;\nSend %d bytes to client: \n&quot;, rtn);
+			color(244); cout &lt;&lt; resp &lt;&lt; endl;
+		}
+		message.clear();//注意返回前一定要清空message，以便下次使用
+		return;
+	}
+	else {//分析出相对路径，结合主目录形成绝对路径
+		int pos_begin = message[0].find(&quot;/&quot;);
+		int pos_end = message[0].find(&quot; HTTP/1.1&quot;);
+		route = message[0].substr(pos_begin, pos_end - pos_begin);
+		if (route.compare(&quot;/favicon.ico&quot;) == 0) {//单独处理网页图标
+			route = &quot;/image&quot; + route;
+		}
+		route = catalogue + route;
+		color(242); cout &lt;&lt; &quot;Get the request route:&quot; ;
+		color(244); cout &lt;&lt; route &lt;&lt; endl;
+
+		if (route.find(&quot;html&quot;) != -1) {//根据请求的文件名判断浏览器想要什么类型的文件
+			html = true;
+		}
+		else if (route.find(&quot;jpg&quot;) != -1 ||
+			route.find(&quot;png&quot;) != -1 ||
+			route.find(&quot;webp&quot;) != -1 ||
+			route.find(&quot;ico&quot;) != -1) {
+			image = true;
+		}
+		else if (route.find(&quot;mp4&quot;)!=-1) {
+			video = true;
+		}
+	}
+	bool understand = html | image | video;//判断是否读懂了请求报文
+	if (understand) {//正确解析出了报文中的路径
+		//根据route打开文件：
+		FILE* fp = fopen(route.c_str(), &quot;rb&quot;);
+
+		if (fp == NULL) {//未找到文件
+			error_tips(s, 404);//反馈错误提示，服务器输出404错误
+		}
+		else {//找到了文件
+			if (route.find(&quot;private&quot;) != -1) {//请求的是私人的不可发送的文件，403
+				error_tips(s, 403);
+			}
+			else {//判断了这么多次终于可以发送了
+
+				//获取文件大小
+				fseek(fp, 0, SEEK_END);
+				long long length = ftell(fp);
+				fseek(fp, 0, SEEK_SET);
+
+				if (length &gt;= 4294967295) {//文件过大，告知浏览器申请的文件过大，无法发送，避免溢出
+					color(252); cout &lt;&lt; &quot;The file which has been requested is too big!&quot; &lt;&lt; endl;
+					string content(&quot;The file which has been requested is too big!&quot;);
+					resp.append(FORBIDDEN);
+					resp.append(&quot;Server: VerySimpleServer\r\n&quot;);
+					resp.append(&quot;Content-Type: text/html; charset=ISO-8859-1\r\n&quot;);
+					resp.append(&quot;Content-Length: &quot;).append(to_string(content.length())).append(&quot;\r\n&quot;);
+					resp.append(&quot;\r\n&quot;);
+					resp.append(content);
+					int rtn = send(s, resp.c_str(), resp.length(), 0);
+					if (rtn &gt; 0) {
+						color(242); printf(&quot;\nSend %d bytes to client: \n&quot;, rtn);
+						color(244); cout &lt;&lt; resp &lt;&lt; endl;
+					}
+					message.clear();//注意返回前一定要清空message，以便下次使用
+					return;
+				}
+
+				//将文件内容存储至缓冲区
+				char* buf = (char*)malloc(length + 1);
+				memset(buf, '\0', length + 1);
+				fread(buf, length, 1, fp);
+				fclose(fp);
+
+				//构造响应报文
+				resp.append(OK);
+				resp.append(&quot;Server: VerySimpleServer\r\n&quot;);
+				if (html) resp.append(&quot;Content-Type: text/html; charset=ISO-8859-1\r\n&quot;);
+				else if(image) resp.append(&quot;Content-Type: image/*\r\n&quot;);
+				else if(video) resp.append(&quot;Content-Type: video/mp4\r\n&quot;);
+				resp.append(&quot;Content-Length: &quot;).append(to_string(length)).append(&quot;\r\n&quot;);
+				resp.append(&quot;\r\n&quot;);
+
+				//发送首部
+				int rtn = send(s, resp.c_str(), resp.length(), 0);
+				if (rtn == SOCKET_ERROR) {//显示处理结果
+					color(252); cout &lt;&lt; &quot;Failed to send!&quot; &lt;&lt; endl;
+				}
+				if (rtn &gt; 0) {
+					color(242); printf(&quot;\nSend %d bytes to client: \n&quot;, rtn);
+					color(244); cout &lt;&lt; resp &lt;&lt; endl;
+				}
+
+				//发送文件内容
+				rtn = send(s, buf, length, 0);
+				if (rtn == SOCKET_ERROR) {//显示处理结果
+					color(252); cout &lt;&lt; &quot;Failed to send!&quot; &lt;&lt; endl;
+				}
+				color(242); cout &lt;&lt; &quot;200 OK, Success to send the file!&quot; &lt;&lt; endl;
+				if (rtn &gt; 0) {
+					color(242); printf(&quot;\nSend %d bytes to client: \n&quot;, rtn);
+					color(244); cout &lt;&lt; buf &lt;&lt; endl;
+				}
+			}
+		}
+	}
+	else {//未读懂报文，我只能发html,image,mp4，你请求的文件不是我能读懂的
+		error_tips(s, 400);
+	}
+	message.clear();//注意返回前一定要清空message，以便下次使用
+	return;
+}
+
+void error_tips(SOCKET s,int problem) {
+	//错误提示
+	const string NOT_FOUND(&quot;HTTP/1.1 404 NOT FOUND\r\n&quot;);
+	const string FORBIDDEN(&quot;HTTP/1.1 403 FORBIDDEN\r\n&quot;);
+	const string BAD_REQUEST(&quot;HTTP/1.1 400 Bad Request\r\n&quot;);
+	//发送错误提示图片——即发送一个包含图片的html网页
+	string error;
+	string route;
+
+	if (problem == 404) {
+		route = route + &quot;file/404.html&quot;;
+		color(245); cout &lt;&lt; &quot;404 NOT FOUND, Can't find the file &quot;&lt;&lt; endl;
+		error.append(NOT_FOUND);
+	}
+	else if (problem == 403) {
+		route = route + &quot;file/403.html&quot;;
+		color(245); cout &lt;&lt; &quot;403 FORBIDDEN, The request is forbidden!&quot; &lt;&lt; endl;
+		error.append(FORBIDDEN);
+	}
+	else if (problem == 400) {
+		route = route + &quot;file/400.html&quot;;
+		color(245); cout &lt;&lt; &quot;400 Bad Request, Can't understand the recvData!&quot; &lt;&lt; endl;
+		error.append(BAD_REQUEST);
+	}
+
+	FILE* fp = fopen(route.c_str(), &quot;rb&quot;);
+	//获取文件大小
+	fseek(fp, 0, SEEK_END);
+	int length = ftell(fp);
+	fseek(fp, 0, SEEK_SET);
+	//将文件内容存储至缓冲区
+	char* buf = (char*)malloc(length + 1);
+	memset(buf, '\0', length + 1);
+	fread(buf, length, 1, fp);
+	fclose(fp);
+	error.append(&quot;Server: VerySimpleServer\r\n&quot;);
+	error.append(&quot;Content-Type: text/html\r\n&quot;);
+	error.append(&quot;Content-Length: &quot;).append(to_string(length)).append(&quot;\r\n&quot;);
+	error.append(&quot;\r\n&quot;);
+	//发送首部
+	int rtn = send(s, error.c_str(), error.length(), 0);
+	if (rtn == SOCKET_ERROR) {//显示处理结果
+		color(252); cout &lt;&lt; &quot;Failed to send!&quot; &lt;&lt; endl;
+	}
+	if (rtn &gt; 0) {
+		color(242); printf(&quot;\nSend %d bytes to client: \n&quot;, rtn);
+		color(244); cout &lt;&lt; error &lt;&lt; endl;
+	}
+	//发送文件内容
+	rtn = send(s, buf, length, 0);
+	if (rtn == SOCKET_ERROR) {//显示处理结果
+		color(252); cout &lt;&lt; &quot;Failed to send!&quot; &lt;&lt; endl;
+	}
+	if (rtn &gt; 0) {
+		color(242); printf(&quot;\nSend %d bytes to client: \n&quot;, rtn);
+		color(244); cout &lt;&lt; buf &lt;&lt; endl;
+	}
+	return;
+}
+</code></pre>
+
+            </div>
+            <hr style="width: 80%;">
+            
+            <div class="postfooter">
+                <ul class="post-copyright">
+                    <li><strong>文章作者：</strong>w_CS</li>
+            <li><strong>原文链接：</strong>https://2006wzt.github.io/post/socket编程实验/</li>
+            <li><strong>版权声明：</strong>本博客所有文章除特别声明外，均采用<i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA
+                许可协议。转载请注明出处！</li>
+            </ul>
+        </div>
+        
+            <div class="shareContainer">
+                <div class="share" style="height:30px;">
+                    <a class="qq" href=""><i><img class="shareicon"
+                                src="https://2006wzt.github.io/media/images/qqs.png" alt=""></i></a>
+                    <a class="wechat" href=""><i><img class="shareicon"
+                                src="https://2006wzt.github.io/media/images/wechats.png" alt=""></i></a>
+                    <a class="weibo" href=""><i><img class="shareicon"
+                                src="https://2006wzt.github.io/media/images/weibos.png" alt=""></i></a>
+                    <a class="qzone" href=""><i><img class="shareicon"
+                                src="https://2006wzt.github.io/media/images/qzones.png" alt=""></i></a>
+                    <a class="douban" href=""><i><img class="shareicon"
+                                src="https://2006wzt.github.io/media/images/doubans.png" alt=""></i></a>
+                    <a class="facebook" href=""><i><img class="shareicon"
+                                src="https://2006wzt.github.io/media/images/facebooks.png" alt=""></i></a>
+                    <a class="twitter" href=""><i><img class="shareicon"
+                                src="https://2006wzt.github.io/media/images/twitter.png" alt=""></i></a>
+                </div>
+            </div>
+            
+        <div id="otherpost">
+            
+            
+            <a data-pjax class="next-post-pc" href="https://2006wzt.github.io/post/CSP-精练/"  style="color: black;">
+                <div id="npcontainer">
+                    
+                    <img src="https://2006wzt.github.io/post-images/CSP-精练.png" style="width: 100%;" class="opimg">
+                    
+                    <h4 class="optitle">CSP-精炼</h4>
+                </div>
+            </a>
+            <div class="next-post">
+                下一篇 <a  data-pjax href="https://2006wzt.github.io/post/CSP-精练/">CSP-精炼</a>
+            </div>
+            
+        </div>
+    </div>
+    </div>
+    </div>
+    <!-- 弹窗 -->
+    <div id="myModal" class="modal">
+        <img class="modal-content" id="img01">
+    </div>
+</body>
+<script>
+    //文章阅读热度
+    var pl = $("#pl").html();
+    var rootaddr = $("#rootaddr").html();
+    pl = pl.replace(rootaddr, "");
+    $("#hotnum").attr('id', pl);
+</script>
+                    <div class="toc-container">
+                        <ul class="markdownIt-TOC">
+<li><a href="#socket%E7%BC%96%E7%A8%8B%E5%AE%9E%E9%AA%8C">Socket编程实验</a>
+<ul>
+<li><a href="#%E4%B8%80-%E5%AE%9E%E9%AA%8C%E8%A6%81%E6%B1%82">一、实验要求</a>
+<ul>
+<li><a href="#11-%E5%AE%9E%E9%AA%8C%E7%9B%AE%E6%A0%87%E5%92%8C%E5%86%85%E5%AE%B9">1.1 实验目标和内容</a>
+<ul>
+<li><a href="#111-%E5%AE%9E%E9%AA%8C%E7%9B%AE%E7%9A%84">1.1.1 实验目的</a></li>
+<li><a href="#112-%E5%AE%9E%E9%AA%8C%E7%8E%AF%E5%A2%83">1.1.2 实验环境</a></li>
+<li><a href="#113-%E5%AE%9E%E9%AA%8C%E5%86%85%E5%AE%B9">1.1.3 实验内容</a></li>
+</ul>
+</li>
+<li><a href="#12-%E6%A3%80%E6%9F%A5%E8%A1%A8">1.2 检查表</a></li>
+</ul>
+</li>
+<li><a href="#%E4%BA%8C-%E5%8A%9F%E8%83%BD%E5%AE%9E%E7%8E%B0">二、功能实现</a>
+<ul>
+<li><a href="#21-server%E5%92%8Cclient%E7%AE%80%E5%8D%95demo">2.1 Server和Client简单Demo</a>
+<ul>
+<li><a href="#211-server">2.1.1 Server</a></li>
+<li><a href="#212-client">2.1.2 Client</a></li>
+</ul>
+</li>
+<li><a href="#22-%E9%85%8D%E7%BD%AE%E7%9B%91%E5%90%AC%E5%9C%B0%E5%9D%80-%E7%AB%AF%E5%8F%A3%E5%92%8C%E4%B8%BB%E7%9B%AE%E5%BD%95">2.2 配置监听地址、端口和主目录</a>
+<ul>
+<li><a href="#221-server">2.2.1 Server</a></li>
+</ul>
+</li>
+<li><a href="#23-%E5%93%8D%E5%BA%94%E5%AE%A2%E6%88%B7%E7%AB%AF%E8%AF%B7%E6%B1%82%E5%AE%9A%E4%BD%8D%E7%9B%B8%E5%BA%94%E7%9A%84html%E6%96%87%E4%BB%B6">2.3 响应客户端请求，定位相应的html文件</a>
+<ul>
+<li><a href="#231-server">2.3.1 Server</a></li>
+</ul>
+</li>
+<li><a href="#24-%E6%94%AF%E6%8C%81%E5%A4%9A%E7%A7%8D%E7%B1%BB%E5%9E%8B%E7%9A%84%E6%96%87%E4%BB%B6%E4%BC%A0%E8%BE%93">2.4 支持多种类型的文件传输</a>
+<ul>
+<li><a href="#241-server">2.4.1 Server</a></li>
+</ul>
+</li>
+<li><a href="#25-%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%B1%8F%E5%B9%95%E4%B8%8A%E6%98%BE%E7%A4%BA%E8%AF%B7%E6%B1%82%E6%9D%A5%E6%BA%90">2.5 服务器屏幕上显示请求来源</a>
+<ul>
+<li><a href="#251-server">2.5.1 Server</a></li>
+</ul>
+</li>
+<li><a href="#26-%E8%AF%B7%E6%B1%82%E5%A4%84%E7%90%86%E7%BB%93%E6%9E%9C%E4%B8%8E%E9%94%99%E8%AF%AF%E6%8F%90%E7%A4%BA">2.6 请求处理结果与错误提示</a></li>
+<li><a href="#27-%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86">2.7 异常处理</a></li>
+<li><a href="#28-%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%AE%8C%E5%96%84">2.8 服务器完善</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+                    </div>
+                    <div class="tog">
+                        <div class="toggleContainer">
+                            <div class="toggle">
+                                <i class="fas fa-angle-double-up"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <!---------------------------- 评论系统👇 ------------------------->
+                    <div id="comment" class="comment">
+                        <div class="commentcontainer">
+                            
+                                
+                            
+                        </div>
+                    </div>
+                    <!---------------------------- 评论系统👆 ------------------------->
+                </div>
+                <!-- main标签，pjax渲染时加载以上内容👆 -->
+                <div class="col-md-1 col-lg-2"></div>
+                <div id="bg">
+                </div>
+            </div>
+            <!-- ----------------左侧菜单栏html 👆-------------------------------------->
+            
+        </div>
+        <!-- aplayer播放器加载👇 -->
+            
+        <!-- aplayer播放器加载👆 -->
+    </div>
+    <!-- 背景图加载方式👇 -->
+    <div id="bgchoice" style="display: none">link
+                </div>
+                
+                <div id="bgurl" style="display:none">https://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/background.png</div>
+                
+    <!-- 背景图加载方式👆 -->
+</body>
+
+<script>
+    //初始化
+    //更换twikoo头像
+    setTimeout(replaceAvatar,1000);
+    setTimeout(replaceAvatar,2000);
+    setTimeout(replaceAvatar,8000);
+    // --------为每张图片添加懒加载（lazyload）标签-->懒加载功能 👇------------
+    lazyload();
+    //为文章内所有代码块添加代码复制功能 👇
+    codeinit();
+    // ------代码高亮显示功能-------------
+    hljs.initHighlightingOnLoad();
+    if (shareChoice)
+        shareInit();
+    if (donateChoice)
+        donateInit();
+</script>
+
+<!------------------ 加载live2d模型功能（看板娘）👇 ---------------->
+
+<script type="text/javascript">
+    var message_Path = '/live2d/'
+    var home_Path = document.getElementById("domainname").innerHTML + "/"; //此处修改为你的域名，必须带斜杠
+</script>
+<script type="text/javascript" src="https://2006wzt.github.io/media/js/live2d.js"></script>
+<script type="text/javascript" src="https://2006wzt.github.io/media/live2d/js/message.js"></script>
+<script type="text/javascript">
+    loadlive2d("live2d", "https://2006wzt.github.io/media/live2d/assets/tororo.model.json");
+</script>
+
+<!------------------ 加载live2d模型功能（看板娘）👆 ---------------->
+
+
+<!----------------------- 返回顶部按钮功能👇 --------------------->
+<script>
+    $(function () {
+        $('.toggleContainer').click(function () {
+            $('html,body').animate({
+                scrollTop: '0px'
+            }, 800);
+        });
+        $(window).scroll(function () {
+            var st = $(window).scrollTop();
+            if (st > 30) {
+                $(".toggleContainer").fadeIn(400);
+            } else {
+                $(".toggleContainer").fadeOut(100);
+            }
+        });
+    });
+</script>
+<!----------------------- 返回顶部按钮功能👆 --------------------->
+
+
+<!------------ 加载全局背景图功能👇（开始时没有写好，这功能有点鸡肋/(ㄒoㄒ)/~~） -->
+<script>
+    var bgchoice = "link"
+    var bg = $('#bg');
+    var bgurl = document.getElementById("bgurl").innerHTML;
+    if (bgchoice == 'default')
+    {
+        for (var i = 0; i < 3; i++)
+            bgurl = bgurl.replace("\\", "/");
+        bgurl = "https://2006wzt.github.io/" + bgurl;
+    }
+    bg.css("background", "url('" + bgurl + "')");
+
+    window.onload = function () {
+        aplayerbtnInit();
+    }
+</script>
+<!------------ 加载全局背景图功能👆（开始时没有写好，这功能有点鸡肋/(ㄒoㄒ)/~~） -->
+
+
+
+
+<script src="https://2006wzt.github.io/media/js/index.js"></script>
+
+
+<script>
+    //加载后的事件同步（阅读量、移动端评论等
+    window.onload = function () {
+    //代码块高亮渲染
+    document.querySelectorAll('pre code').forEach((block) => {
+            hljs.highlightBlock(block);
+    });
+        getHotnum();
+        var sharepc = $(".share").eq(0).html();
+        $(".share").eq(1).html(sharepc);   //插件只会寻找一个分享标签渲染，所以需要手动添加到移动端
+        aplayerbtnInit();
+        $(".hljs").css({
+            "padding": "20px"
+        })
+    }
+</script>
+
+<!-- <script src="https://2006wzt.github.io/media/js/av-min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/leancloud-storage@3.13.0/dist/av-min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/leancloud-storage@4.6.1/dist/av-live-query-min.js"></script> -->
