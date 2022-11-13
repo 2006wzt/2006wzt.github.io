@@ -1,0 +1,4854 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="description" content="数据库实验
+一、实训1 数据库、表与完整性约束的定义(Create)
+1.1 创建数据库
+创建2022年北京冬奥会信息系统数据库
+-- 本关我们强烈建议你点击本编辑窗口上方的“命令行”菜单打开Linux的命令行，
+-- 并通过mysql命令..." />
+    <meta name="keywords" content="mysql,java" />
+    <link rel="stylesheet" href="https://2006wzt.github.io/media/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://2006wzt.github.io/styles/main.css">
+    <!-- 代码渲染风格css -->
+    
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.18.1/build/styles/dracula.min.css">
+    
+    <!-- 代码高亮插件 -->
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.18.1/build/highlight.min.js"></script>
+    <!-- 代码复制插件 -->
+    <script src="https://cdn.jsdelivr.net/gh/850552586/ericamcdn@0.1/js/clipboard.min.js"></script>
+    <!-- live2d插件 -->
+    <link rel="stylesheet" href="https://2006wzt.github.io/media/css/live2d.css">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js"></script>
+    <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+    <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/5.13.1/css/all.min.css" rel="stylesheet">
+    <!-- 数学公式 -->
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/katex.min.css"
+        integrity="sha384-9tPv11A+glH/on/wEu99NVwDPwkMQESOocs/ZGXPoIiLE8MU/qkqUcZ3zzL+6DuH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/katex.min.js"
+        integrity="sha384-U8Vrjwb8fuHMt6ewaCy8uqeUXv4oitYACKdB0VziCerzt011iQ/0TqlSlv8MReCm" crossorigin="anonymous">
+        </script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/contrib/auto-render.min.js"
+        integrity="sha384-aGfk5kvhIq5x1x5YdvCp4upKZYnA8ckafviDpmWEKp4afOZEqOli7gqSnh8I6enH" crossorigin="anonymous">
+        </script>
+    <script>
+        renderMathInElement(document.body, {
+            delimiters: [{
+                left: "$$",
+                right: "$$",
+                display: true
+            },
+            {
+                left: "$",
+                right: "$",
+                display: false
+            }
+            ]
+        });
+    </script>
+    
+    <title>数据库系统实验</title>
+
+    <!-- 大纲索引css调整 -->
+    
+    <style>
+        .markdownIt-TOC {
+            margin-left: 28%;
+            padding-left: 2px;
+            width: 80%;
+        }
+
+        .markdownIt-TOC li {
+            padding-left: 8%;
+        }
+    </style>
+    
+</head>
+
+<body>
+    <div id="landlord">
+        <div class="message" style="opacity:0"></div>
+        <canvas id="live2d" width="240" height="250" class="live2d"></canvas>
+    </div>
+    <div id="domainname" style="display:none">https://2006wzt.github.io</div>
+    <div id="content">
+        <div>
+            <!----------- 移动端导航栏👇 ----------------->
+            <div id="bar">
+                <style>
+  .navmobile {
+    z-index: 15;
+    max-height: 40vh;
+    overflow-y: scroll;
+    overflow-x: hidden;
+  }
+
+  @media screen and (max-width: 1200px) {
+    .navbar {
+      max-width: 100vw;
+    }
+  }
+
+  @media screen and (max-width:1200px) and (min-width: 768px) {
+    @media (min-width: 768px) {
+      .navbar-nav {
+        float: right;
+        margin: 0;
+      }
+    }
+  }
+
+  @media screen and (max-width:768px) {
+    .mbapspan {
+      padding: 0;
+    }
+  }
+</style>
+<div class="pjaxloading"  onclick="pjaxloadingClose()">
+  <div class="loadingbackground"></div>
+  <div id="loading">
+    <div class="loading">
+    </div>
+  </div>
+</div>
+<nav class="navbar navbar-inverse navbar-fixed-top navmobile">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#barmenu"
+        aria-expanded="false" id="barbutton">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a data-pjax class="navbar-brand" style="color:white" href="https://2006wzt.github.io">My Brain&nbsp;&nbsp;|</a>
+      <span class="navbar-brand mbapspan"><i id="mbaplayer" class="fa fa-play-circle-o" aria-hidden="true"
+          style="font-size: 28px;top: 12px;position: absolute;" onclick="aplayerPlay();"></i></span>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="barmenu">
+      <ul class="nav navbar-nav">
+        
+        
+        <li>
+          <a data-pjax href="/" style="color:white">
+            首页
+          </a>
+        </li>
+        
+        
+        
+        <li>
+          <a data-pjax href="/archives" style="color:white">
+            归档
+          </a>
+        </li>
+        
+        
+        
+        <li>
+          <a data-pjax href="/tags" style="color:white">
+            标签
+          </a>
+        </li>
+        
+        
+        
+        <li>
+          <a data-pjax href="/post/about" style="color:white">
+            关于
+          </a>
+        </li>
+        
+        
+        
+        
+          
+        <li><a data-pjax href="https://2006wzt.github.io/friends" style="color:white">友链</a></li>
+
+        
+        </ul>
+      </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+  </nav>
+
+
+  <!-- 引入jQuery核心js文件 -->
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js"></script>
+  <script>
+    let btstate = false;
+    var bt = $("#barbutton");
+    var bm = $("#barmenu");
+    bt.click(function () {
+      dropdown();
+    })
+    function dropdown() {
+      console.log(btstate);
+      //下拉
+      if (btstate == false) {
+        bt.removeClass("collapsed");
+        bt.attr("aria-expanded", "true");
+        bm.attr("aria-expanded", "true")
+        bm.fadeIn(700);
+        btstate = true;
+      }
+      else {
+        bt.addClass("collapsed");
+        bt.attr("aria-expanded", "false");
+        bm.removeClass("in");
+        bm.hide();
+        bm.attr("aria-expanded", "false");
+        btstate = false;
+      }
+    }
+  </script> 
+            </div>
+            <!----------- 移动端导航栏👆 ----------------->
+
+            <!--------------- pc端菜单栏👇 ---------------->
+            <div class="side"><head>
+    <link rel="stylesheet" href="https://2006wzt.github.io/media/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://2006wzt.github.io/styles/main.css">
+    
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.18.1/build/styles/dracula.min.css">
+    
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.18.1/build/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/850552586/ericamcdn@0.1/js/clipboard.min.js"></script>
+    <link rel="stylesheet" href="https://2006wzt.github.io/media/css/live2d.css">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
+    <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+    <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/5.13.1/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <!-- fancybox -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+    <script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+
+
+    <!--------- 数学公式👇---- -->
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/katex.min.css"
+        integrity="sha384-9tPv11A+glH/on/wEu99NVwDPwkMQESOocs/ZGXPoIiLE8MU/qkqUcZ3zzL+6DuH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/katex.min.js"
+        integrity="sha384-U8Vrjwb8fuHMt6ewaCy8uqeUXv4oitYACKdB0VziCerzt011iQ/0TqlSlv8MReCm" crossorigin="anonymous">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/contrib/auto-render.min.js"
+        integrity="sha384-aGfk5kvhIq5x1x5YdvCp4upKZYnA8ckafviDpmWEKp4afOZEqOli7gqSnh8I6enH" crossorigin="anonymous">
+    </script>
+    <script>
+        renderMathInElement(document.body, {
+            delimiters: [{
+                    left: "$$",
+                    right: "$$",
+                    display: true
+                },
+                {
+                    left: "$",
+                    right: "$",
+                    display: false
+                }
+            ]
+        });
+    </script>
+    
+    <!--------- 数学公式👆----------------- -->
+    <!--------- daovocie功能👇 ------------------->
+    
+    <!--------- daovocie功能👆 ------------------->
+    <!-- -----------------twikoo评论系统引入👇 --------->
+    <script src="https://cdn.jsdelivr.net/npm/twikoo@1.3.1/dist/twikoo.all.min.js"></script>
+    <!-- -----------------twikoo评论系统引入👆 --------->
+    <!---------------- leancloud api 功能依赖引入👇 -------->
+    <script src="https://cdn.jsdelivr.net/npm/leancloud-storage@3.13.0/dist/av-min.js"></script>
+    <!---------------- leancloud api 功能依赖引入👆 -------->
+    <!------------------ valine评论系统引入👇 ------------------>
+    <script src="https://2006wzt.github.io/media/js/valine.min.js"></script>
+    <!------------------ valine评论系统引入👆 ------------------>
+    <!---------------- 今日诗词api功能依赖👇 ----------------------->
+    <script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>
+    <!---------------- 今日诗词api功能依赖👆 ----------------------->
+    <!---------------- 今日诗词api功能依赖👇 ----------------------->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/ispeak-bber/ispeak-bber.min.js" charset="utf-8"></script>
+    <!---------------- 哔哔功能依赖👆 ----------------------->
+
+
+</head>
+
+<style>
+    body {
+        overflow-x: hidden;
+        height: 100vh;
+        overflow-y: scroll;
+        cursor: url("https://2006wzt.github.io/media/images/mouse_cursor.png"), auto
+    }
+</style>
+
+<body>
+    <!--=------ 页面加载动态画面👇 --------------->
+    <div class="pjaxloading" onclick="pjaxloadingClose()">
+        <div class="loadingbackground"></div>
+        <div id="loading-aname">
+            <div class="loading-aname">
+            </div>
+        </div>
+    </div>
+    <!--=------ 页面加载动态画面👆 --------------->
+
+    <!--------------- 左侧菜单栏👇 ------------------------>
+    
+    <div id=side>
+        <div class="r_m_div">
+            <a onclick="showAaplayer()"><i style="font-size: 20px;"><img
+                        src='https://2006wzt.github.io/media/images/music.png' alt="音乐播放器" class="musicbtn"></i></a>
+        </div>
+        <div class="avatar-border">
+            <img src="https://2006wzt.github.io/images/avatar.png?v=1668350027460" class="avatar">
+        </div>
+        <div class="sitename">My Brain</div>
+        <span class="description" data-text='["There is no end to learning. "]'>&nbsp;</span>
+        <div class="siteinfocontainer">
+            <span class="siteinfo">文章</span>
+            <span class="siteinfo">标签</span>
+        </div>
+        <div class="siteinfocontainer">
+            <span class="siteinfo" id="siteinfo-postsnum"></span>
+            <span class="siteinfo">7</span>
+        </div>
+        
+        <div class="search">
+            <!-- <input type="text" class="search-input" placeholder="标题搜索(●'◡'●)" /> -->
+            <input type="text" class="search-input" placeholder="标题搜索 ⚆_⚆ つ♡">
+            <div class="search-results"></div>
+        </div>
+        
+    <div class="share-button">
+        <span>Know me😊</span>
+        
+        <a href="https://github.com/2006wzt" target="_blank"><i style="font-size: 20px;"><img class="icon"
+                    src="https://2006wzt.github.io/media/images/github.png" alt=""></i></a>
+        
+        
+        <a onclick="showqq()"><i style="font-size: 20px;"><img class="icon"
+                    src="https://2006wzt.github.io/media/images/QQ.png" alt=""></i></a>
+        
+        
+        
+        <a href="https://space.bilibili.com/662167120" target="_blank"><i style="font-size: 20px;"><img class="icon"
+                    src="https://2006wzt.github.io/media/images/bilibili.png" alt=""></i></a>
+        
+        
+        
+        
+        
+    </div>
+    <div id="qq" style="display:none">1335287851</div>
+    <!------------ 加载菜单按钮👇 ------------------------->
+    <div class="menucontainer">
+        
+        
+        <div class="mchocie description">
+            <a data-pjax href="/" class="menubutton" style="margin-right: 15px;">
+                <i><img class="icon menuicon" src="" alt="首页"></i>&nbsp;<span
+                    data-text="首页">首页</span>
+            </a>
+        </div>
+        
+        
+        
+        <div class="mchocie description">
+            <a data-pjax href="/archives" class="menubutton" style="margin-right: 15px;">
+                <i><img class="icon menuicon" src="" alt="归档"></i>&nbsp;<span
+                    data-text="归档">归档</span>
+            </a>
+        </div>
+        
+        
+        
+        <div class="mchocie description">
+            <a data-pjax href="/tags" class="menubutton" style="margin-right: 15px;">
+                <i><img class="icon menuicon" src="" alt="标签"></i>&nbsp;<span
+                    data-text="标签">标签</span>
+            </a>
+        </div>
+        
+        
+        
+        <div class="mchocie description">
+            <a data-pjax href="/post/about" class="menubutton" style="margin-right: 15px;">
+                <i><img class="icon menuicon" src="" alt="关于"></i>&nbsp;<span
+                    data-text="关于">关于</span>
+            </a>
+        </div>
+        
+        
+
+        
+        
+        
+        <div class="mchocie description">
+            <a data-pjax href="https://2006wzt.github.io/friends" class="menubutton" style="margin-right: 15px;">
+                <i><img class="icon menuicon" src="" alt="友人帐"></i>&nbsp;<span data-text="友人帐">友人帐</span>
+            </a>
+        </div>
+        
+        <!--  -->
+    </div>
+    <!------------ 加载菜单按钮👆 ------------------------->
+    <hr>
+    <style>
+    .copyright {
+        font-size: 15px;
+        color: #d9d9d9;
+    }
+
+
+    @media screen and (min-width: 1200px) {
+        .foot {
+            width: 100%;
+            height: 130px;
+        }
+    }
+
+    @media screen and (max-width: 1200px) {
+        .foot {
+            display: none;
+        }
+    }
+</style>
+
+<body>
+    <div class="foot">
+        <div id="footinfo">Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | Theme: <a
+                href="https://github.com/850552586/gridea-theme-fog">Fog</a>
+            <div>
+                
+                <div id="sitegotimeDate">载入天数...</div>
+                <div id="sitegotimes">载入时分秒...</div>
+                <div id="cussitetime" style="display:none">07/18/2022</div>
+                
+            </div>
+            <div>
+                
+            </div>
+            <div class="copyright" style="color:white;text-align: center;">
+            </div>
+        </div>
+
+
+
+    </div>
+</body>
+
+<script>
+    //----------------------站点运行时间
+    var now = new Date();
+
+    function createtime() {
+        var sitegotime = document.getElementById("cussitetime").innerHTML + " 00:00:00";
+        var grt = new Date(sitegotime); //此处修改你的建站时间或者网站上线时间 
+        now.setTime(now.getTime() + 250);
+        days = (now - grt) / 1000 / 60 / 60 / 24;
+        dnum = Math.floor(days);
+        hours = (now - grt) / 1000 / 60 / 60 - (24 * dnum);
+        hnum = Math.floor(hours);
+        if (String(hnum).length == 1) {
+            hnum = "0" + hnum;
+        }
+        minutes = (now - grt) / 1000 / 60 - (24 * 60 * dnum) - (60 * hnum);
+        mnum = Math.floor(minutes);
+        if (String(mnum).length == 1) {
+            mnum = "0" + mnum;
+        }
+        seconds = (now - grt) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum);
+        snum = Math.round(seconds);
+        if (String(snum).length == 1) {
+            snum = "0" + snum;
+        }
+        document.getElementById("sitegotimeDate").innerHTML = "本站已安全运行 " + dnum + " 天 ";
+        document.getElementById("sitegotimes").innerHTML = hnum + " 小时 " + mnum + " 分 " + snum + " 秒";
+    }
+
+    let intervalId = setInterval("createtime()", 250);
+</script>
+
+    </div>
+
+    <img class="moon" src="https://2006wzt.github.io/media/images/moon.png" onclick="moonlight()">
+    <script src="https://2006wzt.github.io/media/js/wordshow.js"></script>
+    
+    <!--------------- 左侧菜单栏👆 ------------------------>
+
+    <!----------------- 顶部菜单栏👇 ------------------------>
+    
+    <!----------------- 顶部菜单栏👆 ------------------------>
+
+<!--核心功能加载-->
+<script src="https://2006wzt.github.io/media/js/mainfunc.js"></script>
+
+<!------------- Fog1.0版本彩蛋👇 -------------->
+    <!-- <section id="terrestrial" class="popup">
+        <a href="#" class="back">&lt; back</a>
+    </section>
+
+    <div class="flycontainer">
+        <div class="flyword">御风飞行中...</div>
+    </div>
+
+    <script>
+        $("#fog_go").click(function(){fog_go()});
+        async function fog_go(){
+            $(".bars").hide()
+            $("#live2d").hide()
+            await sleep(3000);
+            $(".flycontainer").css("display","flex");
+            $(".popup").fadeOut(500)
+            await sleep(2000);
+            var sitename = "My Brain";
+            getFogUser(sitename);
+        }
+
+        function fog_goregis(){
+            var sitename = "My Brain";
+            var siteurl = "https://2006wzt.github.io";
+            regisFogUser(sitename,siteurl);
+        }
+        fog_goregis();
+    </script> -->
+<!------------- Fog1.0版本彩蛋👆 -------------->
+<script>
+    function change_topmenu(){
+        tmcolor = "antiquewhite"
+        tsnamecolor = "antiquewhite"
+        $(".navbar-inverse .navbar-nav>li>a").css("color",tmcolor)
+        $(".navbar-inverse .navbar-brand").css("color",tsnamecolor)
+        $(".navbar-fixed-top").css("border-radius","0 0 10px 10px")
+    }
+</script>
+
+<!------ 根据自定义配置声明变量👇 --------------------->
+    
+    <script>
+        var postnumChoice = false
+    </script>
+    
+    
+    <script>
+        var shareChoice = true
+    </script>
+    
+    
+    <script>
+        var donateChoice = false
+    </script>
+    
+    
+    <script>
+        var searchChoice = true
+    </script>
+    
+    <script>let postsnum = 0;</script>
+    <div id="side-posttitle" style="display: none;">
+    
+    
+    数据库系统实验
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    Socket编程实验
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    CSP-精炼
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    深度学习实战（二）：知识回顾
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    深度学习实战（一）：深度学习导论
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    算法刷题小记
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    机器学习实战（十四）：树模型
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    机器学习实战（十三）：核函数
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    机器学习实战（十二）：参数权衡
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    机器学习实战（十一）：经验风险最小化
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    机器学习实战（十）：支持向量机
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    机器学习实战（九）：线性回归
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    机器学习实战（八）：梯度下降
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    机器学习实战（七）：逻辑回归
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    机器学习实战（六）：朴素贝叶斯
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    机器学习实战（五）：概率估计
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    机器学习实战（四）：感知机算法
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    机器学习实战（三）：KNN算法
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    机器学习实战（二）：监督学习
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    机器学习实战（一）：机器学习导论
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    Python入门与实战
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    
+    
+    
+    </div>
+    
+        <script>
+            var menupos = 'left';
+            $("#siteinfo-postsnum").html(postsnum);
+        </script>
+    
+    <script>
+        let commentsHide = false
+    </script>
+    <!------ 根据自定义配置声明变量👆 --------------------->
+
+
+    <!----------根据自定义配置设置图标信息👇---------->
+    <script>
+        var icondict = new Array();
+    </script>
+    
+        
+    
+    <!----------根据自定义配置设置图标信息👆---------->
+</body>
+
+<script src="https://2006wzt.github.io/media/share/dist/Share.js"></script>
+<!-- 页面pjax测试 -->
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery.pjax/2.0.1/jquery.pjax.js"></script>
+<!--确保jQuery已经在此之前加载-->
+<!-- <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script> -->
+<script src="https://2006wzt.github.io/media/js/all-pjax.js"></script>
+<script>
+    //-------------------------------说说功能👇--------------------------------------
+    let talksall = [];
+    let talks = [];
+    let talkindex = 0;
+    get();
+
+    function get() {
+        var t = JSON.parse('[]');
+        talkindex = t.length - 1;
+        for (var i = 0; i <= t.length - 1; i++) {
+            var d = {};
+            d["time"] = t[i].time;
+            d["author"] = t[i].author;
+            d["text"] = t[i].text;
+            d["img"] = t[i].img;
+            talksall.push(d);
+        }
+    }
+
+    function add() {
+        for (var i = talkindex; i >= 0 && i > talkindex - 3; i--) {
+            talks.push(talksall[i]);
+        }
+        talkindex = (talkindex - 3) >= 0 ? (talkindex - 3) : -1;
+        if (talkindex < 0) $("#getmorebt").hide();
+        show();
+    }
+
+    function show() {
+        var talkT = document.getElementById("talkContainer");
+        talkT.innerHTML = "";
+        for (var i = 0; i < talks.length; i++) {
+            if (talks[i].img != '') {
+                talkT.innerHTML += '\
+            <div class="talk" v-for="t in talks"> \
+                <span data-fancybox="images" href="' + talks[i].img + '"><img src="' + talks[i].img + '" class="talkimg"></span> \
+                <div class="ainfo">\
+                    <div class="ainfo-intro">\
+                        <div class="author">' + talks[i].author + '</div>·\
+                        <div class="time">' + talks[i].time + '</div>\
+                    </div>\
+                </div>\
+                <div class="talkcontent">' + talks[i].text + '\
+                </div\>\
+            ';
+            } else {
+                talkT.innerHTML += '\
+            <div class="talk" v-for="t in talks"> \
+                <div class="ainfo">\
+                    <div class="ainfo-intro">\
+                        <div class="author">' + talks[i].author + '</div>·\
+                        <div class="time">' + talks[i].time + '</div>\
+                    </div>\
+                </div>\
+                <div class="talkcontent">' + talks[i].text + '\
+                </div\>\
+            ';
+            }
+        }
+    }
+    //-------------------------------说说功能👆--------------------------------------
+</script>
+
+<!---->
+<script>
+    function replaceAvatar() {
+        twikoo_avatar = $(".tk-avatar-img");
+        for (var i = 0; i < twikoo_avatar.length; i++) {
+            var asrc = twikoo_avatar.eq(i).attr('src');
+            if (asrc.search('cn.gravatar.com') != -1) {
+                twikoo_avatar.eq(i).attr('src', 'https://2006wzt.github.io/media/images/comavatar.png');
+            }
+        }
+    }
+
+    function showWechat() {
+        var wechat = '';
+        alert("博主微信号：" + wechat);
+        return false;
+    }
+</script>
+
+<script>
+    /**
+     * https://github.com/tangkaichuan/gridea-search
+     */
+    // 检查缓存是否最新
+    function checkCache() {
+        var caches_postsnum = localStorage.getItem("postsnum");
+        var pt = document.getElementById("side-posttitle").innerHTML;
+        pt = pt.replace(/\s+/g, '').replace(/<script>.*?<\/script>/gi, "")
+        var ptlen = pt.length;
+        var ptlen_storage = localStorage.getItem("poststitlelen");
+        if (caches_postsnum != postsnum || ptlen != ptlen_storage) {
+            console.log("更新缓存");
+            return false
+        }
+        return true;
+    }
+
+    (function () {
+        var CACHES = checkCache()
+        if (!CACHES) {
+            var NOW = Date.now()
+            var API_CONTENT = '../api-content/index.html' + '?_=' + NOW
+            preload(API_CONTENT);
+            getContents(show_getContentresult);
+        }
+
+        function show_getContentresult(data) {
+            console.log("获取成功");
+            var postslen = data["posts"].length;
+            localStorage.setItem('postsnum', postslen);
+            var poststitlelen = 0;
+            var pt = document.getElementById("side-posttitle").innerHTML;
+            pt = pt.replace(/\s+/g, '').replace(/<script>.*?<\/script>/gi, "");
+            localStorage.setItem('poststitlelen', pt.length);
+        }
+
+
+
+        // preload
+        function preload(url) {
+            var preloadLink = document.createElement('link')
+            preloadLink.href = url
+            preloadLink.rel = 'preload'
+            preloadLink.as = 'fetch'
+            preloadLink.crossOrigin = 'anonymous'
+            document.head.appendChild(preloadLink)
+        }
+
+        // 异步 GET 请求
+        function get(obj) {
+            var xhr = new XMLHttpRequest()
+            xhr.open('get', obj.url, true)
+            xhr.send(null)
+            xhr.onreadystatechange = function () {
+                // 异步请求：响应状态为4，数据加载完毕
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        obj.success(xhr.responseText)
+                    } else {
+                        obj.error(xhr.status)
+                    }
+                }
+            }
+        }
+
+        // 获取博客全文 api
+        function getContents(callback) {
+            if (CACHES) {
+                callback(CACHES.contents)
+            } else {
+                get({
+                    url: API_CONTENT,
+                    success: function (data) {
+                        callback(JSON.parse(data));
+                        localStorage.setItem('ContentsCache', data);
+                        getStorageContent();
+                    }
+                })
+            }
+        }
+    })()
+    //------------------------核心功能--pjax全局渲染👇-------------------
+    let talkinit = false;
+    $(document).pjax('a[data-pjax]', '#main', {
+        fragment: '#main',
+        timeout: 8000
+    }).on('pjax:complete', function () {
+        //代码块高亮渲染
+        document.querySelectorAll('pre code').forEach((block) => {
+            hljs.highlightBlock(block);
+        });
+        //文章热度
+        if(postnumChoice){
+            getHotnum();
+        }
+        //文章索引
+        toginit();
+        //清空搜索栏
+        if (searchChoice) {
+            searchInit();
+            searchInput.value = "";
+        }
+        var pl = window.location.pathname;
+        //说说更新
+        if (pl.search("talk") != -1 && !talkinit) {
+            add();
+            talkinit = true;
+        } else if (pl.search("talk") != -1) {
+            show();
+        }
+        if (pl.search("post") != -1) {
+            if (shareChoice)
+                shareInit();
+            if (donateChoice)
+                donateInit();
+            if ("default" == "default"&&!commentsHide) {
+                $("#comment").hide()
+                commentsHide = true
+            }
+            lazyload();
+            codeinit();
+            if ("default" == "twikoo") {
+                //twikoo头像更换
+                setTimeout(replaceAvatar, 3000);
+                setTimeout(replaceAvatar, 8000); //部分博主站点速度加载过慢，再添加一个延迟
+            }
+        }
+        if (btstate == true)
+            dropdown();
+    }).on('pjax:start', function () {
+        $(".pjaxloading").fadeIn(50);
+    }).on('pjax:end', function () {
+        $(".pjaxloading").fadeOut(50);
+    });
+    //------------------------核心功能--pjax全局渲染👆-------------------
+
+    //-------------------------------------------------搜索
+    // 获取搜索框、搜索按钮、清空搜索、结果输出对应的元素
+    if (searchChoice) {
+        var searchInput = document.querySelector('.search-input');
+        var searchResults = document.querySelector('.search-results');
+    }
+    // 申明保存文章的标题、链接、内容的数组变量
+    var searchValue = '',
+        arrItems = [],
+        arrLinks = [],
+        arrTitles = [],
+        arrContents = [],
+        arrResults = [],
+        indexItem = [],
+        itemLength = 0;
+    var tmpDiv = document.createElement('div');
+    tmpDiv.className = 'result-item';
+
+
+    function getStorageContent() {
+        var data = localStorage.getItem('ContentsCache');
+        data = JSON.parse(data);
+        posts = data["posts"];
+        for (var i = 0; i < posts.length; i++) {
+            arrLinks[i] = posts[i].link;
+            arrTitles[i] = posts[i].title;
+            arrContents[i] = posts[i].content;
+            itemLength++;
+        }
+    }
+    if (checkCache())
+        getStorageContent();
+    // 输入框内容变化后就开始匹配，可以不用点按钮
+    // 经测试，onkeydown, onchange 等方法效果不太理想，
+    // 存在输入延迟等问题，最后发现触发 input 事件最理想，
+    // 并且可以处理中文输入法拼写的变化
+    searchInput.oninput = function () {
+        setTimeout(searchConfirm, 0);
+    }
+    searchInput.onfocus = function () {
+        searchResults.style.display = 'block';
+    }
+
+    function searchConfirm() {
+        if (searchInput.value == '') {
+            searchResults.style.display = 'none';
+        } else if (searchInput.value.search(/^\s+$/) >= 0) {
+            // 检测输入值全是空白的情况
+            searchInit();
+            var itemDiv = tmpDiv.cloneNode(true);
+            itemDiv.innerText = '请输入有效内容...';
+            searchResults.appendChild(itemDiv);
+        } else {
+            // 合法输入值的情况
+            searchInit();
+            searchValue = searchInput.value;
+            // 在标题、内容中查找
+            searchMatching(arrTitles, arrContents, searchValue);
+        }
+    }
+
+    // 每次搜索完成后的初始化
+    function searchInit() {
+        arrResults = [];
+        indexItem = [];
+        searchResults.innerHTML = '';
+        searchResults.style.display = 'block';
+    }
+
+    function searchMatching(arr1, arr2, input) {
+        // 忽略输入大小写
+        input = new RegExp(input, 'i');
+        var step = 10;
+        // 在所有文章标题、内容中匹配查询值
+        for (i = 0; i < itemLength; i++) {
+            var indexContent = arr2[i].search(input);
+            //标题匹配
+            if (arr1[i].search(input) != -1) {
+                indexItem.push(i); // 保存匹配值的索引
+                if (indexContent != -1) {
+                    startindex = (indexContent - step) >= 0 ? (indexContent - step) : 0;
+                    var searchcontent = arr2[i].slice(indexContent - step, indexContent + 5)
+                    arrResults.push("....." + searchcontent + ".....");
+                } else
+                    arrResults.push("");
+            }
+            //内容匹配
+            else if (indexContent != -1) {
+                indexItem.push(i); // 保存匹配值的索引
+
+                startindex = (indexContent - step) >= 0 ? (indexContent - step) : 0;
+                var searchcontent = arr2[i].slice(indexContent - step, indexContent + 5)
+                arrResults.push("....." + searchcontent + ".....");
+            }
+        }
+
+        // 输出总共匹配到的数目
+        var totalDiv = tmpDiv.cloneNode(true);
+        totalDiv.innerHTML = '<b>总匹配：' + indexItem.length + ' 项<hr></b>';
+        searchResults.appendChild(totalDiv);
+
+        // 未匹配到内容的情况
+        if (indexItem.length == 0) {
+            var itemDiv = tmpDiv.cloneNode(true);
+            itemDiv.innerText = '未匹配到内容...';
+            searchResults.appendChild(itemDiv);
+        }
+
+        // 将所有匹配内容进行组合
+        for (i = 0; i < arrResults.length; i++) {
+            var itemDiv = tmpDiv.cloneNode(true);
+            itemDiv.innerHTML = '<a data-pjax class="searchresults" href="' + arrLinks[indexItem[i]] + '"><b>[' +
+                arrTitles[indexItem[i]] +
+                ']</b><p>' + arrResults[i] + '</p></a><hr />';
+            searchResults.appendChild(itemDiv);
+        }
+    }
+</script>
+
+
+
+<!--------------------- 菜单栏图标加载功能👇 ----------------------->
+<script>
+var menulist = $(".menuicon");
+var menulength = menulist.length;
+for (var i = 0; i < menulength; i++) {
+    var altname = menulist.eq(i).attr("alt");
+    var iconurl = icondict[altname];
+    if (iconurl == undefined || iconurl == '')
+        continue;
+    if (iconurl == 'Home') {
+        menulist.eq(i).attr("src", "https://2006wzt.github.io/media/images/Home.png");
+menulist.eq(i).show();
+} else if (iconurl == 'Archive') {
+menulist.eq(i).attr("src", "https://2006wzt.github.io/media/images/Archive.png");
+menulist.eq(i).show();
+} else if (iconurl == 'Tag') {
+menulist.eq(i).attr("src", "https://2006wzt.github.io/media/images/Tag.png");
+menulist.eq(i).show();
+} else if (iconurl == 'About') {
+menulist.eq(i).attr("src", "https://2006wzt.github.io/media/images/About.png");
+menulist.eq(i).show();
+} else if (iconurl == 'Talk') {
+menulist.eq(i).attr("src", "https://2006wzt.github.io/media/images/Talk.png");
+menulist.eq(i).show();
+} else if (iconurl == 'Friends') {
+menulist.eq(i).attr("src", "https://2006wzt.github.io/media/images/Friends.png");
+menulist.eq(i).show();
+} else if (iconurl == 'Fly') {
+menulist.eq(i).attr("src", "https://2006wzt.github.io/media/images/wind.png");
+menulist.eq(i).show();
+} else {
+menulist.eq(i).attr("src", iconurl);
+menulist.eq(i).show();
+}
+}
+</script>
+<!--------------------- 菜单栏图标加载功能👆 ----------------------->
+
+<script>
+    //--------------------bber-onetalk加载👇--------------------------------
+    function bberonetalkLoad(){
+        bberjsonurl = '';
+        if ( $("#bber-talk").length > 0 ) {
+        jsonUrl = bberjsonurl
+        $.getJSON(jsonUrl+"?t="+Date.parse( new Date()),function(res){
+        var bberHtml = ''
+        $.each(res.data, function(i, item){
+            d = new Date(item.date)
+            date = d.getFullYear()+'/'+(d.getMonth()+1)+'/'+d.getDate() +' '+d.getHours()+':'+d.getMinutes()+':'+d.getSeconds()
+            dataTime = '<span class="datatime">'+date+'</span>'
+            bberHtml += '<li class="item item-'+(i+1)+'">'+dataTime+'： <a data-pjax href="https://2006wzt.github.io/bber">'+item.content+'</a></li>'
+        });
+        $('#bber-talk').append('<span class="index-talk-icon"><svg viewBox="0 0 1024 1024" width="21" height="21"><path d="M184.32 891.667692c-12.603077 0-25.206154-2.363077-37.809231-7.876923-37.021538-14.966154-59.864615-49.624615-59.864615-89.009231v-275.692307c0-212.676923 173.292308-385.969231 385.969231-385.969231h78.76923c212.676923 0 385.969231 173.292308 385.969231 385.969231 0 169.353846-137.846154 307.2-307.2 307.2H289.083077l-37.021539 37.021538c-18.904615 18.116923-43.323077 28.356923-67.741538 28.356923zM472.615385 195.347692c-178.018462 0-322.953846 144.935385-322.953847 322.953846v275.692308c0 21.267692 15.753846 29.144615 20.48 31.507692 4.726154 2.363077 22.055385 7.876923 37.021539-7.08923l46.473846-46.473846c6.301538-6.301538 14.178462-9.452308 22.055385-9.452308h354.461538c134.695385 0 244.184615-109.489231 244.184616-244.184616 0-178.018462-144.935385-322.953846-322.953847-322.953846H472.615385z"></path><path d="M321.378462 512m-59.076924 0a59.076923 59.076923 0 1 0 118.153847 0 59.076923 59.076923 0 1 0-118.153847 0Z"></path><path d="M518.301538 512m-59.076923 0a59.076923 59.076923 0 1 0 118.153847 0 59.076923 59.076923 0 1 0-118.153847 0Z"></path><path d="M715.224615 512m-59.076923 0a59.076923 59.076923 0 1 0 118.153846 0 59.076923 59.076923 0 1 0-118.153846 0Z"></path></svg></span><ul class="talk-list">'+bberHtml+'</ul>')
+        //Lately({ 'target': '#bber-talk .datatime' });
+        });
+        function Roll (){
+        var list_li = $('.talk-list li'),cur_li = list_li.first(),last_li = list_li.last();
+        last_li.after(cur_li);
+        };
+        setInterval(Roll,3000);
+    }
+    }
+  //--------------------bber-onetalk加载👆--------------------------------
+</script>
+
+<script>
+    var ClicksideState = 1
+    var cur_readingmode = false
+    function readingmode(){
+        if (!cur_readingmode){
+            if(menupos == 'left'){
+                if(ClicksideState==1)
+                menu_openclose1()
+            }
+            $("#tab1").fadeOut(50)
+            $("#bg").fadeOut(50)
+            $(".navbar").fadeOut(50)
+            $(".markdownIt-TOC li a").css("color","black")
+            cur_readingmode = true
+        }else{
+            if(menupos == 'left'){
+                if(ClicksideState==0)
+                    menu_openclose1()
+            }
+            $("#tab1").fadeIn(50)
+            $("#bg").fadeIn(50)
+            $(".navbar").fadeIn(50)
+            $(".markdownIt-TOC li a").css("color","antiquewhite")
+            cur_readingmode = false  
+        }
+    }
+</script>
+
+
+<!----夜间模式👇-->
+<script>
+    var moonlightState = false
+    function moonlight(){
+        if(!moonlightState){
+            $("#bg").fadeOut(200)
+            $('body').css("background","rgba(0,0,0,0.8)")
+            $(".markdownIt-TOC li a").css("color","white")
+            $(".text p, .text ul").css("color","white")
+            $("#articlecontent").css("color","white")
+            $(".post-copyright").css("background","rgba(10,10,10,0.5)")
+            $('blockquote').css("background","rgba(10,10,10,0.6)")
+            $("#articlecontent").css("background","rgba(10,10,10,0.5)")
+            moonlightState = true
+            $(".moon").attr("src","https://2006wzt.github.io/media/images/sun.png")
+        }else{
+            $("#bg").show()
+            $(".markdownIt-TOC li a").css("color","antiquewhite")
+            $(".text p, .text ul").css("color","rgba(0, 0, 0, 0.7)")
+            $("#articlecontent").css("color","black")
+            $(".post-copyright").css("background","#f9f9f9")
+            $('blockquote').css("background","#eff8f0")
+            $("#articlecontent").css("background","white")
+            $(".moon").attr("src","https://2006wzt.github.io/media/images/moon.png")
+            $('body').css("background","white")
+            moonlightState = false
+        }
+    }
+</script>
+<!----夜间模式👆--></div>
+            <!--------------- pc端菜单栏👆 ---------------->
+
+            <!-- ----------------左侧菜单栏html 👇-------------------------------------->
+            
+            <div>
+                <div id="tab1" class="tab">
+                    <div class="bars">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                    <div class="close"></div>
+                </div>
+                <div class="col-md-1 col-lg-3"></div>
+                <!-- main标签，pjax渲染时加载以下内容👇 -->
+                <div id="main" class="col-xs-12 col-sm-12 col-md-12 col-lg-7" style="padding:0;">
+                    <div class="readingmode" onclick="readingmode()">阅</div>
+                    <link rel="stylesheet" href="https://2006wzt.github.io/media/css/font-awesome.css">
+
+<body>
+    <div class="allcontent" id="postdetail">
+        <div class="postshow postpadding" style="padding-bottom: 0;">
+            
+            <div class="postdetailimg">
+                <img src="https://2006wzt.github.io/post-images/数据库系统概论实验.png" class="postimage" style="cursor:auto">
+            </div>
+            <div class="postinfo-detail">
+                <div class="postdate"><i class="fa fa-calendar"></i>2022-11-13</div>
+                <div class="poststatus postdate"><i class="fa fa-clock-o"></i> 91 min read</div>
+                <div class="posttag">
+                    
+                    <a data-pjax href="https://2006wzt.github.io/tag/fG7_jixa3/" class="postlink">
+                        <i class="fa fa-tag"></i> mysql
+                    </a>
+                    
+                    <a data-pjax href="https://2006wzt.github.io/tag/Fc-b8517my/" class="postlink">
+                        <i class="fa fa-tag"></i> java
+                    </a>
+                    
+                </div>
+            </div>
+            
+        <div id="articlecontent">
+            <div id="texttitle" style="text-align: center">
+                <h2 id="ptitle">数据库系统实验</h2>
+                <!-- id 将作为查询条件 -->
+                <div id="pl" style="display:none">https://2006wzt.github.io/post/数据库系统概论实验/</div>
+                <div id="rootaddr" style="display:none">https://2006wzt.github.io</div>
+                
+            </div>
+            <div class="text ">
+                <h1 id="数据库实验">数据库实验</h1>
+<h2 id="一-实训1-数据库-表与完整性约束的定义create">一、<strong>实训1 数据库、表与完整性约束的定义(Create)</strong></h2>
+<h3 id="11-创建数据库">1.1 创建数据库</h3>
+<p>创建2022年北京冬奥会信息系统数据库</p>
+<pre><code class="language-mysql">-- 本关我们强烈建议你点击本编辑窗口上方的“命令行”菜单打开Linux的命令行，
+-- 并通过mysql命令行工具连接并登录到服务器，
+-- 然后在mysql的命令行工具里通过恰当的语句完成任务。
+-- 在以后的关卡中你可以通过命令行调试或测试语句，再将正确的语句粘贴到文件编辑窗口。
+
+-- 你也可以选择在以下空白行填写完成目标任务的SQL语句：
+-- 创建2022年北京冬奥会信息系统数据库
+CREATE DATABASE beijing2022;
+-- end
+</code></pre>
+<h3 id="12-创建表及表的主码约束">1.2 创建表及表的主码约束</h3>
+<p>建数据库<code>TestDb</code>，在<code>TestDb</code>下创建表<code>t_emp</code>，表结构如下：</p>
+<table>
+<thead>
+<tr>
+<th>字段名称</th>
+<th>数据类型</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>INT</td>
+<td>员工编号，主码</td>
+</tr>
+<tr>
+<td>name</td>
+<td>VARCHAR(32)</td>
+<td>员工名称</td>
+</tr>
+<tr>
+<td>deptId</td>
+<td>INT</td>
+<td>所在部门标号</td>
+</tr>
+<tr>
+<td>salary</td>
+<td>FLOAT</td>
+<td>工资</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-mysql"># 请在以下适当的空白处填写SQL语句，完成任务书的要求。空白行可通过回车换行添加。 
+USE TestDb;
+CREATE TABLE t_emp(
+    id INT PRIMARY KEY,
+    name VARCHAR(32),
+    deptId INT,
+    salary FLOAT
+);
+/* *********** 结束 ************* */
+</code></pre>
+<h3 id="13-创建外码约束foreign-key">1.3 创建外码约束(foreign key)</h3>
+<p>设有以下两张表：</p>
+<p><strong>dept(部门)</strong></p>
+<table>
+<thead>
+<tr>
+<th>字段名称</th>
+<th>数据类型</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>deptNo</td>
+<td>INT</td>
+<td>部门号，主键</td>
+</tr>
+<tr>
+<td>deptName</td>
+<td>VARCHAR(32)</td>
+<td>部门名称</td>
+</tr>
+</tbody>
+</table>
+<p><strong>staff(职工)</strong></p>
+<table>
+<thead>
+<tr>
+<th>字段名称</th>
+<th>数据类型</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>staffNo</td>
+<td>INT</td>
+<td>职工号，主键</td>
+</tr>
+<tr>
+<td>staffName</td>
+<td>VARCHAR(32)</td>
+<td>职工姓名</td>
+</tr>
+<tr>
+<td>gender</td>
+<td>CHAR(1)</td>
+<td>性别，F-女，M-男</td>
+</tr>
+<tr>
+<td>dob</td>
+<td>date</td>
+<td>出生日期</td>
+</tr>
+<tr>
+<td>salary</td>
+<td>numeric(8,2)</td>
+<td>工资</td>
+</tr>
+<tr>
+<td>deptNo</td>
+<td>INT</td>
+<td>部门号,外键</td>
+</tr>
+</tbody>
+</table>
+<p>请创建上述两个表，为表定义主键，并给表staff创建外键，这个外键约束的名称为FK_staff_deptNo。在创建表之前你可能需要先创建数据库：<code>MyDb</code>，并且将两张表创建在<code>MyDb</code>数据库中。不需考虑关于性别的约束。（注意：如果你在实验1之后接着作本实验，数据库<code>MyDb</code>可能已经存在）</p>
+<pre><code class="language-mysql"># 请在以下空白处填写完成任务的语句，空白行可通过回车换行添加。
+# 你也可以在命令行窗口完成任务，不过，在命令行键入的语句不会被保存。
+CREATE DATABASE MyDb;
+USE MyDb;
+CREATE TABLE dept(
+    deptNo INT PRIMARY KEY,
+    deptName VARCHAR(32)
+);
+CREATE TABLE staff(
+    staffNo INT PRIMARY KEY,
+    staffName VARCHAR(32),
+    gender CHAR(1),
+    dob date,
+    salary numeric(8,2),
+    deptNo INT,
+    CONSTRAINT FK_staff_deptNo FOREIGN KEY(deptNo) REFERENCES dept(deptNo)
+);
+# 结束 
+</code></pre>
+<h3 id="14-check约束">1.4 CHECK约束</h3>
+<p>表products的结构如下：</p>
+<table>
+<thead>
+<tr>
+<th>字段名称</th>
+<th>数据类型</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>pid</td>
+<td>char(10)</td>
+<td>产品户ID,主码</td>
+</tr>
+<tr>
+<td>name</td>
+<td>varchar(32)</td>
+<td>产品名称</td>
+</tr>
+<tr>
+<td>brand</td>
+<td>char(10)</td>
+<td>品牌，只能是('A','B')中的某一个</td>
+</tr>
+<tr>
+<td>price</td>
+<td>int</td>
+<td>价格，必须&gt;0</td>
+</tr>
+</tbody>
+</table>
+<p>请在数据库MyDb中创建表products，并分别实现对品牌和价格的约束，两个CHECK约束的名称分别为CK_products_brand和CK_products_price，主码约束不要显示命名。（提示：如果数据库MyDb不存在，请首先创建它，并将它作为工作数据库。）</p>
+<pre><code class="language-mysql"># 请在以下空白处填写完成任务的语句，空白行可通过回车换行添加。
+# 你也可以在命令行窗口完成任务，不过，在命令行键入的语句不会被保存。
+# CREATE DATABASE MyDb;
+USE MyDb;
+CREATE TABLE products(
+    pid char(10) PRIMARY KEY,
+    name VARCHAR(32),
+    brand CHAR(10) CONSTRAINT CK_products_brand CHECK(brand in ('A','B')),
+    price INT CONSTRAINT CK_products_price CHECK(price&gt;0)
+);
+# 结束 
+</code></pre>
+<h3 id="15-default约束">1.5 DEFAULT约束</h3>
+<p>表hr的结构如下：</p>
+<table>
+<thead>
+<tr>
+<th>字段名称</th>
+<th>数据类型</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>char(10)</td>
+<td>工号,主码</td>
+</tr>
+<tr>
+<td>name</td>
+<td>varchar(32)</td>
+<td>姓名,不允许为空值</td>
+</tr>
+<tr>
+<td>mz</td>
+<td>char(16)</td>
+<td>民族, 缺省值为“汉族”</td>
+</tr>
+</tbody>
+</table>
+<p>请在数据库MyDb中创建表hr，并实现name列的NOT NULL约束和mz列的Default约束（别忘了主码约束）</p>
+<pre><code class="language-mysql"># 请在以下空白处填写完成任务的语句，空白行可通过回车换行添加。
+# 你也可以在命令行窗口完成任务，不过，在命令行键入的语句不会被保存。
+USE MyDb;
+CREATE TABLE hr(
+    id CHAR(10) PRIMARY KEY,
+    name VARCHAR(32) NOT NULL,
+    mz CHAR(16) DEFAULT &quot;汉族&quot;
+);
+# 结束 
+</code></pre>
+<h3 id="16-unique约束">1.6 UNIQUE约束</h3>
+<p>表s的结构如下：</p>
+<table>
+<thead>
+<tr>
+<th>字段名称</th>
+<th>数据类型</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>sno</td>
+<td>char(10)</td>
+<td>学号,主码</td>
+</tr>
+<tr>
+<td>name</td>
+<td>varchar(32)</td>
+<td>姓名,不允许为空值</td>
+</tr>
+<tr>
+<td>ID</td>
+<td>char(18)</td>
+<td>身份证号, 不允许有两个相同的身份证号</td>
+</tr>
+</tbody>
+</table>
+<p>请在数据库MyDb中创建表s，并实现相关约束（主码，NOT NULL和Unique约束）。 注意表名s是小写的，列名ID是全大写的。如果没有数据库MyDb,你需要创建它，并使其成为当前工作数据库。</p>
+<pre><code class="language-mysql"># 请在以下空白处填写完成任务的语句，空白行可通过回车换行添加。
+# 你也可以在命令行窗口完成任务，不过，在命令行键入的语句不会被保存。
+USE MyDb;
+CREATE TABLE s(
+    sno CHAR(10) PRIMARY KEY,
+    name VARCHAR(32) NOT NULL,
+    ID CHAR(18) UNIQUE
+);
+# 结束 
+</code></pre>
+<h2 id="二-实训2-表结构与完整性的修改alter">二、实训2 表结构与完整性的修改(ALTER)</h2>
+<h3 id="21-修改表名">2.1 修改表名</h3>
+<p>数据库TestDb1中有表your_table，请根据提示，在右侧代码文件编辑窗中添加恰当的语句，将表名your_table更改为my_table。</p>
+<pre><code class="language-mysql">USE TestDb1;
+
+#请在以下空白处添加恰当的语句，将表名your_table更改为my_table:
+ALTER TABLE your_table rename my_table;
+</code></pre>
+<h3 id="22-添加与删除字段">2.2 添加与删除字段</h3>
+<p>假设数据库MyDb中有表order(订单)和orderDetail(订单明细) 等表，两表的结构分别如下：</p>
+<p><strong>order表</strong></p>
+<table>
+<thead>
+<tr>
+<th>字段名称</th>
+<th>数据类型</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>orderNo</td>
+<td>char(12)</td>
+<td>订单号，主码</td>
+</tr>
+<tr>
+<td>orderDate</td>
+<td>date</td>
+<td>订购日期</td>
+</tr>
+<tr>
+<td>customerNo</td>
+<td>char(12)</td>
+<td>客户编号，外码，与customer.customerNo对应</td>
+</tr>
+<tr>
+<td>employeeNo</td>
+<td>char(12)</td>
+<td>雇员工号，外码，与employee.employeeNo对应</td>
+</tr>
+</tbody>
+</table>
+<p><strong>orderDetail表</strong></p>
+<table>
+<thead>
+<tr>
+<th>字段名称</th>
+<th>数据类型</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>orderNo</td>
+<td>char(12)</td>
+<td>订单号，主属性，外码，与order.orderNo对应</td>
+</tr>
+<tr>
+<td>productNo</td>
+<td>char(12)</td>
+<td>产品编号，主属性，外码，与product.productNo对应</td>
+</tr>
+<tr>
+<td>quantityOrdered</td>
+<td>int</td>
+<td>订购数量</td>
+</tr>
+<tr>
+<td>orderDate</td>
+<td>date</td>
+<td>订购日期</td>
+</tr>
+</tbody>
+</table>
+<p><em>注：表orderDetail的主码由(orderNo,productNo)组成</em></p>
+<p>编程的任务是对orderDetail表进行修改：</p>
+<ol>
+<li>orderDetail表的orderDate列明显多余，因为同一订单中的每一笔交易都发生在同一天，这个日期在订单主体表order中已有记录，请删除列orderDate。</li>
+<li>产品的单价是订单明细需要记录的内容，请在orderDetail中添加列unitPrice以记录产品的单价:</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>字段名称</th>
+<th>数据类型</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>unitPrice</td>
+<td>numeric(10,2)</td>
+<td>产品的成交单价</td>
+</tr>
+</tbody>
+</table>
+<p>请根据提示，在右侧代码文件编辑窗中添加恰当的语句，实现上述编程任务。</p>
+<pre><code class="language-mysql">use MyDb;
+
+#请在以下空白处添加适当的SQL代码，实现编程要求
+#语句1：删除表orderDetail中的列orderDate
+ALTER TABLE orderDetail DROP orderDate;
+#语句2：添加列unitPrice
+ALTER TABLE orderDetail ADD unitPrice numeric(10,2);
+</code></pre>
+<h3 id="23-修改字段">2.3 修改字段</h3>
+<p>数据库MyDb中有表addressBook(通信录)，结构如下：</p>
+<table>
+<thead>
+<tr>
+<th>字段名称</th>
+<th>数据类型</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>serialNo</td>
+<td>int</td>
+<td>自动编号，主码</td>
+</tr>
+<tr>
+<td>name</td>
+<td>char(32)</td>
+<td>姓名</td>
+</tr>
+<tr>
+<td>company</td>
+<td>char(32)</td>
+<td>工作单位</td>
+</tr>
+<tr>
+<td>position</td>
+<td>char(10)</td>
+<td>职位</td>
+</tr>
+<tr>
+<td>workPhone</td>
+<td>char(16)</td>
+<td>办公电话</td>
+</tr>
+<tr>
+<td>mobile</td>
+<td>char(11)</td>
+<td>手机</td>
+</tr>
+<tr>
+<td>QQ</td>
+<td>int</td>
+<td>QQ号</td>
+</tr>
+<tr>
+<td>weixin</td>
+<td>char(12)</td>
+<td>微信号</td>
+</tr>
+</tbody>
+</table>
+<p>当初创建表的语句如下：</p>
+<pre><code class="language-mysql">create table addressBook(
+    serialNo int auto_increment primary key,
+    name char(32),
+    company char(32),
+    position char(10),
+    workPhone char(16),
+    mobile char(11),
+    QQ int,
+    weixin char(12)
+);
+</code></pre>
+<p>你的编程任务是对表addressBook作以下修改：</p>
+<ol>
+<li>将QQ号的数据类型改为char(12);</li>
+<li>将列名weixin改为wechat。</li>
+</ol>
+<p>请根据提示，在右侧代码文件test3.sql编辑窗中添加恰当的语句，实现上述编程任务。</p>
+<pre><code class="language-mysql">use MyDb;
+
+#请在以下空白处添加适当的SQL语句，实现编程要求
+ALTER TABLE addressBook MODIFY QQ CHAR(12);
+ALTER TABLE addressBook RENAME COLUMN weixin TO wechat;
+</code></pre>
+<h3 id="24-添加-删除与修改约束">2.4 添加、删除与修改约束</h3>
+<p>数据库MyDb中有以下两表：</p>
+<p><strong>Dept(部门)</strong></p>
+<table>
+<thead>
+<tr>
+<th>字段名称</th>
+<th>数据类型</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>deptNo</td>
+<td>INT</td>
+<td>部门号，主键</td>
+</tr>
+<tr>
+<td>deptName</td>
+<td>VARCHAR(32)</td>
+<td>部门名称，不同部门不允许重名</td>
+</tr>
+<tr>
+<td>tel</td>
+<td>char(11)</td>
+<td>部门电话</td>
+</tr>
+<tr>
+<td>mgrStaffNo</td>
+<td>int</td>
+<td>部门经理的工号，外码</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Staff(职工)</strong></p>
+<table>
+<thead>
+<tr>
+<th>字段名称</th>
+<th>数据类型</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>staffNo</td>
+<td>INT</td>
+<td>工号，主键</td>
+</tr>
+<tr>
+<td>staffName</td>
+<td>VARCHAR(32)</td>
+<td>职工姓名</td>
+</tr>
+<tr>
+<td>gender</td>
+<td>CHAR(1)</td>
+<td>性别，取值范围：F-女，M-男</td>
+</tr>
+<tr>
+<td>dob</td>
+<td>date</td>
+<td>出生日期</td>
+</tr>
+<tr>
+<td>Salary</td>
+<td>numeric(8,2)</td>
+<td>工资</td>
+</tr>
+<tr>
+<td>dept</td>
+<td>INT</td>
+<td>部门号,外键</td>
+</tr>
+</tbody>
+</table>
+<p>现通过以下语句，完成了两表的基础创建工作(部分约束没有实现):</p>
+<pre><code class="language-mysql">create table Dept(
+    deptNo int primary key,
+    deptName varchar(32),
+    tel char(11),
+    mgrStaffNo int
+);
+create table Staff(
+    staffNo int,
+    staffName varchar(32),
+    gender char(1),
+    dob date,
+    salary numeric(8,2),
+    dept int
+);
+</code></pre>
+<p>请在右侧代码编辑窗对应位置写出适当的语句，完成以下工作： (1) 为表Staff添加主码; (2) Dept.mgrStaffNo是外码，对应的主码是Staff.staffNo,请添加这个外码，名字为FK_Dept_mgrStaffNo; (3) Staff.dept是外码，对应的主码是Dept.deptNo. 请添加这个外码，名字为FK_Staff_dept; (4) 为表Staff添加check约束，规则为：gender的值只能为F或M；约束名为CK_Staff_gender; (5) 为表Dept添加unique约束：deptName不允许重复。约束名为UN_Dept_deptName.</p>
+<pre><code class="language-mysql">use MyDb;
+#请在以下空白处填写适当的诘句，实现编程要求。
+#(1) 为表Staff添加主码
+ALTER TABLE Staff ADD PRIMARY KEY(staffNo);
+#(2) Dept.mgrStaffNo是外码，对应的主码是Staff.staffNo,请添加这个外码，名字为FK_Dept_mgrStaffNo:
+ALTER TABLE Dept ADD CONSTRAINT FK_Dept_mgrStaffNo FOREIGN KEY(mgrStaffNo) REFERENCES Staff(staffNo);
+#(3) Staff.dept是外码，对应的主码是Dept.deptNo. 请添加这个外码，名字为FK_Staff_dept:
+ALTER TABLE Staff ADD CONSTRAINT FK_Staff_dept FOREIGN KEY(dept) REFERENCES Dept(deptNo);
+#(4) 为表Staff添加check约束，规则为：gender的值只能为F或M；约束名为CK_Staff_gender:
+ALTER TABLE Staff ADD CONSTRAINT CK_Staff_gender CHECK(gender in('F','M'));
+#(5) 为表Dept添加unique约束：deptName不允许重复。约束名为UN_Dept_deptName：
+ALTER TABLE Dept ADD CONSTRAINT UN_Dept_deptName UNIQUE(deptName);
+</code></pre>
+<h2 id="三-实训3-数据查询select之一">三、<strong>实训3 数据查询(Select)之一</strong></h2>
+<h3 id="31-查询客户主要信息">3.1 查询客户主要信息</h3>
+<p>本实训采用的是某银行的一个金融场景应用的模拟数据库，数据库中表，表结构以及所有字段的说明如下：</p>
+<p>表1 client(客户表)</p>
+<table>
+<thead>
+<tr>
+<th>字段名称</th>
+<th>数据类型</th>
+<th>约束</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>c_id</td>
+<td>INTEGER</td>
+<td>PRIMARY KEY</td>
+<td>客户编号</td>
+</tr>
+<tr>
+<td>c_name</td>
+<td>VARCHAR(100)</td>
+<td>NOT NULL</td>
+<td>客户名称</td>
+</tr>
+<tr>
+<td>c_mail</td>
+<td>CHAR(30)</td>
+<td>UNIQUE</td>
+<td>客户邮箱</td>
+</tr>
+<tr>
+<td>c_id_card</td>
+<td>CHAR(20)</td>
+<td>UNIQUE NOT NULL</td>
+<td>客户身份证</td>
+</tr>
+<tr>
+<td>c_phone</td>
+<td>CHAR(20)</td>
+<td>UNIQUE NOT NULL</td>
+<td>客户手机号</td>
+</tr>
+<tr>
+<td>c_password</td>
+<td>CHAR(20)</td>
+<td>NOT NULL</td>
+<td>客户登录密码</td>
+</tr>
+</tbody>
+</table>
+<p>表2 bank_card(银行卡)</p>
+<table>
+<thead>
+<tr>
+<th>字段名称</th>
+<th>数据类型</th>
+<th>约束</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>b_number</td>
+<td>CHAR(30)</td>
+<td>PRIMARY KEY</td>
+<td>银行卡号</td>
+</tr>
+<tr>
+<td>b_type</td>
+<td>CHAR(20)</td>
+<td>无</td>
+<td>银行卡类型(储蓄卡/信用卡)</td>
+</tr>
+<tr>
+<td>b_c_id</td>
+<td>INTEGER</td>
+<td>NOT NULL FOREIGN KEY</td>
+<td>所属客户编号,引用自client表的c_id字段。</td>
+</tr>
+<tr>
+<td>b_balance</td>
+<td>NUMERIC(10,2)</td>
+<td>NOT NULL</td>
+<td>余额,信用卡余额系指已透支的金额</td>
+</tr>
+</tbody>
+</table>
+<p>表3 finances_product(理财产品表)</p>
+<table>
+<thead>
+<tr>
+<th>字段名称</th>
+<th>数据类型</th>
+<th>约束</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>p_name</td>
+<td>VARCHAR(100)</td>
+<td>NOT NULL</td>
+<td>产品名称</td>
+</tr>
+<tr>
+<td>p_id</td>
+<td>INTEGER</td>
+<td>PRIMARY KEY</td>
+<td>产品编号</td>
+</tr>
+<tr>
+<td>p_description</td>
+<td>VARCHAR(4000)</td>
+<td>无</td>
+<td>产品描述</td>
+</tr>
+<tr>
+<td>p_amount</td>
+<td>INTEGER</td>
+<td>无</td>
+<td>购买金额</td>
+</tr>
+<tr>
+<td>p_year</td>
+<td>INTEGER</td>
+<td>无</td>
+<td>理财年限</td>
+</tr>
+</tbody>
+</table>
+<p>表4 insurance(保险表)</p>
+<table>
+<thead>
+<tr>
+<th>字段名称</th>
+<th>数据类型</th>
+<th>约束</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>i_name</td>
+<td>VARCHAR(100)</td>
+<td>NOT NULL</td>
+<td>保险名称</td>
+</tr>
+<tr>
+<td>i_id</td>
+<td>INTEGER</td>
+<td>PRIMARY KEY</td>
+<td>保险编号</td>
+</tr>
+<tr>
+<td>i_amount</td>
+<td>INTEGER</td>
+<td>无</td>
+<td>保险金额</td>
+</tr>
+<tr>
+<td>i_person</td>
+<td>CHAR(20)</td>
+<td>无</td>
+<td>适用人群</td>
+</tr>
+<tr>
+<td>i_year</td>
+<td>INTEGER</td>
+<td>无</td>
+<td>保险年限</td>
+</tr>
+<tr>
+<td>i_project</td>
+<td>VARCHAR(200)</td>
+<td>无</td>
+<td>保障项目</td>
+</tr>
+</tbody>
+</table>
+<p>表5 fund(基金表)</p>
+<table>
+<thead>
+<tr>
+<th>字段名称</th>
+<th>数据类型</th>
+<th>约束</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>f_name</td>
+<td>VARCHAR(100)</td>
+<td>NOT NULL</td>
+<td>基金名称</td>
+</tr>
+<tr>
+<td>f_id</td>
+<td>INTEGER</td>
+<td>PRIMARY KEY</td>
+<td>基金编号</td>
+</tr>
+<tr>
+<td>f_type</td>
+<td>CHAR(20)</td>
+<td>无</td>
+<td>基金类型</td>
+</tr>
+<tr>
+<td>f_amount</td>
+<td>INTEGER</td>
+<td>无</td>
+<td>基金金额</td>
+</tr>
+<tr>
+<td>risk_level</td>
+<td>CHAR(20)</td>
+<td>NOT NULL</td>
+<td>风险等级</td>
+</tr>
+<tr>
+<td>f_manager</td>
+<td>INTEGER</td>
+<td>NOT NULL</td>
+<td>基金管理者</td>
+</tr>
+</tbody>
+</table>
+<p>表6 property(资产表)</p>
+<table>
+<thead>
+<tr>
+<th>字段名称</th>
+<th>数据类型</th>
+<th>约束</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>pro_id</td>
+<td>INTEGER</td>
+<td>PRIMARY KEY</td>
+<td>资产编号</td>
+</tr>
+<tr>
+<td>pro_c_id</td>
+<td>INTEGER</td>
+<td>NOT NULL</td>
+<td>FOREIGN KEY</td>
+</tr>
+<tr>
+<td>pro_pif_id</td>
+<td>INTEGER</td>
+<td>NOT NULL</td>
+<td>业务约束</td>
+</tr>
+<tr>
+<td>pro_type</td>
+<td>INTEGER</td>
+<td>NOT NULL</td>
+<td>商品类型:1表示理财产品;2表示保险;3表示基金</td>
+</tr>
+<tr>
+<td>pro_status</td>
+<td>CHAR(20)</td>
+<td>无</td>
+<td>商品状态:'可用','冻结'</td>
+</tr>
+<tr>
+<td>pro_quantity</td>
+<td>INTEGER</td>
+<td>无</td>
+<td>商品数量</td>
+</tr>
+<tr>
+<td>pro_income</td>
+<td>INTEGER</td>
+<td>无</td>
+<td>商品收益</td>
+</tr>
+<tr>
+<td>pro_purchase_time</td>
+<td>DATE</td>
+<td>无</td>
+<td>购买时间</td>
+</tr>
+</tbody>
+</table>
+<p>请用一条SQL语句完成以下查询任务： 查询所有客户的名称、手机号和邮箱信息。查询结果按照客户编号排序。</p>
+<pre><code class="language-mysql">-- 1) 查询所有客户的名称、手机号和邮箱信息。查询结果按照客户编号排序。
+--    请用一条SQL语句实现该查询：
+SELECT c_name,c_phone,c_mail
+FROM client
+ORDER BY c_id;
+/*  end  of  your code  */
+</code></pre>
+<h3 id="32-邮箱为null的客户">3.2 邮箱为null的客户</h3>
+<p>请用一条SQL语句完成以下查询任务：<br>
+查询客户表(client)中没有填写邮箱信息(邮箱字段值为null)的客户的编号、名称、身份证号、手机号。</p>
+<pre><code class="language-mysql">-- 2) 查询客户表(client)中邮箱信息为null的客户的编号、名称、身份证号、手机号。
+--    请用一条SQL语句实现该查询：
+
+SELECT c_id,c_name,c_id_card,c_phone
+FROM client
+WHERE c_mail IS NULL;
+/*  end  of  your code  */
+</code></pre>
+<h3 id="33-既买了保险又买了基金的客户">3.3 既买了保险又买了基金的客户</h3>
+<p>请用一条SQL语句完成以下查询任务： 查询既买了保险又买了基金的客户的名称、邮箱和电话,结果依客户编号排序。</p>
+<pre><code class="language-mysql">-- 3) 查询既买了保险又买了基金的客户的名称、邮箱和电话。结果依c_id排序
+-- 请用一条SQL语句实现该查询：
+SELECT c_name,c_mail,c_phone
+FROM client
+WHERE c_id IN(SELECT pro_c_id FROM property WHERE pro_type=2)
+AND c_id IN(SELECT pro_c_id FROM property WHERE pro_type=3)
+ORDER BY c_id;
+/*  end  of  your code  */
+</code></pre>
+<h3 id="34-办理了储蓄卡的客户信息">3.4 办理了储蓄卡的客户信息</h3>
+<p>请用一条SQL语句完成以下查询任务： 查询办理了储蓄卡的客户名称、手机号和银行卡号。注意一个客户在本行可能不止一张储蓄卡，应全列出。查询结果结果依客户编号排序。</p>
+<pre><code class="language-mysql">-- 4) 查询办理了储蓄卡的客户名称、手机号、银行卡号。 查询结果结果依客户编号排序。
+--    请用一条SQL语句实现该查询：
+SELECT c_name,c_phone,b_number
+FROM client,bank_card
+WHERE c_id=b_c_id AND b_type=&quot;储蓄卡&quot;
+ORDER BY c_id;
+/*  end  of  your code  */
+</code></pre>
+<h3 id="35-每份金额在30000~50000之间的理财产品">3.5 每份金额在30000～50000之间的理财产品</h3>
+<p>请用一条SQL语句完成以下查询任务： 查询理财产品中每份金额在30000～50000之间的理财产品的编号,每份金额，理财年限，并按金额升序排序，金额相同的按照理财年限降序排序。</p>
+<pre><code class="language-mysql">-- 5) 查询理财产品中每份金额在30000～50000之间的理财产品的编号,每份金额，理财年限，并按照金额升序排序，金额相同的按照理财年限降序排序。
+--    请用一条SQL语句实现该查询：
+SELECT p_id,p_amount,p_year
+FROM finances_product
+WHERE p_amount BETWEEN 30000 AND 50000
+ORDER BY p_amount,p_year DESC;
+/*  end  of  your code  */
+</code></pre>
+<h3 id="36-商品收益的众数">3.6 商品收益的众数</h3>
+<p>请用一条SQL语句完成以下查询任务： 众数是一组数据中出现次数最多的数值，有时众数在一组数中会有好几个。查询资产表中所有资产记录里商品收益的众数和它出现的次数，出现的次数命名为presence。</p>
+<pre><code class="language-mysql">-- 6) 查询资产表中所有资产记录里商品收益的众数和它出现的次数。
+--    请用一条SQL语句实现该查询：
+SELECT A.pro_income,COUNT(*) presence
+FROM property A
+GROUP BY A.pro_income
+HAVING presence&gt;=ALL(SELECT COUNT(*)
+                    FROM property B
+                    GROUP BY B.pro_income);
+/*  end  of  your code  */
+</code></pre>
+<h3 id="37-未购买任何理财产品的武汉居民">3.7 未购买任何理财产品的武汉居民</h3>
+<p>请用一条SQL语句完成以下查询任务： 已知身份证前6位表示居民地区，其中4201开头表示湖北省武汉市。查询身份证隶属武汉市没有买过任何理财产品的客户的名称、电话号、邮箱。依客户编号排序</p>
+<pre><code class="language-mysql">-- 7) 查询身份证隶属武汉市没有买过任何理财产品的客户的名称、电话号、邮箱。
+--    请用一条SQL语句实现该查询：
+SELECT c_name,c_phone,c_mail
+FROM client
+WHERE c_id_card LIKE '4201%' 
+AND c_id NOT IN(SELECT pro_c_id
+                FROM property B
+                WHERE B.pro_type=1)
+ORDER BY c_id;
+/*  end  of  your code  */
+</code></pre>
+<h3 id="38-持有两张信用卡的用户">3.8 持有两张信用卡的用户</h3>
+<p>请用一条SQL语句完成以下查询任务： 查询持有两张(含）以上信用卡的用户的名称、身份证号、手机号。查询结果依客户编号排序</p>
+<pre><code class="language-mysql">-- 8) 查询持有两张(含）以上信用卡的用户的名称、身份证号、手机号。
+--    请用一条SQL语句实现该查询：
+SELECT c_name,c_id_card,c_phone
+FROM client,bank_card
+WHERE c_id=b_c_id AND b_type=&quot;信用卡&quot;
+GROUP BY c_id
+HAVING COUNT(*)&gt;=2
+ORDER BY c_id;
+/*  end  of  your code  */
+</code></pre>
+<h3 id="39-购买了货币型基金的客户信息">3.9 购买了货币型基金的客户信息</h3>
+<p>请用一条SQL语句完成以下查询任务： 查询购买了货币型(f_type='货币型')基金的用户的名称、电话号、邮箱。依客户编号排序</p>
+<pre><code class="language-mysql">-- 9) 查询购买了货币型(f_type='货币型')基金的用户的名称、电话号、邮箱。
+--   请用一条SQL语句实现该查询：
+SELECT c_name,c_phone,c_mail
+FROM client
+WHERE EXISTS(
+    SELECT *
+    FROM property
+    WHERE c_id=pro_c_id AND pro_type=3 AND EXISTS(
+        SELECT *
+        FROM fund
+        WHERE f_type='货币型' AND f_id=pro_pif_id
+    )
+)
+ORDER BY c_id;
+/*  end  of  your code  */
+</code></pre>
+<h3 id="310-投资总收益前三名的客户">3.10 投资总收益前三名的客户</h3>
+<p>请用一条SQL语句完成以下查询任务： 查询当前总的可用资产收益(被冻结的资产除外)前三名的客户的名称、身份证号及其总收益，按收益降序输出，总收益命名为total_income。不考虑并列排名情形。</p>
+<pre><code class="language-mysql">-- 10) 查询当前总的可用资产收益(被冻结的资产除外)前三名的客户的名称、身份证号及其总收益，按收益降序输出，总收益命名为total_income。不考虑并列排名情形。
+--    请用一条SQL语句实现该查询：
+SELECT c_name,c_id_card,S1.total_income
+FROM client,(SELECT pro_c_id,SUM(pro_income) total_income
+             FROM property
+             WHERE pro_status=&quot;可用&quot;
+             GROUP BY pro_c_id) S1
+WHERE c_id=S1.pro_c_id
+ORDER BY S1.total_income DESC
+LIMIT 3;
+/*  end  of  your code  */ 
+</code></pre>
+<h3 id="311-黄姓客户持卡数量">3.11 黄姓客户持卡数量</h3>
+<p>请用一条SQL语句完成以下查询任务： 给出黄姓用户的编号、名称、办理的银行卡的数量(没有办卡的卡数量计为0). 按办理银行卡数量降序输出,持卡数量相同的,依客户编号排序。</p>
+<pre><code class="language-mysql">-- 11) 给出黄姓用户的编号、名称、办理的银行卡的数量(没有办卡的卡数量计为0),持卡数量命名为number_of_cards,
+--     按办理银行卡数量降序输出,持卡数量相同的,依客户编号排序。
+-- 请用一条SQL语句实现该查询：
+SELECT c_id,c_name,COUNT(b_number) number_of_cards
+FROM client LEFT OUTER JOIN bank_card ON(client.c_id=bank_card.b_c_id)
+WHERE c_name LIKE '黄%'
+GROUP BY c_id
+ORDER BY number_of_cards DESC,c_id;
+/*  end  of  your code  */ 
+</code></pre>
+<h3 id="312-客户理财-保险与基金投资总额">3.12 客户理财、保险与基金投资总额</h3>
+<p>请用一条SQL语句完成以下查询任务： 综合客户表(client)、资产表(property)、理财产品表(finances_product)、保险表(insurance)和基金表(fund)，列出客户的名称、身份证号以及投资总金额（即投资本金，每笔投资金额=商品数量*该产品每份金额)，注意投资金额按类型需查询不同的表， 投资总金额是客户购买的各类(理财,保险,基金)资产投资金额的总和，总金额命名为total_amount。查询结果按总金额降序排序。</p>
+<pre><code class="language-mysql"> -- 12) 综合客户表(client)、资产表(property)、理财产品表(finances_product)、保险表(insurance)和
+ --     基金表(fund)，列出客户的名称、身份证号以及投资总金额（即投资本金，
+ --     每笔投资金额=商品数量*该产品每份金额)，注意投资金额按类型需要查询不同的表，
+ --     投资总金额是客户购买的各类资产(理财,保险,基金)投资金额的总和，总金额命名为total_amount。
+ --     查询结果按总金额降序排序。
+ -- 请用一条SQL语句实现该查询：
+SELECT c_name,c_id_card,coalesce(SUM(final.amount_pif),0) total_amount
+FROM client C1
+LEFT OUTER JOIN
+((SELECT C2.c_id c_id_p,SUM(pro_quantity*p_amount) amount_p
+ FROM client C2,finances_product,property
+ WHERE pro_c_id=C2.c_id AND p_id=pro_pif_id AND pro_type=1
+ GROUP BY c_id_p)
+ UNION ALL
+(SELECT C3.c_id c_id_i,SUM(pro_quantity*i_amount) amount_i
+ FROM client C3,insurance,property
+ WHERE pro_c_id=C3.c_id AND i_id=pro_pif_id AND pro_type=2
+ GROUP BY c_id_i)
+ UNION ALL
+(SELECT C4.c_id c_id_f,SUM(pro_quantity*f_amount) amount_f
+ FROM client C4,fund,property
+ WHERE pro_c_id=C4.c_id AND f_id=pro_pif_id AND pro_type=3
+ GROUP BY c_id_f)) AS final(c_id_pif,amount_pif)
+ON(C1.c_id=final.c_id_pif)
+GROUP BY C1.c_id
+ORDER BY total_amount DESC;
+/*  end  of  your code  */ 
+</code></pre>
+<h3 id="313-客户总资产">3.13 客户总资产</h3>
+<p>请用一条SQL语句完成以下查询任务：<br>
+综合客户表(client)、资产表(property)、理财产品表(finances_product)、保险表(insurance)、基金表(fund)，列出所有客户的编号、名称和总资产，总资产命名为total_property。总资产为储蓄卡总余额，投资总额，投资总收益的和，再扣除信用卡透支的总金额(信用卡余额即为透支金额)。客户总资产包括被冻结的资产。</p>
+<pre><code class="language-mysql">-- 13) 综合客户表(client)、资产表(property)、理财产品表(finances_product)、
+--     保险表(insurance)、基金表(fund)和投资资产表(property)，
+--     列出所有客户的编号、名称和总资产，总资产命名为total_property。
+--     总资产为储蓄卡余额，投资总额，投资总收益的和，再扣除信用卡透支的金额
+--     (信用卡余额即为透支金额)。客户总资产包括被冻结的资产。
+--    请用一条SQL语句实现该查询：
+SELECT C0.c_id,C0.c_name,coalesce(debit_balance+total_amount+total_income-credit_balance,0) total_property
+FROM client C0,
+(
+    SELECT c_id,coalesce(SUM(final.amount_pif),0) total_amount
+    FROM client C1
+    LEFT OUTER JOIN
+    ((SELECT C2.c_id c_id_p,SUM(pro_quantity*p_amount) amount_p
+    FROM client C2,finances_product,property
+    WHERE pro_c_id=C2.c_id AND p_id=pro_pif_id AND pro_type=1
+    GROUP BY c_id_p)
+    UNION ALL
+    (SELECT C3.c_id c_id_i,SUM(pro_quantity*i_amount) amount_i
+    FROM client C3,insurance,property
+    WHERE pro_c_id=C3.c_id AND i_id=pro_pif_id AND pro_type=2
+    GROUP BY c_id_i)
+    UNION ALL
+    (SELECT C4.c_id c_id_f,SUM(pro_quantity*f_amount) amount_f
+    FROM client C4,fund,property
+    WHERE pro_c_id=C4.c_id AND f_id=pro_pif_id AND pro_type=3
+    GROUP BY c_id_f)) AS final(c_id_pif,amount_pif)
+    ON(C1.c_id=final.c_id_pif)
+    GROUP BY C1.c_id
+) AS Amount(c_id,total_amount),
+(
+    SELECT c_id,coalesce(SUM(b_balance),0) debit_balance
+    FROM client LEFT OUTER JOIN
+    (
+        SELECT b_c_id,b_balance
+        FROM bank_card
+        WHERE b_type='储蓄卡'
+    ) AS balance0(b_c_id,b_balance)
+    ON(c_id=b_c_id)
+    GROUP BY c_id
+) AS Debit(c_id,debit_balance),
+(
+    SELECT c_id,coalesce(SUM(b_balance),0) credit_balance
+    FROM client LEFT OUTER JOIN
+    (
+        SELECT b_c_id,b_balance
+        FROM bank_card
+        WHERE b_type='信用卡'
+    ) AS balance1(b_c_id,b_balance)
+    ON(c_id=b_c_id)
+    GROUP BY c_id
+) AS Credit(c_id,credit_balance),
+(
+    SELECT c_id,coalesce(SUM(pro_income),0) total_income
+    FROM client LEFT OUTER JOIN property ON(c_id=pro_c_id)
+    GROUP BY c_id
+) AS Income(c_id,total_income)
+WHERE C0.c_id=Amount.c_id AND C0.c_id=Debit.c_id AND C0.c_id=Credit.c_id AND C0.c_id=Income.c_id
+ORDER BY c_id
+/*  end  of  your code  */ 
+</code></pre>
+<h3 id="314-第n高问题">3.14 第N高问题</h3>
+<p>请用一条SQL语句实现本询要求： 查询每份保险金额第4高保险产品的编号和保险金额。在数字序列8000,8000,7000,7000,6000中，两个8000均为第1高，两个7000均为第2高,6000为第3高。</p>
+<pre><code class="language-mysql">-- 14) 查询每份保险金额第4高保险产品的编号和保险金额。
+--     在数字序列8000,8000,7000,7000,6000中，
+--     两个8000均为第1高，两个7000均为第2高,6000为第3高。
+-- 请用一条SQL语句实现该查询：
+SELECT i_id,i_amount
+FROM insurance
+WHERE i_amount = (
+    SELECT DISTINCT i_amount
+    FROM insurance
+    ORDER BY i_amount DESC
+    LIMIT 1 OFFSET 3
+)
+ORDER BY i_id;
+/*  end  of  your code  */ 
+</code></pre>
+<h3 id="315-基金收益两种方式排名">3.15 基金收益两种方式排名</h3>
+<p><strong>排名问题：</strong><br>
+排名是数据库应用中的一类经典问题，实际又根据具体需求细分为3种场景：</p>
+<ul>
+<li>连续排名，同数不同名次，无并列名次。例如300、200、200、150、150、100的排名结果为1, 2, 3, 4, 5, 6。这种排名类似于编号；</li>
+<li>同数同名次，总排名不连续。例如300、200、200、150、150、100的排名结果为1, 2, 2, 4, 4, 6；</li>
+<li>同数同名次，总排名连续。例如300、200、200、150、150、100的排名结果为1, 2, 2, 3, 3, 4。</li>
+</ul>
+<p>不同的需求对应着不同的查询策略。本关的任务是实现后两种方式的排名。</p>
+<p><strong>编程要求：</strong><br>
+请分别用两条SQL语句实现下述两个任务： 查询资产表中客户编号，客户基金投资总收益,基金投资总收益的排名(从高到低排名)。总收益相同时名次亦相同(即并列名次)。总收益命名为total_revenue, 名次命名为rank。第一条SQL语句实现全局名次不连续的排名，第二条SQL语句实现全局名次连续的排名。不管哪种方式排名，收益相同时,客户编号小的排在前</p>
+<pre><code class="language-mysql">-- 15) 查询资产表中客户编号，客户基金投资总收益,基金投资总收益的排名(从高到低排名)。
+--     总收益相同时名次亦相同(即并列名次)。总收益命名为total_revenue, 名次命名为rank。
+--     第一条SQL语句实现全局名次不连续的排名，
+--     第二条SQL语句实现全局名次连续的排名。
+
+-- (1) 基金总收益排名(名次不连续)
+SELECT pro_c_id,total_revenue,rank0 AS 'rank'
+FROM(
+    SELECT pro_c_id,total_revenue,if(total_revenue=@income,@curRank,@curRank:=@num) AS rank0,@income:=total_revenue,@num:=@num+1
+    FROM (
+        SELECT pro_c_id,SUM(pro_income) total_revenue
+        FROM property
+        WHERE pro_type=3
+        GROUP BY pro_c_id
+        ORDER BY total_revenue DESC,pro_c_id
+    ) AS Income,(SELECT @curRank:=0,@income:=NULL,@num:=1) r
+) AS r1;
+-- (2) 基金总收益排名(名次连续)
+SELECT pro_c_id,total_revenue,rank0 AS 'rank'
+FROM(
+    SELECT pro_c_id,total_revenue,if(total_revenue=@income,@curRank,@curRank:=@curRank+1) AS rank0,@income:=total_revenue
+    FROM (
+        SELECT pro_c_id,SUM(pro_income) total_revenue
+        FROM property
+        WHERE pro_type=3
+        GROUP BY pro_c_id
+        ORDER BY total_revenue DESC,pro_c_id
+    ) AS Income,(SELECT @curRank:=0,@income:=NULL) r
+) AS r1;
+/*  end  of  your code  */
+</code></pre>
+<h3 id="316-持有完全相同基金组合的客户">3.16 持有完全相同基金组合的客户</h3>
+<p>请用一条SQL语句实现查询任务： 查询持有相同基金组合的客户对，如编号为A的客户持有的基金，编号为B的客户也持有，反过来，编号为B的客户持有的基金，编号为A的客户也持有，则(A,B)即为持有相同基金组合的二元组，请列出这样的客户对。为避免过多的重复，如果(1,2)为满足条件的元组，则不必显示(2,1)，即只显示 编号小者在前的那一对，这一组客户编号分别命名为c_id1,c_id2</p>
+<pre><code class="language-mysql">-- 16) 查询持有相同基金组合的客户对，如编号为A的客户持有的基金，编号为B的客户也持有，反过来，编号为B的客户持有的基金，编号为A的客户也持有，则(A,B)即为持有相同基金组合的二元组，请列出这样的客户对。为避免过多的重复，如果(1,2)为满足条件的元组，则不必显示(2,1)，即只显示编号小者在前的那一对，这一组客户编号分别命名为c_id1,c_id2。
+
+-- 请用一条SQL语句实现该查询：
+SELECT c_id1,c_id2
+FROM (
+    SELECT pro_c_id,GROUP_CONCAT(
+        pro_pif_id
+        ORDER BY pro_pif_id
+        SEPARATOR ' ') as pifset
+    FROM property
+    WHERE pro_type=3
+    GROUP BY pro_c_id
+) AS c1(c_id1,pifset1),
+(
+    SELECT pro_c_id,GROUP_CONCAT(
+        pro_pif_id
+        ORDER BY pro_pif_id
+        SEPARATOR ' ') as pifset
+    FROM property
+    WHERE pro_type=3
+    GROUP BY pro_c_id
+)AS c2(c_id2,pifset2)
+WHERE pifset1=pifset2 AND c_id1&lt;c_id2;
+/*  end  of  your code  */
+</code></pre>
+<h3 id="317-购买基金的高峰期">3.17 购买基金的高峰期</h3>
+<p>请用一条SQL语句实现查询任务： 查询2022年2月购买基金的高峰期。至少连续三个交易日，所有投资者购买基金的总金额超过100万(含)，则称这段连续交易日为投资者购买基金的高峰期。只有交易日才能购买基金,但不能保证每个交易日都有投资者购买基金。2022年春节假期之后的第1个交易日为2月7日,周六和周日是非交易日，其余均为交易日。请列出高峰时段的日期和当日基金的总购买金额，按日期顺序排序。总购买金额命名为total_amount。</p>
+<p>（<s>破防！切身感受到了课上讲的和实际要你做的之间的天壤之别</s>）</p>
+<pre><code class="language-mysql">-- 17 查询2022年2月购买基金的高峰期。至少连续三个交易日，所有投资者购买基金的总金额超过100万(含)，则称这段连续交易日为投资者购买基金的高峰期。只有交易日才能购买基金,但不能保证每个交易日都有投资者购买基金。2022年春节假期之后的第1个交易日为2月7日,周六和周日是非交易日，其余均为交易日。请列出高峰时段的日期和当日基金的总购买金额，按日期顺序排序。总购买金额命名为total_amount。
+--    请用一条SQL语句实现该查询：
+/*交易日:2.7-2.11,2.14-2.18,2.21-2.25,2.28共16天*/
+/*遍历全部3个连续交易日,需要遍历14次*/
+SELECT pro_purchase_time,total_amount
+FROM(
+    SELECT pro_purchase_time,SUM(pro_quantity*f_amount) total_amount
+    FROM property,fund
+    WHERE pro_type=3 AND pro_pif_id=f_id AND
+    pro_purchase_time&gt;='2022-02-07' AND pro_purchase_time&lt;='2022-02-28'
+    GROUP BY pro_purchase_time
+    ORDER BY pro_purchase_time
+    LIMIT 3 OFFSET 0
+) AS amount0(pro_purchase_time,total_amount)
+WHERE 3 IN (SELECT `rank` FROM(
+    SELECT pro_purchase_time,total_amount,@curRank0:=@curRank0+1 AS `rank`
+    FROM(
+        SELECT pro_purchase_time,SUM(pro_quantity*f_amount) total_amount
+        FROM property,fund
+        WHERE pro_type=3 AND pro_pif_id=f_id AND
+        pro_purchase_time&gt;='2022-02-07' AND pro_purchase_time&lt;='2022-02-28'
+        GROUP BY pro_purchase_time
+        ORDER BY pro_purchase_time
+        LIMIT 3 OFFSET 0
+    ) AS amount(pro_purchase_time,total_amount),(SELECT @curRank0:=0) AS r
+    WHERE total_amount&gt;=1000000
+) AS amount1(pro_purchase_time,total_amount,`rank`))
+
+UNION
+
+SELECT pro_purchase_time,total_amount
+FROM(
+    SELECT pro_purchase_time,SUM(pro_quantity*f_amount) total_amount
+    FROM property,fund
+    WHERE pro_type=3 AND pro_pif_id=f_id AND
+    pro_purchase_time&gt;='2022-02-07' AND pro_purchase_time&lt;='2022-02-28'
+    GROUP BY pro_purchase_time
+    ORDER BY pro_purchase_time
+    LIMIT 3 OFFSET 1
+) AS amount0(pro_purchase_time,total_amount)
+WHERE 3 IN (SELECT `rank` FROM(
+    SELECT pro_purchase_time,total_amount,@curRank1:=@curRank1+1 AS `rank`
+    FROM(
+        SELECT pro_purchase_time,SUM(pro_quantity*f_amount) total_amount
+        FROM property,fund
+        WHERE pro_type=3 AND pro_pif_id=f_id AND
+        pro_purchase_time&gt;='2022-02-07' AND pro_purchase_time&lt;='2022-02-28'
+        GROUP BY pro_purchase_time
+        ORDER BY pro_purchase_time
+        LIMIT 3 OFFSET 1
+    ) AS amount(pro_purchase_time,total_amount),(SELECT @curRank1:=0) AS r
+    WHERE total_amount&gt;=1000000
+) AS amount1(pro_purchase_time,total_amount,`rank`))
+
+UNION
+
+SELECT pro_purchase_time,total_amount
+FROM(
+    SELECT pro_purchase_time,SUM(pro_quantity*f_amount) total_amount
+    FROM property,fund
+    WHERE pro_type=3 AND pro_pif_id=f_id AND
+    pro_purchase_time&gt;='2022-02-07' AND pro_purchase_time&lt;='2022-02-28'
+    GROUP BY pro_purchase_time
+    ORDER BY pro_purchase_time
+    LIMIT 3 OFFSET 2
+) AS amount0(pro_purchase_time,total_amount)
+WHERE 3 IN (SELECT `rank` FROM(
+    SELECT pro_purchase_time,total_amount,@curRank2:=@curRank2+1 AS `rank`
+    FROM(
+        SELECT pro_purchase_time,SUM(pro_quantity*f_amount) total_amount
+        FROM property,fund
+        WHERE pro_type=3 AND pro_pif_id=f_id AND
+        pro_purchase_time&gt;='2022-02-07' AND pro_purchase_time&lt;='2022-02-28'
+        GROUP BY pro_purchase_time
+        ORDER BY pro_purchase_time
+        LIMIT 3 OFFSET 2
+    ) AS amount(pro_purchase_time,total_amount),(SELECT @curRank2:=0) AS r
+    WHERE total_amount&gt;=1000000
+) AS amount1(pro_purchase_time,total_amount,`rank`))
+
+UNION
+
+SELECT pro_purchase_time,total_amount
+FROM(
+    SELECT pro_purchase_time,SUM(pro_quantity*f_amount) total_amount
+    FROM property,fund
+    WHERE pro_type=3 AND pro_pif_id=f_id AND
+    pro_purchase_time&gt;='2022-02-07' AND pro_purchase_time&lt;='2022-02-28'
+    GROUP BY pro_purchase_time
+    ORDER BY pro_purchase_time
+    LIMIT 3 OFFSET 3
+) AS amount0(pro_purchase_time,total_amount)
+WHERE 3 IN (SELECT `rank` FROM(
+    SELECT pro_purchase_time,total_amount,@curRank3:=@curRank3+1 AS `rank`
+    FROM(
+        SELECT pro_purchase_time,SUM(pro_quantity*f_amount) total_amount
+        FROM property,fund
+        WHERE pro_type=3 AND pro_pif_id=f_id AND
+        pro_purchase_time&gt;='2022-02-07' AND pro_purchase_time&lt;='2022-02-28'
+        GROUP BY pro_purchase_time
+        ORDER BY pro_purchase_time
+        LIMIT 3 OFFSET 3
+    ) AS amount(pro_purchase_time,total_amount),(SELECT @curRank3:=0) AS r
+    WHERE total_amount&gt;=1000000
+) AS amount1(pro_purchase_time,total_amount,`rank`))
+
+UNION
+
+SELECT pro_purchase_time,total_amount
+FROM(
+    SELECT pro_purchase_time,SUM(pro_quantity*f_amount) total_amount
+    FROM property,fund
+    WHERE pro_type=3 AND pro_pif_id=f_id AND
+    pro_purchase_time&gt;='2022-02-07' AND pro_purchase_time&lt;='2022-02-28'
+    GROUP BY pro_purchase_time
+    ORDER BY pro_purchase_time
+    LIMIT 3 OFFSET 4
+) AS amount0(pro_purchase_time,total_amount)
+WHERE 3 IN (SELECT `rank` FROM(
+    SELECT pro_purchase_time,total_amount,@curRank4:=@curRank4+1 AS `rank`
+    FROM(
+        SELECT pro_purchase_time,SUM(pro_quantity*f_amount) total_amount
+        FROM property,fund
+        WHERE pro_type=3 AND pro_pif_id=f_id AND
+        pro_purchase_time&gt;='2022-02-07' AND pro_purchase_time&lt;='2022-02-28'
+        GROUP BY pro_purchase_time
+        ORDER BY pro_purchase_time
+        LIMIT 3 OFFSET 4
+    ) AS amount(pro_purchase_time,total_amount),(SELECT @curRank4:=0) AS r
+    WHERE total_amount&gt;=1000000
+) AS amount1(pro_purchase_time,total_amount,`rank`))
+
+UNION
+
+SELECT pro_purchase_time,total_amount
+FROM(
+    SELECT pro_purchase_time,SUM(pro_quantity*f_amount) total_amount
+    FROM property,fund
+    WHERE pro_type=3 AND pro_pif_id=f_id AND
+    pro_purchase_time&gt;='2022-02-07' AND pro_purchase_time&lt;='2022-02-28'
+    GROUP BY pro_purchase_time
+    ORDER BY pro_purchase_time
+    LIMIT 3 OFFSET 5
+) AS amount0(pro_purchase_time,total_amount)
+WHERE 3 IN (SELECT `rank` FROM(
+    SELECT pro_purchase_time,total_amount,@curRank5:=@curRank5+1 AS `rank`
+    FROM(
+        SELECT pro_purchase_time,SUM(pro_quantity*f_amount) total_amount
+        FROM property,fund
+        WHERE pro_type=3 AND pro_pif_id=f_id AND
+        pro_purchase_time&gt;='2022-02-07' AND pro_purchase_time&lt;='2022-02-28'
+        GROUP BY pro_purchase_time
+        ORDER BY pro_purchase_time
+        LIMIT 3 OFFSET 5
+    ) AS amount(pro_purchase_time,total_amount),(SELECT @curRank5:=0) AS r
+    WHERE total_amount&gt;=1000000
+) AS amount1(pro_purchase_time,total_amount,`rank`))
+
+UNION
+
+SELECT pro_purchase_time,total_amount
+FROM(
+    SELECT pro_purchase_time,SUM(pro_quantity*f_amount) total_amount
+    FROM property,fund
+    WHERE pro_type=3 AND pro_pif_id=f_id AND
+    pro_purchase_time&gt;='2022-02-07' AND pro_purchase_time&lt;='2022-02-28'
+    GROUP BY pro_purchase_time
+    ORDER BY pro_purchase_time
+    LIMIT 3 OFFSET 6
+) AS amount0(pro_purchase_time,total_amount)
+WHERE 3 IN (SELECT `rank` FROM(
+    SELECT pro_purchase_time,total_amount,@curRank6:=@curRank6+1 AS `rank`
+    FROM(
+        SELECT pro_purchase_time,SUM(pro_quantity*f_amount) total_amount
+        FROM property,fund
+        WHERE pro_type=3 AND pro_pif_id=f_id AND
+        pro_purchase_time&gt;='2022-02-07' AND pro_purchase_time&lt;='2022-02-28'
+        GROUP BY pro_purchase_time
+        ORDER BY pro_purchase_time
+        LIMIT 3 OFFSET 6
+    ) AS amount(pro_purchase_time,total_amount),(SELECT @curRank6:=0) AS r
+    WHERE total_amount&gt;=1000000
+) AS amount1(pro_purchase_time,total_amount,`rank`))
+
+UNION
+
+SELECT pro_purchase_time,total_amount
+FROM(
+    SELECT pro_purchase_time,SUM(pro_quantity*f_amount) total_amount
+    FROM property,fund
+    WHERE pro_type=3 AND pro_pif_id=f_id AND
+    pro_purchase_time&gt;='2022-02-07' AND pro_purchase_time&lt;='2022-02-28'
+    GROUP BY pro_purchase_time
+    ORDER BY pro_purchase_time
+    LIMIT 3 OFFSET 7
+) AS amount0(pro_purchase_time,total_amount)
+WHERE 3 IN (SELECT `rank` FROM(
+    SELECT pro_purchase_time,total_amount,@curRank7:=@curRank7+1 AS `rank`
+    FROM(
+        SELECT pro_purchase_time,SUM(pro_quantity*f_amount) total_amount
+        FROM property,fund
+        WHERE pro_type=3 AND pro_pif_id=f_id AND
+        pro_purchase_time&gt;='2022-02-07' AND pro_purchase_time&lt;='2022-02-28'
+        GROUP BY pro_purchase_time
+        ORDER BY pro_purchase_time
+        LIMIT 3 OFFSET 7
+    ) AS amount(pro_purchase_time,total_amount),(SELECT @curRank7:=0) AS r
+    WHERE total_amount&gt;=1000000
+) AS amount1(pro_purchase_time,total_amount,`rank`))
+
+UNION
+
+SELECT pro_purchase_time,total_amount
+FROM(
+    SELECT pro_purchase_time,SUM(pro_quantity*f_amount) total_amount
+    FROM property,fund
+    WHERE pro_type=3 AND pro_pif_id=f_id AND
+    pro_purchase_time&gt;='2022-02-07' AND pro_purchase_time&lt;='2022-02-28'
+    GROUP BY pro_purchase_time
+    ORDER BY pro_purchase_time
+    LIMIT 3 OFFSET 8
+) AS amount0(pro_purchase_time,total_amount)
+WHERE 3 IN (SELECT `rank` FROM(
+    SELECT pro_purchase_time,total_amount,@curRank8:=@curRank8+1 AS `rank`
+    FROM(
+        SELECT pro_purchase_time,SUM(pro_quantity*f_amount) total_amount
+        FROM property,fund
+        WHERE pro_type=3 AND pro_pif_id=f_id AND
+        pro_purchase_time&gt;='2022-02-07' AND pro_purchase_time&lt;='2022-02-28'
+        GROUP BY pro_purchase_time
+        ORDER BY pro_purchase_time
+        LIMIT 3 OFFSET 8
+    ) AS amount(pro_purchase_time,total_amount),(SELECT @curRank8:=0) AS r
+    WHERE total_amount&gt;=1000000
+) AS amount1(pro_purchase_time,total_amount,`rank`))
+
+UNION
+
+SELECT pro_purchase_time,total_amount
+FROM(
+    SELECT pro_purchase_time,SUM(pro_quantity*f_amount) total_amount
+    FROM property,fund
+    WHERE pro_type=3 AND pro_pif_id=f_id AND
+    pro_purchase_time&gt;='2022-02-07' AND pro_purchase_time&lt;='2022-02-28'
+    GROUP BY pro_purchase_time
+    ORDER BY pro_purchase_time
+    LIMIT 3 OFFSET 9
+) AS amount0(pro_purchase_time,total_amount)
+WHERE 3 IN (SELECT `rank` FROM(
+    SELECT pro_purchase_time,total_amount,@curRank9:=@curRank9+1 AS `rank`
+    FROM(
+        SELECT pro_purchase_time,SUM(pro_quantity*f_amount) total_amount
+        FROM property,fund
+        WHERE pro_type=3 AND pro_pif_id=f_id AND
+        pro_purchase_time&gt;='2022-02-07' AND pro_purchase_time&lt;='2022-02-28'
+        GROUP BY pro_purchase_time
+        ORDER BY pro_purchase_time
+        LIMIT 3 OFFSET 9
+    ) AS amount(pro_purchase_time,total_amount),(SELECT @curRank9:=0) AS r
+    WHERE total_amount&gt;=1000000
+) AS amount1(pro_purchase_time,total_amount,`rank`))
+
+UNION
+
+SELECT pro_purchase_time,total_amount
+FROM(
+    SELECT pro_purchase_time,SUM(pro_quantity*f_amount) total_amount
+    FROM property,fund
+    WHERE pro_type=3 AND pro_pif_id=f_id AND
+    pro_purchase_time&gt;='2022-02-07' AND pro_purchase_time&lt;='2022-02-28'
+    GROUP BY pro_purchase_time
+    ORDER BY pro_purchase_time
+    LIMIT 3 OFFSET 10
+) AS amount0(pro_purchase_time,total_amount)
+WHERE 3 IN (SELECT `rank` FROM(
+    SELECT pro_purchase_time,total_amount,@curRank10:=@curRank10+1 AS `rank`
+    FROM(
+        SELECT pro_purchase_time,SUM(pro_quantity*f_amount) total_amount
+        FROM property,fund
+        WHERE pro_type=3 AND pro_pif_id=f_id AND
+        pro_purchase_time&gt;='2022-02-07' AND pro_purchase_time&lt;='2022-02-28'
+        GROUP BY pro_purchase_time
+        ORDER BY pro_purchase_time
+        LIMIT 3 OFFSET 10
+    ) AS amount(pro_purchase_time,total_amount),(SELECT @curRank10:=0) AS r
+    WHERE total_amount&gt;=1000000
+) AS amount1(pro_purchase_time,total_amount,`rank`))
+
+UNION
+
+SELECT pro_purchase_time,total_amount
+FROM(
+    SELECT pro_purchase_time,SUM(pro_quantity*f_amount) total_amount
+    FROM property,fund
+    WHERE pro_type=3 AND pro_pif_id=f_id AND
+    pro_purchase_time&gt;='2022-02-07' AND pro_purchase_time&lt;='2022-02-28'
+    GROUP BY pro_purchase_time
+    ORDER BY pro_purchase_time
+    LIMIT 3 OFFSET 11
+) AS amount0(pro_purchase_time,total_amount)
+WHERE 3 IN (SELECT `rank` FROM(
+    SELECT pro_purchase_time,total_amount,@curRank11:=@curRank11+1 AS `rank`
+    FROM(
+        SELECT pro_purchase_time,SUM(pro_quantity*f_amount) total_amount
+        FROM property,fund
+        WHERE pro_type=3 AND pro_pif_id=f_id AND
+        pro_purchase_time&gt;='2022-02-07' AND pro_purchase_time&lt;='2022-02-28'
+        GROUP BY pro_purchase_time
+        ORDER BY pro_purchase_time
+        LIMIT 3 OFFSET 11
+    ) AS amount(pro_purchase_time,total_amount),(SELECT @curRank11:=0) AS r
+    WHERE total_amount&gt;=1000000
+) AS amount1(pro_purchase_time,total_amount,`rank`))
+
+UNION
+
+SELECT pro_purchase_time,total_amount
+FROM(
+    SELECT pro_purchase_time,SUM(pro_quantity*f_amount) total_amount
+    FROM property,fund
+    WHERE pro_type=3 AND pro_pif_id=f_id AND
+    pro_purchase_time&gt;='2022-02-07' AND pro_purchase_time&lt;='2022-02-28'
+    GROUP BY pro_purchase_time
+    ORDER BY pro_purchase_time
+    LIMIT 3 OFFSET 12
+) AS amount0(pro_purchase_time,total_amount)
+WHERE 3 IN (SELECT `rank` FROM(
+    SELECT pro_purchase_time,total_amount,@curRank12:=@curRank12+1 AS `rank`
+    FROM(
+        SELECT pro_purchase_time,SUM(pro_quantity*f_amount) total_amount
+        FROM property,fund
+        WHERE pro_type=3 AND pro_pif_id=f_id AND
+        pro_purchase_time&gt;='2022-02-07' AND pro_purchase_time&lt;='2022-02-28'
+        GROUP BY pro_purchase_time
+        ORDER BY pro_purchase_time
+        LIMIT 3 OFFSET 12
+    ) AS amount(pro_purchase_time,total_amount),(SELECT @curRank12:=0) AS r
+    WHERE total_amount&gt;=1000000
+) AS amount1(pro_purchase_time,total_amount,`rank`))
+
+UNION
+
+SELECT pro_purchase_time,total_amount
+FROM(
+    SELECT pro_purchase_time,SUM(pro_quantity*f_amount) total_amount
+    FROM property,fund
+    WHERE pro_type=3 AND pro_pif_id=f_id AND
+    pro_purchase_time&gt;='2022-02-07' AND pro_purchase_time&lt;='2022-02-28'
+    GROUP BY pro_purchase_time
+    ORDER BY pro_purchase_time
+    LIMIT 3 OFFSET 13
+) AS amount0(pro_purchase_time,total_amount)
+WHERE 3 IN (SELECT `rank` FROM(
+    SELECT pro_purchase_time,total_amount,@curRank13:=@curRank13+1 AS `rank`
+    FROM(
+        SELECT pro_purchase_time,SUM(pro_quantity*f_amount) total_amount
+        FROM property,fund
+        WHERE pro_type=3 AND pro_pif_id=f_id AND
+        pro_purchase_time&gt;='2022-02-07' AND pro_purchase_time&lt;='2022-02-28'
+        GROUP BY pro_purchase_time
+        ORDER BY pro_purchase_time
+        LIMIT 3 OFFSET 13
+    ) AS amount(pro_purchase_time,total_amount),(SELECT @curRank13:=0) AS r
+    WHERE total_amount&gt;=1000000
+) AS amount1(pro_purchase_time,total_amount,`rank`))
+/*  end  of  your code  */
+</code></pre>
+<h3 id="318-至少有一张信用卡余额超过5000元的客户信息">3.18 至少有一张信用卡余额超过5000元的客户信息</h3>
+<p>请用一条SQL语句实现以下查询要求：<br>
+查询至少有一张信用卡余额超过5000元的客户编号，以及该客户持有的信用卡总余额，总余额命名为credit_card_amount。查询结果依客户编号排序。</p>
+<p>（<s>第17关快把人整死，第18关就这？</s>）</p>
+<pre><code class="language-mysql"> -- 18) 查询至少有一张信用卡余额超过5000元的客户编号，以及该客户持有的信用卡总余额，总余额命名为credit_card_amount。
+--    请用一条SQL语句实现该查询：
+SELECT A.b_c_id,SUM(b_balance) credit_card_amount
+FROM bank_card A
+WHERE b_type='信用卡' AND EXISTS(
+    SELECT *
+    FROM bank_card B
+    WHERE A.b_c_id=B.b_c_id AND b_type='信用卡' AND b_balance&gt;5000
+)
+GROUP BY A.b_c_id
+ORDER BY A.b_c_id;
+/*  end  of  your code  */
+</code></pre>
+<h3 id="319-以日历表格式显示每日基金购买总金额">3.19 以日历表格式显示每日基金购买总金额</h3>
+<p>请用一条SQL语句完成以下查询任务： 以日历表格式列出2022年2月每周每个交易日基金购买总金额，输出格式如下：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">week_of_trading</th>
+<th style="text-align:center">Monday</th>
+<th style="text-align:center">Tuesday</th>
+<th style="text-align:center">Wednesday</th>
+<th style="text-align:center">Thursday</th>
+<th style="text-align:center">Friday</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">1</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center">2</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center">3</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center">4</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+</tr>
+</tbody>
+</table>
+<p>列表中第1列为周次，2022年2月7日(星期一)为当月的第1个交易日，这一周记为第1周次。注意显示结果并不需要画表格线，只需按这个格式输出结果即可了。</p>
+<pre><code class="language-mysql">-- 19) 以日历表格式列出2022年2月每周每日基金购买总金额，输出格式如下：
+-- week_of_trading Monday Tuesday Wednesday Thursday Friday
+--               1
+--               2    
+--               3
+--               4
+--   请用一条SQL语句实现该查询：
+SELECT week_of_trading,
+    SUM(if(wd=2,total_amount,NULL)) Monday,
+    SUM(if(wd=3,total_amount,NULL)) Tuesday,
+    SUM(if(wd=4,total_amount,NULL)) Wednesday,
+    SUM(if(wd=5,total_amount,NULL)) Thursday,
+    SUM(if(wd=6,total_amount,NULL)) Friday
+FROM(
+        SELECT week(pro_purchase_time)-5 week_of_trading,dayofweek(pro_purchase_time) wd,total_amount
+    FROM(
+        SELECT pro_purchase_time,SUM(pro_quantity*f_amount) total_amount
+        FROM property,fund
+        WHERE pro_type=3 AND pro_pif_id=f_id AND
+        pro_purchase_time&gt;='2022-02-07' AND pro_purchase_time&lt;='2022-02-28'
+        GROUP BY pro_purchase_time
+        ORDER BY pro_purchase_time
+    ) R1(pro_purchase_time,total_amount)
+) R2(week_of_trading,wd,total_amount)
+GROUP BY week_of_trading;
+/*  end  of  your code  */
+</code></pre>
+<h2 id="四-实训4-数据查询select之二">四、实训4 数据查询(Select)之二</h2>
+<h3 id="41-查询销售总额前三的理财产品">4.1 查询销售总额前三的理财产品</h3>
+<p>请用一条SQL语句完成以下查询任务：<br>
+查询2010年和2011年这两年每年销售总额前3名（如果有并列排名，则后续排名号跳过之前的并列排名个数，例如1、1、3）的统计年份（pyear）、销售总额排名值(rk)、理财产品编号(p_id)、销售总额(sumamount)。<br>
+注意结果输出要求：(1)按照年份升序排列，同一年份按照销售总额的排名值升序排列，如遇到并列排名则按照理财产品编号升序排列;(2)属性显示：统计年份（pyear）、销售总额排名值(rk)、理财产品编号(p_id)、销售总额(sumamount)（3）结果显示顺序：先按照统计年份（pyear）升序排,同一年份按照销售总额排名值（rk）升序排,同一排名值的按照理财产品编号（p_id ）升序排。</p>
+<pre><code class="language-mysql"> -- 1) 查询销售总额前三的理财产品
+--   请用一条SQL语句实现该查询：
+SELECT pyear,rk,p_id,sumamount
+FROM(
+    SELECT pyear,rank()over(partition by pyear order by sumamount DESC) AS rk,p_id,sumamount
+    FROM(
+        SELECT p_id,SUM(pro_quantity*p_amount) sumamount,2010 pyear
+        FROM property,finances_product
+        WHERE pro_pif_id=p_id AND pro_type=1 AND year(pro_purchase_time)=2010
+        GROUP BY p_id
+        UNION
+        SELECT p_id,SUM(pro_quantity*p_amount) sumamount,2011 pyear
+        FROM property,finances_product
+        WHERE pro_pif_id=p_id AND pro_type=1 AND year(pro_purchase_time)=2011
+        GROUP BY p_id
+    ) AS R1
+) AS R2
+WHERE rk&lt;=3;
+/*  end  of  your code  */
+</code></pre>
+<h3 id="42-投资积极且偏好理财类产品的客户">4.2 投资积极且偏好理财类产品的客户</h3>
+<p>请用一条SQL语句完成以下查询任务：<br>
+购买了3种（同一编号的理财产品记为一种）以上理财产品的客户被认为投资积极的客户，若该客户持有基金产品种类数（同一基金编号记为相同的基金产品种类）小于其持有的理财产品种类数，则认为该客户为投资积极且偏好理财产品的客户。查询所有此类客户的编号(pro_c_id)。 注意结果输出要求：按照客户编号的升序排列，且去除重复结果</p>
+<pre><code class="language-mysql">  -- 2) 投资积极且偏好理财类产品的客户
+--   请用一条SQL语句实现该查询：
+SELECT P.pro_c_id
+FROM(
+  SELECT pro_c_id,COUNT(pro_pif_id) pnum
+  FROM property
+  WHERE pro_type=1
+  GROUP BY pro_c_id
+) P,(
+  SELECT pro_c_id,COUNT(pro_pif_id) fnum
+  FROM property
+  WHERE pro_type=3
+  GROUP BY pro_c_id
+) F
+WHERE P.pro_c_id=F.pro_c_id AND pnum&gt;=3 AND pnum&gt;fnum;
+/*  end  of  your code  */
+</code></pre>
+<h3 id="43-查询购买了所有畅销理财产品的客户">4.3 查询购买了所有畅销理财产品的客户</h3>
+<p>请用一条SQL语句完成以下查询任务：<br>
+若定义持有人数超过2的理财产品称为畅销理财产品。查询购买了所有畅销理财产品的客户编号(pro_c_id)。 注意结果输出要求：按照客户编号的升序排列，且去除重复结果。</p>
+<p>（<s>实训3做出阴影了，感觉实训4都还算简单</s>）</p>
+<pre><code class="language-mysql">   -- 3) 查询购买了所有畅销理财产品的客户
+--   请用一条SQL语句实现该查询：
+SELECT pro_c_id
+FROM property A
+WHERE NOT EXISTS(
+   SELECT *
+   FROM property B
+   WHERE A.pro_c_id=B.pro_c_id AND B.pro_type=1 AND A.pro_pif_id NOT IN(
+      SELECT pro_pif_id
+      FROM property
+      WHERE pro_type=1
+      GROUP BY pro_pif_id
+      HAVING COUNT(pro_c_id)&gt;2
+   )
+) AND pro_type=1
+GROUP BY pro_c_id
+HAVING COUNT(pro_pif_id)=(SELECT COUNT(*) FROM(
+   SELECT pro_pif_id
+   FROM property
+   WHERE pro_type=1
+   GROUP BY pro_pif_id
+   HAVING COUNT(pro_c_id)&gt;2
+) AS R1)
+ORDER BY pro_c_id;
+/*  end  of  your code  */
+</code></pre>
+<h3 id="44-查找相似的理财产品">4.4 查找相似的理财产品</h3>
+<p>请用一条SQL语句完成以下查询任务：  在某些推荐方法中，需要查找某款理财产品相似的其他理财产品，不妨设其定义为：对于某款理财产品A，可找到持有A数量最多的“3”个（包括所有持有相同数量的客户，因此如有3个并列第一、1个第二、一个第三，则排列结果是1,1,1,2,3）客户，然后对于这“3”个客户持有的所有理财产品（不包含产品A自身），每款产品被全体客户持有总人数被认为是和产品A的相似度，若有相似度相同的理财产品，则为了便于后续处理的确定性，则这些相似度相同的理财产品间按照产品编号的升序排列。按照和产品A的相似度，最多的“3”款（同上理，前3名允许并列的情况，例如排列结果是1,2,2,2,3）理财产品，就是产品A的相似的理财产品。 请查找产品14的相似理财产品编号（不包含14自身）（pro_pif_id）、该编号的理财产品的客购买客户总人数（cc）以及该理财产品对于14 号理财产品的相似度排名值（prank）。 注意结果输出要求：按照相似度值降序排列，相同相似度的理财产品之间则按照产品编号的升序排列。</p>
+<pre><code class="language-mysql">    -- 4) 	查找相似的理财产品
+
+--   请用一条SQL语句实现该查询：
+SELECT R2.pro_pif_id,cc,dense_rank() over(ORDER BY cc DESC) AS prank
+FROM(
+    SELECT pro_pif_id
+    FROM property A,(
+        SELECT pro_c_id
+        FROM(
+            SELECT pro_c_id,dense_rank() over(ORDER BY pro_quantity DESC) AS rk
+            FROM property
+            WHERE pro_type=1 AND pro_pif_id=14
+        ) AS R1(pro_c_id,rk)
+        WHERE R1.rk&lt;=3
+    ) R1
+    WHERE R1.pro_c_id=A.pro_c_id AND A.pro_type=1 AND pro_pif_id&lt;&gt;14
+    GROUP BY pro_pif_id
+) AS R2,(
+    SELECT pro_pif_id,COUNT(pro_c_id) cc
+    FROM property
+    WHERE pro_type=1
+    GROUP BY pro_pif_id
+) AS R3
+WHERE R2.pro_pif_id=R3.pro_pif_id
+ORDER BY cc DESC,pro_pif_id
+/*  end  of  your code  */
+</code></pre>
+<h3 id="45-查询任意两个客户的相同理财产品数">4.5 查询任意两个客户的相同理财产品数</h3>
+<p>请用一条SQL语句完成以下查询任务：<br>
+查询任意两个客户之间持有的相同理财产品种数，并且结果仅保留相同理财产品数至少2种的用户对。  注意结果输出要求：第一列和第二列输出客户编号(pro_c_id,pro_c_id)，第三列输出他们持有的相同理财产品数(total_count)，按照第一列的客户编号的升序排列。</p>
+<pre><code class="language-mysql">-- 5) 查询任意两个客户的相同理财产品数
+--   请用一条SQL语句实现该查询：
+SELECT R1.pro_c_id,R2.pro_c_id,COUNT(*) total_count
+FROM(
+    SELECT pro_c_id,pro_pif_id
+    FROM property
+    WHERE pro_type=1
+) AS R1,(
+    SELECT pro_c_id,pro_pif_id
+    FROM property
+    WHERE pro_type=1
+)AS R2
+WHERE R1.pro_pif_id=R2.pro_pif_id AND R1.pro_c_id&lt;&gt;R2.pro_c_id
+GROUP BY R1.pro_c_id,R2.pro_c_id
+HAVING total_count&gt;=2
+ORDER BY R1.pro_c_id
+/*  end  of  your code  */
+</code></pre>
+<h3 id="46-查找相似的理财客户">4.6 查找相似的理财客户</h3>
+<p>请用一条SQL语句完成以下查询任务：<br>
+在某些推荐方法中，需要查找某位客户在理财行为上相似的其他客户，不妨设其定义为：对于A客户，其购买的理财产品集合为{P}，另所有买过{P}中至少一款产品的其他客户集合为{B}，则{B}中每位用户购买的{P}中产品的数量为他与A客户的相似度值。将{B}中客户按照相似度值降序排列，得到A客户的相同相似度值则按照客户编号升序排列，这样取前两位客户即为A客户的相似理财客户列表。  查询每位客户(列名：pac)的相似度排名值小于3的相似客户(列名：pbc)列表，以及该每位客户和他的每位相似客户的共同持有的理财产品数(列名：common)、相似度排名值(列名：crank)。  注意结果输出要求：要求结果先按照左边客户编号(pac)升序排列，同一个客户的相似客户则按照客户相似度排名值（crank）顺序排列。</p>
+<pre><code class="language-mysql"> -- 6) 查找相似的理财客户
+--   请用一条SQL语句实现该查询：
+SELECT pac,pbc,common,crank
+FROM(
+    SELECT pac,pbc,common,rank() over(partition by pac order by common desc,pbc) as crank
+    FROM(
+        SELECT R1.pro_c_id pac,R2.pro_c_id pbc,COUNT(*) common
+        FROM(
+            SELECT pro_c_id,pro_pif_id
+            FROM property
+            WHERE pro_type=1
+        ) AS R1,(
+            SELECT pro_c_id,pro_pif_id
+            FROM property
+            WHERE pro_type=1
+        )AS R2
+        WHERE R1.pro_pif_id=R2.pro_pif_id AND R1.pro_c_id&lt;&gt;R2.pro_c_id
+        GROUP BY R1.pro_c_id,R2.pro_c_id
+        ORDER BY R1.pro_c_id
+    ) AS R1(pac,pbc,common)
+) AS R2(pac,pbc,common,crank)
+WHERE R2.crank&lt;3
+/*  end  of  your code  */
+</code></pre>
+<h2 id="五-实训5-数据的插入-修改与删除insertupdatedelete">五、实训5 数据的插入、修改与删除(Insert,Update,Delete)</h2>
+<h3 id="51-插入多条完整的客户信息">5.1 插入多条完整的客户信息</h3>
+<p>重温上一实训项目中金融应用场景数据库中的客户表结构：</p>
+<p>表1 client(客户表)</p>
+<table>
+<thead>
+<tr>
+<th>字段名称</th>
+<th>数据类型</th>
+<th>约束</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>c_id</td>
+<td>INTEGER</td>
+<td>PRIMARY KEY</td>
+<td>客户编号</td>
+</tr>
+<tr>
+<td>c_name</td>
+<td>VARCHAR(100)</td>
+<td>NOT NULL</td>
+<td>客户名称</td>
+</tr>
+<tr>
+<td>c_mail</td>
+<td>CHAR(30)</td>
+<td>UNIQUE</td>
+<td>客户邮箱</td>
+</tr>
+<tr>
+<td>c_id_card</td>
+<td>CHAR(20)</td>
+<td>UNIQUE NOT NULL</td>
+<td>客户身份证</td>
+</tr>
+<tr>
+<td>c_phone</td>
+<td>CHAR(20)</td>
+<td>UNIQUE NOT NULL</td>
+<td>客户手机号</td>
+</tr>
+<tr>
+<td>c_password</td>
+<td>CHAR(20)</td>
+<td>NOT NULL</td>
+<td>客户登录密码</td>
+</tr>
+</tbody>
+</table>
+<p>向客户表插入以下3条数据:</p>
+<table>
+<thead>
+<tr>
+<th>c_id</th>
+<th>c_name</th>
+<th>c_mail</th>
+<th>c_id_card</th>
+<th>c_phone</th>
+<th>c_password</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>林惠雯</td>
+<td><a href="mailto:960323053@qq.com">960323053@qq.com</a></td>
+<td>411014196712130323</td>
+<td>15609032348</td>
+<td>Mop5UPkl</td>
+</tr>
+<tr>
+<td>2</td>
+<td>吴婉瑜</td>
+<td><a href="mailto:1613230826@gmail.com">1613230826@gmail.com</a></td>
+<td>420152196802131323</td>
+<td>17605132307</td>
+<td>QUTPhxgVNlXtMxN</td>
+</tr>
+<tr>
+<td>3</td>
+<td>蔡贞仪</td>
+<td><a href="mailto:252323341@foxmail.com">252323341@foxmail.com</a></td>
+<td>160347199005222323</td>
+<td>17763232321</td>
+<td>Bwe3gyhEErJ7</td>
+</tr>
+</tbody>
+</table>
+<p>用一条insert语句，或用三条insert语句完成，都可以。</p>
+<pre><code class="language-mysql">use finance1;
+-- 用insert语句向客户表(client)插入任务要求的3条数据:
+INSERT
+INTO client(c_id,c_name,c_mail,c_id_card,c_phone,c_password)
+VALUES(1,'林惠雯','960323053@qq.com','411014196712130323','15609032348','Mop5UPkl');
+
+INSERT
+INTO client(c_id,c_name,c_mail,c_id_card,c_phone,c_password)
+VALUES(2,'吴婉瑜','1613230826@gmail.com','420152196802131323','17605132307','QUTPhxgVNlXtMxN');
+
+INSERT
+INTO client(c_id,c_name,c_mail,c_id_card,c_phone,c_password)
+VALUES(3,'蔡贞仪','252323341@foxmail.com','160347199005222323','17763232321','Bwe3gyhEErJ7');
+/* end of you code */
+</code></pre>
+<h3 id="52-插入不完整的客户信息">5.2 插入不完整的客户信息</h3>
+<p>已知33号客户部分信息如下:<br>
+c_id(编号):33<br>
+c_name(名称):蔡依婷<br>
+c_phone(电话):18820762130<br>
+c_id_card(身份证号):350972199204227621<br>
+c_password(密码):MKwEuc1sc6<br>
+请用一条SQL语句将这名客户的信息插入到客户表(client)</p>
+<pre><code class="language-mysql">use finance1;
+-- 已知33号客户部分信息如下:
+-- c_id(编号):33
+-- c_name(名称):蔡依婷
+-- c_phone(电话):18820762130
+-- c_id_card(身份证号):350972199204227621
+-- c_password(密码):MKwEuc1sc6
+
+-- 请用一条SQL语句将这名客户的信息插入到客户表(client):
+INSERT
+INTO client(c_id,c_name,c_phone,c_id_card,c_password)
+VALUES(33,'蔡依婷','18820762130','350972199204227621','MKwEuc1sc6');
+/* the end of your code */ 
+</code></pre>
+<h3 id="53-批量插入数据">5.3 批量插入数据</h3>
+<p>已知表new_client保存了一批新客户信息，该表与client表结构完全相同。<br>
+请用一条SQL语句将new_client表的全部客户信息插入到客户表(client)</p>
+<pre><code class="language-mysql"> use finance1;
+ -- 已知表new_client保存了一批新客户信息，该表与client表结构完全相同。请用一条SQL语句将new_client表的全部客户信息插入到客户表(client):
+INSERT
+INTO client
+SELECT * FROM new_client;
+/* the end of your code */
+</code></pre>
+<h3 id="54-删除没有银行卡的客户信息">5.4 删除没有银行卡的客户信息</h3>
+<p>请用一条SQL语句删除client表中没有银行卡的客户信息。 注意：MySQL的delete语句中from关键词不能省略。</p>
+<pre><code class="language-mysql">use finance1;
+-- 请用一条SQL语句删除client表中没有银行卡的客户信息：
+DELETE
+FROM client
+WHERE c_id NOT IN(SELECT b_c_id FROM bank_card);
+/* the end of your code */ 
+</code></pre>
+<h3 id="55-冻结客户资产">5.5 冻结客户资产</h3>
+<p>请用一条update语句将手机号码为“13686431238”这位客户的投资资产(理财、保险与基金)的状态置为“冻结”。</p>
+<pre><code class="language-mysql">use finance1;
+-- 请用一条update语句将手机号码为“13686431238”的这位客户的投资资产(理财、保险与基金)的状态置为“冻结”。：
+UPDATE property
+SET pro_status='冻结'
+WHERE EXISTS(
+    SELECT *
+    FROM client
+    WHERE c_id=pro_c_id AND c_phone='13686431238'
+);
+/* the end of your code */
+</code></pre>
+<h3 id="56-连接更新">5.6 连接更新</h3>
+<p>在金融应用场景数据库中，已在表property(资产表)中添加了客户身份证列，列名为pro_id_card，类型为char(18)，该列目前全部留空(null)。请用一条update语句，根据client表中提供的身份证号(c_id_card)，填写property表中对应的身份证号信息(pro_id_card)</p>
+<pre><code class="language-mysql">use finance1;
+-- 在金融应用场景数据库中，已在表property(资产表)中添加了客户身份证列，列名为pro_id_card，类型为char(18)，该列目前全部留空(null)。
+
+-- 请用一条update语句，根据client表中提供的身份证号(c_id_card)，填写property表中对应的身份证号信息(pro_id_card)。
+UPDATE property
+SET pro_id_card=(
+    SELECT c_id_card
+    FROM client
+    WHERE pro_c_id=c_id
+);
+/* the end of your code */
+</code></pre>
+<h2 id="六-视图">六、视图</h2>
+<h3 id="61-创建所有保险资产的详细记录视图">6.1 创建所有保险资产的详细记录视图</h3>
+<p>根据提示，在右侧代码编辑窗口填写1条SQL语句，完成以下任务： 创建包含所有保险资产记录的详细信息的视图v_insurance_detail，包括购买客户的名称、客户的身份证号、保险名称、保障项目、商品状态、商品数量、保险金额、保险年限、商品收益和购买时间</p>
+<pre><code class="language-mysql">use finance1;
+-- 创建包含所有保险资产记录的详细信息的视图v_insurance_detail，包括购买客户的名称、客户的身份证号、保险名称、保障项目、商品状态、商品数量、保险金额、保险年限、商品收益和购买时间。
+-- 请用1条SQL语句完成上述任务：
+CREATE VIEW v_insurance_detail
+AS
+SELECT c_name,c_id_card,i_name,i_project,pro_status,pro_quantity,i_amount,i_year,pro_income,pro_purchase_time
+FROM client,insurance,property
+WHERE c_id=pro_c_id AND pro_pif_id=i_id AND pro_type=2
+/*   end  of your code  */
+</code></pre>
+<h3 id="62-基于视图的查询">6.2 基于视图的查询</h3>
+<p>基于上一关创建的视图v_insurance_detail进行分组统计查询，列出每位客户的姓名，身份证号，保险投资总额（insurance_total_amount）和保险投资总收益（insurance_total_revenue）,结果依保险投资总额降序排列</p>
+<pre><code class="language-mysql"> -- 基于上一关创建的视图v_insurance_detail进行分组统计查询，列出每位客户的姓名，身份证号，保险投资总额(insurance_total_amount)和保险投资总收益(insurance_total_revenue),结果依保险投资总额降序排列。
+--  请用一条SQL语句实现该查询：
+SELECT c_name,c_id_card,SUM(pro_quantity*i_amount) insurance_total_amount,SUM(pro_income) insurance_total_revenue
+FROM v_insurance_detail
+GROUP BY c_id_card
+ORDER BY insurance_total_amount DESC;
+/*  end  of  your code  */
+</code></pre>
+<h2 id="七-存储过程与事务">七、存储过程与事务</h2>
+<h3 id="71-使用流程控制语句的存储过程">7.1 使用流程控制语句的存储过程</h3>
+<p>数据库中有表fibonacci，用来储存斐波拉契数列的前n项：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">列名</th>
+<th style="text-align:center">类型</th>
+<th style="text-align:center">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">n</td>
+<td style="text-align:center">int</td>
+<td style="text-align:center">斐波拉契数列的第n项,主码</td>
+</tr>
+<tr>
+<td style="text-align:center">fib(n)</td>
+<td style="text-align:center">bigint</td>
+<td style="text-align:center">第n项的值</td>
+</tr>
+</tbody>
+</table>
+<p>斐波拉契数列的前5项为:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">n</th>
+<th style="text-align:center">fib(n)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">0</td>
+<td style="text-align:center">0</td>
+</tr>
+<tr>
+<td style="text-align:center">1</td>
+<td style="text-align:center">1</td>
+</tr>
+<tr>
+<td style="text-align:center">2</td>
+<td style="text-align:center">1</td>
+</tr>
+<tr>
+<td style="text-align:center">3</td>
+<td style="text-align:center">2</td>
+</tr>
+<tr>
+<td style="text-align:center">4</td>
+<td style="text-align:center">3</td>
+</tr>
+</tbody>
+</table>
+<p>推导公式为：fib(n) = fib(n-1) + fib(n-2)。</p>
+<p>请根据提示，在右侧代码文件编辑器补充代码，创建存储过程<code>sp_fibonacci(in m int)</code>，向表fibonacci插入斐波拉契数列的前m项，及其对应的斐波拉契数。fibonacci表初始值为一张空表。请保证你的存储过程可以多次运行而不出错。</p>
+<pre><code class="language-mysql">use fib;
+
+-- 创建存储过程`sp_fibonacci(in m int)`，向表fibonacci插入斐波拉契数列的前m项，及其对应的斐波拉契数。fibonacci表初始值为一张空表。请保证你的存储过程可以多次运行而不出错。
+
+drop procedure if exists sp_fibonacci;
+delimiter $$
+create procedure sp_fibonacci(in m int)
+begin
+######## 请补充代码完成存储过程体 ########
+DECLARE fib0,fib1,fibn,n int;
+set fib0=0,fib1=1,n=2;
+if m&gt;=1 then
+    insert into fibonacci values(0,0);
+end if;
+if m&gt;=2 then
+    insert into fibonacci values(1,1);
+end if;
+while m&gt;n do
+    set fibn=fib0+fib1;
+    insert into fibonacci values(n,fibn);
+    set fib0=fib1;
+    set fib1=fibn;
+    set n=n+1;
+end while;
+end $$
+
+delimiter ;
+</code></pre>
+<h3 id="72-使用游标的存储过程">7.2 使用游标的存储过程</h3>
+<p>医院的某科室有科室主任1名(亦为医生)，医生若干(至少2名，不含主任)，护士若干(至少4人)，现在需要编写一存储过程，自动安排某个连续期间的大夜班(即每天00:00-8:00时间段)的值班表，排班规则为：<br>
+1.每个夜班安排1名医生，2名护士；<br>
+2.值班顺序依工号顺序循环轮流安排(即排至最后1名后再从第1名接着排)；<br>
+3.科室主任参与轮值夜班，但不安排周末(星期六和星期天)的夜班，当周末轮至科主任时，主任的夜班调至周一，由排在主任后面的医生依次递补值周末的夜班。</p>
+<p>存储过程的名字为sp_night_shift_arrange,它带两个输入参数：start_date, end_date，分别指排班的起始时间和结束时间。排班结果直接写入表night_shift_schedule，其结构如下：</p>
+<p>表night_shift_schedule(夜班值班安排表)</p>
+<table>
+<thead>
+<tr>
+<th>列</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>n_date</td>
+<td>date</td>
+<td>日期, primary key</td>
+</tr>
+<tr>
+<td>n_doctor_name</td>
+<td>char(30)</td>
+<td>医生姓名</td>
+</tr>
+<tr>
+<td>n_nurse1_name</td>
+<td>char(30)</td>
+<td>护士1姓名</td>
+</tr>
+<tr>
+<td>n_nurse2_name</td>
+<td>char(30)</td>
+<td>护士2姓名</td>
+</tr>
+</tbody>
+</table>
+<p>假定该科室没有同名的医生和同名的护士。<br>
+科室参与值班的医护人员存储在表employee中，其结构为：</p>
+<p>表employee(医护人员表)</p>
+<table>
+<thead>
+<tr>
+<th>列</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>e_id</td>
+<td>int</td>
+<td>编号, primary key</td>
+</tr>
+<tr>
+<td>e_name</td>
+<td>char(30)</td>
+<td>姓名</td>
+</tr>
+<tr>
+<td>e_type</td>
+<td>int</td>
+<td>类别：1-主任,医生;2-医生;3-护士</td>
+</tr>
+</tbody>
+</table>
+<p>不用考虑其它信息(比如科室之类的)，在生产环境中，只需在where短语中施加条件限制即可明确选出所需科室的医护人员。这里，且把表中全部人员视为该科室人员。</p>
+<p>请根据提示，在右侧代码文件编辑器补充代码，完成该存储过程。（<s>这部分太长了，感觉有点复杂，没有自己完成，以下部分为学长的代码</s>）[HUST-CS-Database-system-principle/第2关 使用游标的存储过程.txt at main · fly-lovest/HUST-CS-Database-system-principle (github.com)](https://github.com/fly-lovest/HUST-CS-Database-system-principle/blob/main/数据库系统原理实验/实验code及报告/源代码/实训6 存储过程与事务/第2关 使用游标的存储过程.txt)</p>
+<pre><code class="language-mysql">use hms1;
+
+-- 编写一存储过程，自动安排某个连续期间的大夜班的值班表:
+
+delimiter $$
+create procedure sp_night_shift_arrange(in start_date date, in end_date date)
+begin
+declare now_date date;
+declare not_found_flag INT default FALSE;
+declare weekend_doctor_flag INT default FALSE;
+declare d_name,n_name1,n_name2 char(30);
+declare temp_name char(30);
+declare d_type int default(0);
+
+declare doctor_cursor cursor for select e_name,e_type from employee where e_type &lt;&gt; 3;
+declare nurse_cursor cursor for select e_name from employee where e_type = 3;
+
+declare continue handler for NOT FOUND set not_found_flag = TRUE;
+
+open doctor_cursor;
+open nurse_cursor;
+
+fetch doctor_cursor into d_name,d_type;
+fetch nurse_cursor into n_name1;
+fetch nurse_cursor into n_name2;
+
+set now_date = start_date;
+while now_date &lt;= end_date do
+	if d_type = 1 and (dayofweek(now_date)=1 or dayofweek(now_date)=7) then
+		set temp_name = d_name;
+		set weekend_doctor_flag = TRUE;
+		fetch doctor_cursor into d_name,d_type;
+		if not_found_flag = TRUE then
+			set not_found_flag = FALSE;
+			close doctor_cursor;
+			open doctor_cursor;
+			fetch doctor_cursor into d_name,d_type;
+		end if;
+		insert into night_shift_schedule values(now_date,d_name,n_name1,n_name2);
+		set now_date = date_sub(now_date,interval -1 day);
+		fetch doctor_cursor into d_name,d_type;
+		if not_found_flag = TRUE then
+			set not_found_flag = FALSE;
+			close doctor_cursor;
+			open doctor_cursor;
+			fetch doctor_cursor into d_name,d_type;
+		end if;
+		fetch nurse_cursor into n_name1;
+		if not_found_flag = TRUE then
+			set not_found_flag = FALSE;
+			close nurse_cursor;
+			open nurse_cursor;
+			fetch nurse_cursor into n_name1;
+		end if;
+		fetch nurse_cursor into n_name2;
+		if not_found_flag = TRUE then
+			set not_found_flag = FALSE;
+			close nurse_cursor;
+			open nurse_cursor;
+			fetch nurse_cursor into n_name2;
+		end if;	
+	elseif dayofweek(now_date)=2 and weekend_doctor_flag = TRUE then
+		set weekend_doctor_flag = FALSE;
+		insert into night_shift_schedule values(now_date,temp_name,n_name1,n_name2);
+		set now_date = date_sub(now_date,interval -1 day);
+		fetch nurse_cursor into n_name1;
+		if not_found_flag = TRUE then
+			set not_found_flag = FALSE;
+			close nurse_cursor;
+			open nurse_cursor;
+			fetch nurse_cursor into n_name1;
+		end if;
+		fetch nurse_cursor into n_name2;
+		if not_found_flag = TRUE then
+			set not_found_flag = FALSE;
+			close nurse_cursor;
+			open nurse_cursor;
+			fetch nurse_cursor into n_name2;
+		end if;
+	else
+		insert into night_shift_schedule values(now_date,d_name,n_name1,n_name2);
+		set now_date = date_sub(now_date,interval -1 day);
+		fetch doctor_cursor into d_name,d_type;
+		if not_found_flag = TRUE then
+			set not_found_flag = FALSE;
+			close doctor_cursor;
+			open doctor_cursor;
+			fetch doctor_cursor into d_name,d_type;
+		end if;
+		fetch nurse_cursor into n_name1;
+		if not_found_flag = TRUE then
+			set not_found_flag = FALSE;
+			close nurse_cursor;
+			open nurse_cursor;
+			fetch nurse_cursor into n_name1;
+		end if;
+		fetch nurse_cursor into n_name2;
+		if not_found_flag = TRUE then
+			set not_found_flag = FALSE;
+			close nurse_cursor;
+			open nurse_cursor;
+			fetch nurse_cursor into n_name2;
+		end if;
+	end if;
+end while;
+close doctor_cursor;
+close nurse_cursor;
+end$$
+
+delimiter ;
+
+/*  end  of  your code  */ 
+</code></pre>
+<h3 id="73-使用事务的存储过程">7.3 使用事务的存储过程</h3>
+<p>在金融应用场景数据库中，编程实现一个转账操作的存储过程sp_transfer，实现从一个帐户向另一个帐户转账。该过程有5个输入参数：</p>
+<blockquote>
+<p>applicant_id 付款人编号<br>
+source_card_id 付款卡号<br>
+receiver_card_id 收款人编号<br>
+dest_card_id 收款卡号<br>
+amount 转账金额<br>
+return_code 1：正常转账；0:转账不成功</p>
+</blockquote>
+<p>转账操作涉及对表bank_card的操作(在生产环境中，至少还要记录转账操作本身相关的信息至转账表，在实验环境中没有设计这样的表，从略；另外，生产环境中，当银行卡被冻结，或被卡主挂失后，都不能进行转账，在实验环境中，没有设计相应的字段 ，故也从略)。</p>
+<p>注意事项：</p>
+<blockquote>
+<p>仅当转款人是转出卡的持有人时，才可转出；<br>
+仅当收款人是收款卡的持有人时，才可转入；<br>
+储蓄卡之间可以相互转账；<br>
+允许储蓄卡向信用卡转账，称为信用卡还款(允许替它人还款)，还款可以超过信用卡余额，此时，信用卡余额为负数；<br>
+信用卡不能向储蓄卡转账；<br>
+转账金额不能超过储蓄卡余额；</p>
+</blockquote>
+<p>附上 bank_card(银行卡)表结构：</p>
+<table>
+<thead>
+<tr>
+<th>字段名称</th>
+<th>数据类型</th>
+<th>约束</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>b_number</td>
+<td>CHAR(30)</td>
+<td>PRIMARY KEY</td>
+<td>银行卡号</td>
+</tr>
+<tr>
+<td>b_type</td>
+<td>CHAR(20)</td>
+<td>无</td>
+<td>银行卡类型(储蓄卡/信用卡)</td>
+</tr>
+<tr>
+<td>b_c_id</td>
+<td>INTEGER</td>
+<td>NOT NULL FOREIGN KEY</td>
+<td>所属客户编号,引用自client表的c_id字段。</td>
+</tr>
+<tr>
+<td>b_balance</td>
+<td>NUMERIC(10,2)</td>
+<td>NOT NULL</td>
+<td>余额,信用卡余额系指已透支的金额</td>
+</tr>
+</tbody>
+</table>
+<p>请根据上述要求，在右侧代码文件编辑器补充代码，完成存储过程sp_transfer的编程。</p>
+<pre><code class="language-mysql">use finance1;
+
+-- 在金融应用场景数据库中，编程实现一个转账操作的存储过程sp_transfer_balance，实现从一个帐户向另一个帐户转账。
+-- 请补充代码完成该过程：
+delimiter $$
+create procedure sp_transfer(
+	                 IN applicant_id int,      
+                     IN source_card_id char(30),
+					 IN receiver_id int, 
+                     IN dest_card_id char(30),
+					 IN	amount numeric(10,2),
+					 OUT return_code int)
+BEGIN
+SET autocommit=OFF;
+START transaction;
+
+UPDATE bank_card
+SET b_balance=b_balance-amount
+WHERE b_number=source_card_id AND b_c_id=applicant_id AND b_type='储蓄卡';
+
+UPDATE bank_card
+SET b_balance=b_balance+amount
+WHERE b_number=dest_card_id AND b_c_id=receiver_id AND b_type='储蓄卡';
+
+UPDATE bank_card
+SET b_balance=b_balance-amount
+WHERE b_number=dest_card_id AND b_c_id=receiver_id AND b_type='信用卡';
+
+IF NOT EXISTS(
+    SELECT *
+    FROM bank_card 
+    WHERE b_number=source_card_id 
+    AND b_c_id=applicant_id 
+    AND b_type='储蓄卡' 
+    AND b_balance&gt;=0
+) THEN
+SET return_code=0;
+rollback;
+
+ELSEIF NOT EXISTS(
+    SELECT *
+    FROM bank_card
+    WHERE b_number=dest_card_id AND b_c_id=receiver_id
+) THEN
+SET return_code=0;
+rollback;
+
+ELSE
+SET return_code=1;
+commit;
+
+END IF;
+
+END$$
+
+delimiter ;
+
+/*  end  of  your code  */ 
+</code></pre>
+<h2 id="八-触发器">八、触发器</h2>
+<h3 id="81-为投资表property实现业务约束规则-根据投资类别分别引用不同表的主码">8.1 为投资表property实现业务约束规则-根据投资类别分别引用不同表的主码</h3>
+<p>在右侧代码文件编辑器里补充代码，实现本任务所要求的完整性业务规则。当插入的数据不符合要求时，拒绝数据的插入，并反馈出错信息：<br>
+(1) pro_type数据不合法时，显示:<br>
+type x is illegal!<br>
+这里，x系指试图插入的pro_type值。<br>
+(2) pro_type = 1,但pro_pif_id不是finances_product表中的某个主码值，显示:<br>
+finances product #x not found!<br>
+这里,x系指试图插入的pro_pif_di的值。<br>
+(3) pro_type = 2,但pro_pif_id不是insurance表中的某个主码值，显示:<br>
+insurance #x not found!<br>
+这里,x系指试图插入的pro_pif_id的值。<br>
+(3) pro_type = 3,但pro_pif_id不是fund表中的某个主码值，显示:<br>
+fund #x not found!<br>
+这里,x系指试图插入的pro_pif_id的值。</p>
+<p>提示：<br>
+(1) 查阅MySQL的字符串函数，构造出错信息；<br>
+(2) 当数据不合法时，用signal sqlstate 语句抛出异常，并设置出错信息：<br>
+SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = msg;<br>
+其中，通用SQLSTATE '45000'意指用户定义的待处理异常，msg需替换成你想要显示的提示信息(不超过128个字符)。</p>
+<pre><code class="language-mysql">use finance1;
+drop trigger if exists before_property_inserted;
+-- 请在适当的地方补充代码，完成任务要求：
+delimiter $$
+CREATE TRIGGER before_property_inserted BEFORE INSERT ON property
+FOR EACH ROW 
+BEGIN
+
+DECLARE msg varchar(40);
+IF new.pro_type&lt;&gt;1 AND new.pro_type&lt;&gt;2 AND new.pro_type&lt;&gt;3 THEN
+    SET msg=concat('type ',new.pro_type,' is illegal!');
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = msg;
+END IF;
+
+IF new.pro_type=1 AND NOT EXISTS(SELECT * FROM finances_product WHERE p_id=new.pro_pif_id) THEN
+    SET msg=concat('finances product #',new.pro_pif_id,' not found!');
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = msg;
+END IF;
+
+IF new.pro_type=2 AND NOT EXISTS(SELECT * FROM insurance WHERE i_id=new.pro_pif_id) THEN
+    SET msg=concat('insurance #',new.pro_pif_id,' not found!');
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = msg;
+END IF;
+
+IF new.pro_type=3 AND NOT EXISTS(SELECT * FROM fund WHERE f_id=new.pro_pif_id) THEN
+    SET msg=concat('fund #',new.pro_pif_id,' not found!');
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = msg;
+END IF;
+
+END$$
+ 
+delimiter ;
+</code></pre>
+<h2 id="九-用户自定义函数">九、用户自定义函数</h2>
+<h3 id="91-创建函数并在语句中使用它">9.1 创建函数并在语句中使用它</h3>
+<p>主在右侧代文件编辑器补充代码，完成以下编程任务：<br>
+(1) 用create function语句创建符合以下要求的函数：<br>
+依据客户编号计算其所有储蓄卡余额的总和<br>
+函数名为：get_deposit<br>
+(2) 利用创建的函数，仅用一条SQL语句查询存款总额在100万(含)以上的客户身份证号，姓名和存款总额(total_deposit)，结果依存储总额从高到低排序</p>
+<pre><code class="language-mysql">use finance1;
+set global log_bin_trust_function_creators=1;
+drop function IF EXISTS get_deposit;
+/*
+   用create function语句创建符合以下要求的函数：
+   依据客户编号计算该客户所有储蓄卡的存款总额。
+   函数名为：get_Records。函数的参数名可以自己命名:*/
+
+delimiter $$
+create function get_deposit(client_id int)
+returns numeric(10,2) 
+begin
+	DECLARE deposit numeric(10,2);
+    SELECT SUM(b_balance) INTO deposit
+    FROM bank_card
+    WHERE b_c_id=client_id AND b_type='储蓄卡'
+    GROUP BY b_c_id;
+    return deposit;
+end$$
+delimiter ;
+
+/*  应用该函数查询存款总额在100万以上的客户身份证号，姓名和存储总额(total_deposit)，
+    结果依存款总额从高到代排序  */
+SELECT c_id_card,c_name,get_deposit(c_id) AS total_deposit
+FROM client
+WHERE get_deposit(c_id)&gt;=1000000
+ORDER BY get_deposit(c_id) DESC;
+/*  代码文件结束     */
+</code></pre>
+<h2 id="十-数据库设计与实现">十、数据库设计与实现</h2>
+<h3 id="101-从概念模型到mysql实现">10.1 从概念模型到MySQL实现</h3>
+<img src="https://data.educoder.net/api/attachments/2638254" style="zoom:80%;" />
+<p>应用背景介绍<br>
+这是一个机票订票系统，系统需要考虑以下实体：<br>
+<strong>（1）用户(user)：</strong><br>
+用户分两类，普通用户可以订票，管理用户有权限维护和管理整个系统的运营。为简单起见，两类用户合并，用admin_tag标记区分。用户的属性(包括业务约束)有：</p>
+<blockquote>
+<p>● 用户编号: user_id int 主码,自动增加<br>
+● 名字: firstname varchar(50) 不可为空<br>
+● 姓氏: lastname varchar(50) 不可为空<br>
+● 生日: dob date 不可为空<br>
+● 性别: sex char(1) 不可为空<br>
+● 邮箱: email varchar(50)<br>
+● 联系电话: phone varchar(30)<br>
+● 用户名: username varchar(20) 不可空,不可有重<br>
+● 密码: password char(32) 不可空<br>
+● 管理员标志: admin_tag tinyint 缺省值0(非管理员),不能空</p>
+</blockquote>
+<p><strong>（2）旅客(passenger)：</strong><br>
+用户登录系统不一定是替自己买票，所以用户和旅客信息是分开存储的。属性有：</p>
+<blockquote>
+<p>● 旅客编号: passenger_id int 自增，主码<br>
+● 证件号码: id char(18) 不可空 不可重<br>
+● 名字：firstname varchar(50) 不可空<br>
+● 姓氏: lastname varchar(50) 不可空<br>
+● 邮箱：mail varchar(50)<br>
+● 电话: phone varchar(20) 不可空<br>
+● 性别: sex char(1) 不可空<br>
+● 生日: dob date</p>
+</blockquote>
+<p><strong>（3）机场(airport)：</strong><br>
+有以下属性：</p>
+<blockquote>
+<p>● 编号: airport_id int 自增，主码<br>
+● 国际民航组织编码：iata char(3) 不可空，全球唯一<br>
+● 国际航运协会编码: icao char(4) 不可空，全球唯一<br>
+● 机场名称: name varchar(50) 不可空，普通索引<br>
+● 所在城市: city varchar(50)<br>
+● 所在国家: country varchar(50)<br>
+● 纬度: latitude decimal(11,8)<br>
+● 经度: longitude decimal(11,8)<br>
+● 全球每个机场都有唯一IATA编码和ICAO编码，IATA为3个字符，ICAO为4个字符。例如首都机场的(IATA,ICAO)分别为(PEK,ZBAA)，大兴机场为(PKX,ZBAD),天河机机场为(WUH,ZHHH)。在飞机登记牌上出发地和到达地均用IATA表示。为能在地图上显示机场位置，需要记录经纬度信息。</p>
+</blockquote>
+<p><strong>（4）航空公司(airline)：</strong><br>
+有以下属性:</p>
+<blockquote>
+<p>● 编号：airline_id int 自增，主码<br>
+● 名称：name varchar(30) 不可空<br>
+● 国际民航组织编码: iata char(2) 不可空，具全球唯一性<br>
+● 航空公司的IATA编码为2位，如东航为MU，国航为CA,南航为CZ等，航班号一般以所属航空公司的IATA码为前缀。</p>
+</blockquote>
+<p><strong>（5）民航飞机(airplane)：</strong><br>
+有属性：</p>
+<blockquote>
+<p>● 编号：airplane_id int 自增，主码<br>
+● 机型：type varchar(50) 不可空，如B737-300,A320-500等<br>
+● 座位: capacity smallint 不可空<br>
+● 标识: identifier varchar(50) 不可空</p>
+</blockquote>
+<p><strong>（6）航班常规调度表(flightschedule)：</strong><br>
+舤班一般以周次安排，例如：每周两个班次，周一和周五。有属性：</p>
+<blockquote>
+<p>● 航班号: flight_no char(8) 主码<br>
+● 起飞时间: departure time 非空<br>
+● 到达时间: arrival time 非空<br>
+● 飞行时长: duration smalint 非空，飞行时长一般以分种计。<br>
+● 周一：monday tinyint 缺省0<br>
+● 周二：tuesday tinyint 缺省0<br>
+● 周三：wednesday tinyint 缺省0<br>
+● 周四：thursday tinyint 缺省0<br>
+● 周五：friday tinyint 缺省0<br>
+● 周六：saturday tinyint 缺省0<br>
+● 周日：sunday tinyint 缺省0</p>
+</blockquote>
+<p><strong>（7）航班表(flight)：</strong><br>
+航班依航班常规调度表为基准安排。但调度表不是一成不变，也不是每个既定的航都实际起飞，也不总是按既定的时间起飞，所以实飞航班必须单独安排并记录。要记录的信息有：</p>
+<blockquote>
+<p>● 飞行编号：flight_id int 自增，主码<br>
+● 起飞时间: departure datetime 非空<br>
+● 到达时间: arrival datetime 非空<br>
+● 飞行时长：duration smallint 非空</p>
+</blockquote>
+<p>有的系统还会实时显示航班经纬度和高度位置，这里我们作了简化，去掉了实时飞行信息。</p>
+<p><strong>（8）机票(ticket)：</strong><br>
+用户可替自己或其亲友购买某个航班的机票。机票的属性有：</p>
+<blockquote>
+<p>● 票号：ticket_id int 自增，主码<br>
+● 坐位号：seat char(4)<br>
+● 价格：price decimal(10,2) 不能空</p>
+</blockquote>
+<p><strong>（9）实体间的联系：</strong><br>
+实体间的联系都清楚地标注在ER图中：</p>
+<p>每个航空公司都有一个母港(机场)，又叫基地。大的机场可能会是多家公司的基地，小型机场可能不是任何航空公司的基地。<br>
+每个航班属于一家航空公司，航空公司可以很多航班。<br>
+任何一驾民航飞机属于一家航空公司，航空公司可以有多驾飞机。<br>
+每驾飞机可以执飞多个航班，一个飞行航班由一架飞机执飞。<br>
+一个航班根据执飞机型可以售出若干机票。一张机票是某个特定航班的机票。<br>
+用户可以多次订票，旅客可以多次乘坐飞机。一张机票肯定是某个用户为某个特定的旅客购买的特定航班的机票。即机票信息不仅跟乘坐人有关，同时记录购买人信息(虽然两者有时是同一人)。为简单起见，订购时间没有考虑。<br>
+无论常规计划的航班，还是实际飞行航班，都是从某个机场出发，到达另一个机场。但一个机场可以是很多个航班的出发地，也是很多航班的到达地。<br>
+请根据上述信息和所给ER图，给出在MySQL实现flight_booking的语句，包括建库，建表，创建主码，外码，索引，指定缺省，不能为空等约束。所有索引采用BTREE。所有约束的名字不作要求。所有的外码与主码同名。但有两处例外: 计划航班和飞行航班都涉及出发机场和到达机场，外码与主码同名会导致同一表有两个同名列。故这两处外码例外处理：出发机场命名为from，到达机场命名为to。<br>
+注意：所有的表名字和列名，都没有大写字母。列名存在与关键字同名的情形，请妥善处理。你有可能不能一次通过评测，请考虑你的代码要反复修改再运行的情形。</p>
+<pre><code class="language-mysql"> # 请将你实现flight_booking数据库的语句写在下方：
+CREATE DATABASE flight_booking;
+USE flight_booking;
+CREATE TABLE user(
+    user_id INT PRIMARY KEY AUTO_INCREMENT,
+    firstname VARCHAR(50) NOT NULL,
+    lastname VARCHAR(50) NOT NULL,
+    dob DATE NOT NULL,
+    sex CHAR(1) NOT NULL,
+    email VARCHAR(50),
+    phone VARCHAR(30),
+    username VARCHAR(20) NOT NULL UNIQUE,
+    password CHAR(32) NOT NULL,
+    admin_tag TINYINT NOT NULL DEFAULT 0
+);
+
+CREATE TABLE passenger(
+    passenger_id INT PRIMARY KEY AUTO_INCREMENT,
+    id CHAR(18) NOT NULL UNIQUE,
+    firstname VARCHAR(50) NOT NULL,
+    lastname VARCHAR(50) NOT NULL,
+    mail VARCHAR(50),
+    phone VARCHAR(20) NOT NULL,
+    sex CHAR(1) NOT NULL,
+    dob DATE
+);
+
+CREATE TABLE airport(
+    airport_id INT PRIMARY KEY AUTO_INCREMENT,
+    iata CHAR(3) NOT NULL UNIQUE,
+    icao CHAR(4) NOT NULL UNIQUE,
+    name VARCHAR(50) NOT NULL,
+    city VARCHAR(50),
+    country VARCHAR(50),
+    latitude DECIMAL(11,8),
+    longitude DECIMAL(11,8),
+    index(name)
+);
+
+CREATE TABLE airline(
+    airline_id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(30) NOT NULL,
+    iata CHAR(2) NOT NULL UNIQUE,
+    airport_id INT NOT NULL,
+    CONSTRAINT FK_airline_airport FOREIGN KEY(airport_id) REFERENCES airport(airport_id)
+);
+
+CREATE TABLE airplane(
+    airplane_id INT PRIMARY KEY AUTO_INCREMENT,
+    type VARCHAR(50) NOT NULL,
+    capacity SMALLINT NOT NULL,
+    identifier VARCHAR(50) NOT NULL,
+    airline_id INT NOT NULL,
+    CONSTRAINT FK_airplane_airline FOREIGN KEY(airline_id) REFERENCES airline(airline_id)
+);
+
+CREATE TABLE flightschedule(
+    flight_no CHAR(8) PRIMARY KEY,
+    departure TIME NOT NULL,
+    arrival TIME NOT NULL,
+    duration SMALLINT NOT NULL,
+    monday TINYINT DEFAULT 0,
+    tuesday TINYINT DEFAULT 0,
+    wednesday TINYINT DEFAULT 0,
+    thursday TINYINT DEFAULT 0,
+    friday TINYINT DEFAULT 0,
+    saturday TINYINT DEFAULT 0,
+    sunday TINYINT DEFAULT 0,
+    airline_id INT NOT NULL,
+    `from` INT NOT NULL,
+    `to` INT NOT NULL,
+    CONSTRAINT FK_flightschedule_airline FOREIGN KEY(airline_id) REFERENCES airline(airline_id),
+	CONSTRAINT FK_flightschedule_airport1 FOREIGN KEY(`from`) REFERENCES airport(airport_id),
+	CONSTRAINT FK_flightschedule_airport2 FOREIGN KEY(`to`) REFERENCES airport(airport_id)
+);
+
+CREATE TABLE flight(
+    flight_id INT PRIMARY KEY AUTO_INCREMENT,
+    departure DATETIME NOT NULL,
+    arrival DATETIME NOT NULL,
+    duration SMALLINT NOT NULL,
+    airline_id INT NOT NULL,
+	airplane_id INT NOT NULL,
+	flight_no CHAR(8) NOT NULL,
+	`from` INT NOT NULL,
+	`to` INT NOT NULL,
+    CONSTRAINT FK_flight_airline FOREIGN KEY (airline_id) REFERENCES airline(airline_id),
+	CONSTRAINT FK_flight_airplane FOREIGN KEY (airplane_id) REFERENCES airplane(airplane_id),
+	CONSTRAINT FK_flight_flightschedule FOREIGN KEY (flight_no) REFERENCES flightschedule(flight_no),
+	CONSTRAINT FK_flight_airport1 FOREIGN KEY (`from`) REFERENCES airport(airport_id),
+	CONSTRAINT FK_flight_airport2 FOREIGN KEY (`to`) REFERENCES airport(airport_id)
+);
+
+CREATE TABLE ticket(
+    ticket_id INT PRIMARY KEY AUTO_INCREMENT,
+    seat CHAR(4),
+    price DECIMAL(10,2) NOT NULL,
+    flight_id INT NOT NULL,
+	passenger_id INT NOT NULL,
+	user_id INT NOT NULL,
+	CONSTRAINT FK_ticket_flight FOREIGN KEY (flight_id) REFERENCES flight(flight_id),
+	CONSTRAINT FK_ticket_passenger FOREIGN KEY (passenger_id) REFERENCES passenger(passenger_id),
+	CONSTRAINT FK_ticket_user FOREIGN KEY (user_id) REFERENCES user(user_id)
+);
+</code></pre>
+<h2 id="十一-数据库应用开发java篇">十一、数据库应用开发(JAVA篇)</h2>
+<h3 id="111-jdbc体系结构和简单的查询">11.1 JDBC体系结构和简单的查询</h3>
+<p>正确使用JDBC，查询金融应用场景数据库finance的client表(客户表)中邮箱不为空的客户信息，列出客户姓名，邮箱和电话.一个展示结果的示例如下(字体颜色是平台自动加的，不是编程要求)：</p>
+<pre><code>姓名	邮箱				电话
+夏雅惠	57433144004@qq.com		18962433158
+钟庭玮	59434199077@163.com		18110434192
+</code></pre>
+<p>注：标题以及字段值之间用制表符隔开。第1列和第2列间用一个制表符，第2列和第3列间，标题用4个制表符，字段值用两个制表符隔开。</p>
+<p>JDBC驱动程序(mysql-connector-java-8.0.23.jar)由平台提供，直接使用即可，不用特别设置。</p>
+<p>请在右侧代码文件编辑器适当的位置补充代码，实现上述编程要求。</p>
+<p>附client表的结构: 表1 client(客户表)</p>
+<table>
+<thead>
+<tr>
+<th>字段名称</th>
+<th>数据类型</th>
+<th>约束</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>c_id</td>
+<td>INTEGER</td>
+<td>PRIMARY KEY</td>
+<td>客户编号</td>
+</tr>
+<tr>
+<td>c_name</td>
+<td>VARCHAR(100)</td>
+<td>NOT NULL</td>
+<td>客户名称</td>
+</tr>
+<tr>
+<td>c_mail</td>
+<td>CHAR(30)</td>
+<td>UNIQUE</td>
+<td>客户邮箱</td>
+</tr>
+<tr>
+<td>c_id_card</td>
+<td>CHAR(20)</td>
+<td>UNIQUE NOT NULL</td>
+<td>客户身份证</td>
+</tr>
+<tr>
+<td>c_phone</td>
+<td>CHAR(20)</td>
+<td>UNIQUE NOT NULL</td>
+<td>客户手机号</td>
+</tr>
+<tr>
+<td>c_password</td>
+<td>CHAR(20)</td>
+<td>NOT NULL</td>
+<td>客户登录密码</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-java">/* 请在适当的位置补充代码，完成指定的任务 
+   提示：
+      try {
+
+
+      } catch
+    之间补充代码  
+*/
+import java.sql.*;
+
+public class Client {
+    public static void main(String[] args) {
+        Connection connection = null;
+        Statement statement = null;
+        ResultSet resultSet = null;
+
+        try {
+            //注册驱动程序
+            Class.forName(&quot;com.mysql.cj.jdbc.Driver&quot;);
+            //创建数据库连接对象
+            String URL=&quot;jdbc:mysql://127.0.0.1:3306/finance?useUnicode=true&amp;characterEncoding=UTF8&amp;useSSL=false&amp;serverTimezone=UTC&quot;;
+            String USER=&quot;root&quot;;
+            String PASS=&quot;123123&quot;;
+            connection=DriverManager.getConnection(URL, USER, PASS);
+            //创建执行对象
+            statement = connection.createStatement();
+            //执行SQL语句
+            String SQL = &quot;select * from client where c_mail is not null;&quot;;
+            resultSet = statement.executeQuery(SQL);
+            //输出查询结果
+            System.out.println(&quot;姓名\t邮箱\t\t\t\t电话&quot;);
+            while (resultSet.next()) {
+                System.out.print(resultSet.getString(&quot;c_name&quot;)+'\t');
+                System.out.print(resultSet.getString(&quot;c_mail&quot;)+&quot;\t\t&quot;);
+                System.out.println(resultSet.getString(&quot;c_phone&quot;));
+            }
+ 
+         } catch (ClassNotFoundException e) {
+            System.out.println(&quot;Sorry,can`t find the JDBC Driver!&quot;); 
+            e.printStackTrace();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        } finally {
+            try {
+                if (resultSet != null) {
+                    resultSet.close();
+                }
+                if (statement != null) {
+                    statement.close();
+                }
+
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        }
+    }
+}
+</code></pre>
+<h3 id="112-用户登录">11.2 用户登录</h3>
+<p>编程体验客户登录功能.程序先后提示客户输用户名和密码: 请输入用户名： 请输入密码： 客户的邮箱(c_mail)充当用户名,而不是编号(c_id).通常邮箱更容易记住. 根据客户的输入,输出以下两类信息之一:</p>
+<ul>
+<li>
+<p>登录成功。</p>
+</li>
+<li>
+<p>用户名或密码错误！</p>
+<p>如果用户名和密码匹配成功,输出前者,其它情况输出后者(包括该用户不存在).通常被恶意用户试探出用户名,也会带来不良后果.</p>
+</li>
+</ul>
+<p>请在右侧代码文件编辑窗补充代码，完成编程任务。</p>
+<pre><code class="language-java">import java.sql.*;
+import java.util.Scanner;
+
+public class Login {
+    public static void main(String[] args) {
+        Connection connection = null;
+        //申明下文中的resultSet, statement
+        Statement statement = null;
+        ResultSet resultSet = null;
+
+
+        Scanner input = new Scanner(System.in);
+
+        System.out.print(&quot;请输入用户名：&quot;);
+        String loginName = input.nextLine();
+        System.out.print(&quot;请输入密码：&quot;);
+        String loginPass = input.nextLine();
+
+        try {
+            Class.forName(&quot;com.mysql.cj.jdbc.Driver&quot;);
+
+            String userName = &quot;root&quot;;
+            String passWord = &quot;123123&quot;;
+            String url = &quot;jdbc:mysql://127.0.0.1:3306/finance?useUnicode=true&amp;characterEncoding=UTF8&amp;useSSL=false&amp;serverTimezone=UTC&quot;;
+            connection = DriverManager.getConnection(url, userName, passWord);
+            // 补充实现代码:
+            statement = connection.createStatement();
+            String SQL=&quot;SELECT * FROM client WHERE c_mail='&quot;+loginName+&quot;';&quot;;
+            resultSet = statement.executeQuery(SQL); 
+            if(resultSet.next()){//有查询结果
+                if(resultSet.getString(&quot;c_password&quot;).equals(loginPass)){
+                    System.out.print(&quot;登录成功。\n&quot;);
+                }
+                else{
+                    System.out.print(&quot;用户名或密码错误！\n&quot;);
+                }
+            }
+            else{
+                System.out.print(&quot;用户名或密码错误！\n&quot;);
+            }
+
+            
+
+         } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        } finally {
+            try {
+                if (resultSet != null) {
+                    resultSet.close();
+                }
+                if (statement != null) {
+                    statement.close();
+                }
+
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        }
+    }
+}
+</code></pre>
+<h3 id="113-添加新客户">11.3 添加新客户</h3>
+<p>根据提示，在右侧代码文件编辑器补充代码，实现向client表插入客户信息的方法：</p>
+<pre><code class="language-java">public static int insertClient(Connection connection,int c_id, String c_name, String c_mail,           String c_id_card, String c_phone,String c_password){
+    
+}
+</code></pre>
+<p>insertClient()方法的每个参数都在注释中进行了详细的说明。 insertClient()方法返回插入的行数，尽管main()方法在调时并没有检查该返回值(评测程序能检查出是否插入是否成功)。 假定输入的客户信息没有错误需要处理(比如客户编号不是整数，信息项缺失等异常情况)。</p>
+<p>请不要修改main()方法。</p>
+<pre><code class="language-java">import java.sql.*;
+import java.util.Scanner;
+
+public class AddClient {
+    static final String JDBC_DRIVER = &quot;com.mysql.cj.jdbc.Driver&quot;;
+    static final String DB_URL = &quot;jdbc:mysql://127.0.0.1:3306/finance?allowPublicKeyRetrieval=true&amp;useUnicode=true&amp;characterEncoding=UTF8&amp;useSSL=false&amp;serverTimezone=UTC&quot;;
+    static final String USER = &quot;root&quot;;
+    static final String PASS = &quot;123123&quot;;
+    /**
+     * 向Client表中插入数据
+     *
+     * @param connection 数据库连接对象
+     * @param c_id 客户编号
+     * @param c_name 客户名称
+     * @param c_mail 客户邮箱
+     * @param c_id_card 客户身份证
+     * @param c_phone 客户手机号
+     * @param c_password 客户登录密码
+     */
+    public static int insertClient(Connection connection,
+                                   int c_id, String c_name, String c_mail,
+                                   String c_id_card, String c_phone, 
+                                   String c_password){
+        int n=0;
+        PreparedStatement pps = null;
+        try{
+            String SQL=&quot;INSERT INTO client VALUES(?,?,?,?,?,?);&quot;;
+            pps=connection.prepareStatement(SQL);
+            pps.setInt(1,c_id);
+            pps.setString(2,c_name);
+            pps.setString(3,c_mail);
+            pps.setString(4,c_id_card);
+            pps.setString(5,c_phone);
+            pps.setString(6,c_password);
+            n=pps.executeUpdate();
+        }catch (SQLException throwables) {
+            throwables.printStackTrace();
+        } finally {
+            try {
+                if (pps != null) {
+                    pps.close();
+                }
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        }
+        return n;
+    }
+
+    // 不要修改main() 
+    public static void main(String[] args) throws Exception {
+
+        Scanner sc = new Scanner(System.in);
+        Class.forName(JDBC_DRIVER);
+
+        Connection connection = DriverManager.getConnection(DB_URL, USER, PASS);
+
+        while(sc.hasNext())
+        {
+            String input = sc.nextLine();
+            if(input.equals(&quot;&quot;))
+                break;
+
+            String[]commands = input.split(&quot; &quot;);
+            if(commands.length ==0)
+                break;
+            int id = Integer.parseInt(commands[0]);
+            String name = commands[1];
+            String mail = commands[2];
+            String idCard = commands[3];
+            String phone = commands[4];
+            String password = commands[5];
+
+            insertClient(connection, id, name, mail, idCard, phone, password);
+        }
+    }
+
+}
+</code></pre>
+<h3 id="114-银行卡销户">11.4 银行卡销户</h3>
+<p>根据提示，在右侧代码文件编辑器补充代码，实现向银行卡销号的方法，只要客户编号和银行卡号匹配，即从bank_card表中删除该银行卡。至于卡内余额或信用卡的欠款，由客户在柜台当面结清，程序不用考虑其它事项。</p>
+<pre><code class="language-java">public static int removeBankCard(Connection connection,int b_c_id, String b_number){
+}
+</code></pre>
+<p>removeBankCard()方法的每个参数都在注释中进行了详细的说明。 removeBankCard()方法返回被删除的行数。 假定输入的客户信息没有错误需要处理(比如客户编号不是整数，信息项缺失等异常情况)。</p>
+<p>请不要修改main()方法。</p>
+<pre><code class="language-java">import java.sql.*;
+import java.util.Scanner;
+
+public class RemoveCard {
+    static final String JDBC_DRIVER = &quot;com.mysql.cj.jdbc.Driver&quot;;
+    static final String DB_URL = &quot;jdbc:mysql://127.0.0.1:3306/finance?allowPublicKeyRetrieval=true&amp;useUnicode=true&amp;characterEncoding=UTF8&amp;useSSL=false&amp;serverTimezone=UTC&quot;;
+    static final String USER = &quot;root&quot;;
+    static final String PASS = &quot;123123&quot;;
+    /**
+     * 删除bank_card表中数据
+     *
+     * @param connection 数据库连接对象
+     * @param b_c_id 客户编号
+     * @param c_number 银行卡号
+     */
+    public static int removeBankCard(Connection connection,
+                                   int b_c_id, String b_number){
+        int n=0;
+        PreparedStatement pps = null;
+        try{
+            String SQL=&quot;DELETE FROM bank_card WHERE b_c_id=? AND b_number=? ;&quot;;
+            pps=connection.prepareStatement(SQL);
+            pps.setInt(1,b_c_id);
+            pps.setString(2,b_number);
+            n=pps.executeUpdate();
+        }catch (SQLException throwables) {
+            throwables.printStackTrace();
+        } finally {
+            try {
+                if (pps != null) {
+                    pps.close();
+                }
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        }
+        return n;
+    }
+
+    // 不要修改main() 
+    public static void main(String[] args) throws Exception {
+
+        Scanner sc = new Scanner(System.in);
+        Class.forName(JDBC_DRIVER);
+
+        Connection connection = DriverManager.getConnection(DB_URL, USER, PASS);
+
+        while(sc.hasNext())
+        {
+            String input = sc.nextLine();
+            if(input.equals(&quot;&quot;))
+                break;
+
+            String[]commands = input.split(&quot; &quot;);
+            if(commands.length ==0)
+                break;
+            int id = Integer.parseInt(commands[0]);
+            String carNumber = commands[1];
+            
+            int n = removeBankCard(connection, id, carNumber);
+            if (n &gt; 0) {
+               System.out.println(&quot;已销卡数：&quot; + n);
+            } else {
+               System.out.println(&quot;销户失败，请检查客户编号或银行卡号！&quot; );
+            }
+        }
+    }
+
+}
+</code></pre>
+<h3 id="115-客户修改密码">11.5 客户修改密码</h3>
+<p>根据提示，在右侧代码文件编辑器补充代码，实现修改密码的方法passwd()。客户修改密码通常需要确认客户身份，即客户需提供用户名(以邮箱为用户名)和密码，同时还需要输两次新密码，以免客户实际输入的密码与心中想的不一致，只有当所有条件(合法的客户，两次密码输入一致)时才修改密码。main()方法在调用passwd()之前，会先检查新设密码的两次输入是否一致，只有在两次输入一致的情形下才会调用passwd();</p>
+<pre><code class="language-java">public static int insertClient(Connection connection,String mail,String password,String newPass){
+    
+}
+</code></pre>
+<p>passwd()方法的每个参数都在注释中进行了详细的说明。 passwd()方法返回一个整数：<br>
+1 - 密码修改成功<br>
+2 - 用户不存在<br>
+3 - 密码不正确<br>
+-1 - 程序异常(如没能连接到数据库等）</p>
+<p>请不要修改main()方法。</p>
+<pre><code class="language-java">import java.sql.*;
+import java.util.Scanner;
+
+public class ChangePass {
+    static final String JDBC_DRIVER = &quot;com.mysql.cj.jdbc.Driver&quot;;
+    static final String DB_URL = &quot;jdbc:mysql://127.0.0.1:3306/finance?allowPublicKeyRetrieval=true&amp;useUnicode=true&amp;characterEncoding=UTF8&amp;useSSL=false&amp;serverTimezone=UTC&quot;;
+    static final String USER = &quot;root&quot;;
+    static final String PASS = &quot;123123&quot;;
+    /**
+     * 修改客户密码
+     *
+     * @param connection 数据库连接对象
+     * @param mail 客户邮箱,也是登录名
+     * @param password 客户登录密码
+     * @param newPass  新密码
+     * @return
+     *   1 - 密码修改成功
+     *   2 - 用户不存在
+     *   3 - 密码不正确
+     *  -1 - 程序异常(如没能连接到数据库等）
+     */
+    public static int passwd(Connection connection,
+                             String mail,
+                             String password, 
+                             String newPass){
+        int n=0;
+        PreparedStatement pps = null;
+        ResultSet resultSet = null;
+        try{
+            //首先确认用户是否存在
+            String SQL=&quot;SELECT * FROM client WHERE c_mail=?;&quot;;
+            pps=connection.prepareStatement(SQL);
+            pps.setString(1,mail);
+            resultSet = pps.executeQuery();
+            if(resultSet.next()){//查询到了用户
+                SQL=&quot;SELECT * FROM client WHERE c_mail=? AND c_password=? ;&quot;;
+                pps=connection.prepareStatement(SQL);
+                pps.setString(1,mail);
+                pps.setString(2,password);
+                resultSet = pps.executeQuery();
+                if(resultSet.next()){//密码正确
+                    SQL=&quot;UPDATE client SET c_password = ? where c_mail = ?;&quot;;
+                    pps=connection.prepareStatement(SQL);
+                    pps.setString(1,newPass);
+                    pps.setString(2,mail);
+                    n = pps.executeUpdate();
+                }
+                else{//密码错误
+                    n=3;
+                }
+            }
+            else{//未查询到用户
+                n=2;
+            }
+        }catch (SQLException throwables) {
+            throwables.printStackTrace();
+            n = -1;
+        } finally {
+            try {
+                if (pps != null) {
+                    pps.close();
+                }
+                if (resultSet != null) {
+                    resultSet.close();
+                }
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+                n = -1;
+            }
+        }
+        return n;
+    }
+
+    // 不要修改main() 
+    public static void main(String[] args) throws Exception {
+
+        Scanner sc = new Scanner(System.in);
+        Class.forName(JDBC_DRIVER);
+
+        Connection connection = DriverManager.getConnection(DB_URL, USER, PASS);
+
+        while(sc.hasNext())
+        {
+            String input = sc.nextLine();
+            if(input.equals(&quot;&quot;))
+                break;
+
+            String[]commands = input.split(&quot; &quot;);
+            if(commands.length ==0)
+                break;
+            String email = commands[0];
+            String pass = commands[1];
+            String pwd1 = commands[2];
+            String pwd2 = commands[3];
+            if (pwd1.equals(pwd2)) {
+              int n = passwd(connection, email, pass, pwd1);  
+              System.out.println(&quot;return: &quot; + n);
+            } else {
+              System.out.println(&quot;两次输入的密码不一样!&quot;);
+            }
+        }
+    }
+
+}
+</code></pre>
+<h3 id="116-事务与转账操作">11.6 事务与转账操作</h3>
+<p>编写一个银行卡转账的方法transferBalance()。</p>
+<p>transferBalance()在被调用前，柜台已经确认过转出帐号持有者身份，所以转帐方法只接受转出卡号，转入卡号和转账金额三个参数。由调用者保证转账金额为正数。 transferBalance()方法的每个参数都在注释中进行了详细的说明。 transferBalance()返回boolean值，true表示转帐成功，false表示转账失败，并不需要细分或解释失败的原因。 下列任一情形都不可转账(转账失败的原因)： 转出或转入帐号不存在 转出账号是信用卡 转出帐号余额不足</p>
+<p>提示：<br>
+1.本方法需开启手工事务,并正确使用commit和rollback；<br>
+2.当转入卡是信用卡时，意指信用卡还款，还款可以超过透支款项；<br>
+3.对事务的隔离级别不作要求。</p>
+<p>请不要修改main()方法。</p>
+<p>附:bank_card(银行卡)的表结构：</p>
+<table>
+<thead>
+<tr>
+<th>字段名称</th>
+<th>数据类型</th>
+<th>约束</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>b_number</td>
+<td>CHAR(30)</td>
+<td>PRIMARY KEY</td>
+<td>银行卡号</td>
+</tr>
+<tr>
+<td>b_type</td>
+<td>CHAR(20)</td>
+<td>无</td>
+<td>银行卡类型(储蓄卡/信用卡)</td>
+</tr>
+<tr>
+<td>b_c_id</td>
+<td>INTEGER</td>
+<td>NOT NULL FOREIGN KEY</td>
+<td>所属客户编号,引用自client表的c_id字段。</td>
+</tr>
+<tr>
+<td>b_balance</td>
+<td>NUMERIC(10,2)</td>
+<td>NOT NULL</td>
+<td>余额,信用卡余额系指已透支</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-java">import java.sql.*;
+import java.util.Scanner;
+
+public class Transfer {
+    static final String JDBC_DRIVER = &quot;com.mysql.cj.jdbc.Driver&quot;;
+    static final String DB_URL = &quot;jdbc:mysql://127.0.0.1:3306/finance?allowPublicKeyRetrieval=true&amp;useUnicode=true&amp;characterEncoding=UTF8&amp;useSSL=false&amp;serverTimezone=UTC&quot;;
+    static final String USER = &quot;root&quot;;
+    static final String PASS = &quot;123123&quot;;
+    /**
+     * 转账操作
+     *
+     * @param connection 数据库连接对象
+     * @param sourceCard 转出账号
+     * @param destCard 转入账号
+     * @param amount  转账金额
+     * @return boolean
+     *   true  - 转账成功
+     *   false - 转账失败
+     */
+    public static boolean transferBalance(Connection connection,
+                             String sourceCard,
+                             String destCard, 
+                             double amount){
+        PreparedStatement pps = null;
+        ResultSet resultSet = null;
+        boolean n = true;
+        try{
+            connection.setAutoCommit(false);//禁止自动提交
+            
+            String SQL=&quot;UPDATE bank_card SET b_balance = b_balance - ? WHERE b_number = ? AND b_type='储蓄卡';&quot;;
+            pps=connection.prepareStatement(SQL);
+            pps.setDouble(1,amount);
+            pps.setString(2,sourceCard);
+            pps.executeUpdate();
+            
+            SQL=&quot;UPDATE bank_card SET b_balance = b_balance + ? WHERE b_number = ? AND b_type='储蓄卡' ;&quot;;
+            pps=connection.prepareStatement(SQL);
+            pps.setDouble(1,amount);
+            pps.setString(2,destCard);
+            pps.executeUpdate();
+
+            SQL=&quot;UPDATE bank_card SET b_balance = b_balance - ? WHERE b_number = ? AND b_type='信用卡' ;&quot;;
+            pps=connection.prepareStatement(SQL);
+            pps.setDouble(1,amount);
+            pps.setString(2,destCard);
+            pps.executeUpdate();
+
+            SQL=&quot;SELECT * FROM bank_card WHERE b_number=? AND b_type='储蓄卡' ;&quot;;
+            pps=connection.prepareStatement(SQL);
+            pps.setString(1,sourceCard);
+            resultSet = pps.executeQuery();
+            if(!resultSet.next()){//不存在转出卡
+                n=false;
+                connection.rollback();
+            }
+            else{//存在转出卡
+                if(resultSet.getDouble(&quot;b_balance&quot;)&lt;0){//当前b_balance为转出的状态
+                    n=false;
+                    connection.rollback();
+                }
+                else{
+                    //判断转出卡是否存在
+                    SQL=&quot;SELECT * FROM bank_card WHERE b_number=? ;&quot;;
+                    pps=connection.prepareStatement(SQL);
+                    pps.setString(1,destCard);
+                    resultSet = pps.executeQuery();
+                    if(!resultSet.next()){
+                        n=false;
+                        connection.rollback();
+                    }
+                    else connection.commit();
+                }
+            }
+        }catch (SQLException throwables) {
+            throwables.printStackTrace();
+            n = false;
+        } finally {
+            try {
+                if (pps != null) {
+                    pps.close();
+                }
+                if (resultSet != null) {
+                    resultSet.close();
+                }
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+                n = false;
+            }
+        }
+        return n;
+    }
+
+    // 不要修改main() 
+    public static void main(String[] args) throws Exception {
+
+        Scanner sc = new Scanner(System.in);
+        Class.forName(JDBC_DRIVER);
+
+        Connection connection = DriverManager.getConnection(DB_URL, USER, PASS);
+
+        while(sc.hasNext())
+        {
+            String input = sc.nextLine();
+            if(input.equals(&quot;&quot;))
+                break;
+
+            String[]commands = input.split(&quot; &quot;);
+            if(commands.length ==0)
+                break;
+            String payerCard = commands[0];
+            String  payeeCard = commands[1];
+            double  amount = Double.parseDouble(commands[2]);
+            if (transferBalance(connection, payerCard, payeeCard, amount)) {
+              System.out.println(&quot;转账成功。&quot; );
+            } else {
+              System.out.println(&quot;转账失败,请核对卡号，卡类型及卡余额!&quot;);
+            }
+        }
+    }
+
+}
+</code></pre>
+
+            </div>
+            <hr style="width: 80%;">
+            
+            <div class="postfooter">
+                <ul class="post-copyright">
+                    <li><strong>文章作者：</strong>w_CS</li>
+            <li><strong>原文链接：</strong>https://2006wzt.github.io/post/数据库系统概论实验/</li>
+            <li><strong>版权声明：</strong>本博客所有文章除特别声明外，均采用<i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA
+                许可协议。转载请注明出处！</li>
+            </ul>
+        </div>
+        
+            <div class="shareContainer">
+                <div class="share" style="height:30px;">
+                    <a class="qq" href=""><i><img class="shareicon"
+                                src="https://2006wzt.github.io/media/images/qqs.png" alt=""></i></a>
+                    <a class="wechat" href=""><i><img class="shareicon"
+                                src="https://2006wzt.github.io/media/images/wechats.png" alt=""></i></a>
+                    <a class="weibo" href=""><i><img class="shareicon"
+                                src="https://2006wzt.github.io/media/images/weibos.png" alt=""></i></a>
+                    <a class="qzone" href=""><i><img class="shareicon"
+                                src="https://2006wzt.github.io/media/images/qzones.png" alt=""></i></a>
+                    <a class="douban" href=""><i><img class="shareicon"
+                                src="https://2006wzt.github.io/media/images/doubans.png" alt=""></i></a>
+                    <a class="facebook" href=""><i><img class="shareicon"
+                                src="https://2006wzt.github.io/media/images/facebooks.png" alt=""></i></a>
+                    <a class="twitter" href=""><i><img class="shareicon"
+                                src="https://2006wzt.github.io/media/images/twitter.png" alt=""></i></a>
+                </div>
+            </div>
+            
+        <div id="otherpost">
+            
+            
+            <a data-pjax class="next-post-pc" href="https://2006wzt.github.io/post/socket编程实验/"  style="color: black;">
+                <div id="npcontainer">
+                    
+                    <img src="https://2006wzt.github.io/post-images/socket编程实验.png" style="width: 100%;" class="opimg">
+                    
+                    <h4 class="optitle">Socket编程实验</h4>
+                </div>
+            </a>
+            <div class="next-post">
+                下一篇 <a  data-pjax href="https://2006wzt.github.io/post/socket编程实验/">Socket编程实验</a>
+            </div>
+            
+        </div>
+    </div>
+    </div>
+    </div>
+    <!-- 弹窗 -->
+    <div id="myModal" class="modal">
+        <img class="modal-content" id="img01">
+    </div>
+</body>
+<script>
+    //文章阅读热度
+    var pl = $("#pl").html();
+    var rootaddr = $("#rootaddr").html();
+    pl = pl.replace(rootaddr, "");
+    $("#hotnum").attr('id', pl);
+</script>
+                    <div class="toc-container">
+                        <ul class="markdownIt-TOC">
+<li><a href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9E%E9%AA%8C">数据库实验</a>
+<ul>
+<li><a href="#%E4%B8%80-%E5%AE%9E%E8%AE%AD1-%E6%95%B0%E6%8D%AE%E5%BA%93-%E8%A1%A8%E4%B8%8E%E5%AE%8C%E6%95%B4%E6%80%A7%E7%BA%A6%E6%9D%9F%E7%9A%84%E5%AE%9A%E4%B9%89create">一、<strong>实训1 数据库、表与完整性约束的定义(Create)</strong></a>
+<ul>
+<li><a href="#11-%E5%88%9B%E5%BB%BA%E6%95%B0%E6%8D%AE%E5%BA%93">1.1 创建数据库</a></li>
+<li><a href="#12-%E5%88%9B%E5%BB%BA%E8%A1%A8%E5%8F%8A%E8%A1%A8%E7%9A%84%E4%B8%BB%E7%A0%81%E7%BA%A6%E6%9D%9F">1.2 创建表及表的主码约束</a></li>
+<li><a href="#13-%E5%88%9B%E5%BB%BA%E5%A4%96%E7%A0%81%E7%BA%A6%E6%9D%9Fforeign-key">1.3 创建外码约束(foreign key)</a></li>
+<li><a href="#14-check%E7%BA%A6%E6%9D%9F">1.4 CHECK约束</a></li>
+<li><a href="#15-default%E7%BA%A6%E6%9D%9F">1.5 DEFAULT约束</a></li>
+<li><a href="#16-unique%E7%BA%A6%E6%9D%9F">1.6 UNIQUE约束</a></li>
+</ul>
+</li>
+<li><a href="#%E4%BA%8C-%E5%AE%9E%E8%AE%AD2-%E8%A1%A8%E7%BB%93%E6%9E%84%E4%B8%8E%E5%AE%8C%E6%95%B4%E6%80%A7%E7%9A%84%E4%BF%AE%E6%94%B9alter">二、实训2 表结构与完整性的修改(ALTER)</a>
+<ul>
+<li><a href="#21-%E4%BF%AE%E6%94%B9%E8%A1%A8%E5%90%8D">2.1 修改表名</a></li>
+<li><a href="#22-%E6%B7%BB%E5%8A%A0%E4%B8%8E%E5%88%A0%E9%99%A4%E5%AD%97%E6%AE%B5">2.2 添加与删除字段</a></li>
+<li><a href="#23-%E4%BF%AE%E6%94%B9%E5%AD%97%E6%AE%B5">2.3 修改字段</a></li>
+<li><a href="#24-%E6%B7%BB%E5%8A%A0-%E5%88%A0%E9%99%A4%E4%B8%8E%E4%BF%AE%E6%94%B9%E7%BA%A6%E6%9D%9F">2.4 添加、删除与修改约束</a></li>
+</ul>
+</li>
+<li><a href="#%E4%B8%89-%E5%AE%9E%E8%AE%AD3-%E6%95%B0%E6%8D%AE%E6%9F%A5%E8%AF%A2select%E4%B9%8B%E4%B8%80">三、<strong>实训3 数据查询(Select)之一</strong></a>
+<ul>
+<li><a href="#31-%E6%9F%A5%E8%AF%A2%E5%AE%A2%E6%88%B7%E4%B8%BB%E8%A6%81%E4%BF%A1%E6%81%AF">3.1 查询客户主要信息</a></li>
+<li><a href="#32-%E9%82%AE%E7%AE%B1%E4%B8%BAnull%E7%9A%84%E5%AE%A2%E6%88%B7">3.2 邮箱为null的客户</a></li>
+<li><a href="#33-%E6%97%A2%E4%B9%B0%E4%BA%86%E4%BF%9D%E9%99%A9%E5%8F%88%E4%B9%B0%E4%BA%86%E5%9F%BA%E9%87%91%E7%9A%84%E5%AE%A2%E6%88%B7">3.3 既买了保险又买了基金的客户</a></li>
+<li><a href="#34-%E5%8A%9E%E7%90%86%E4%BA%86%E5%82%A8%E8%93%84%E5%8D%A1%E7%9A%84%E5%AE%A2%E6%88%B7%E4%BF%A1%E6%81%AF">3.4 办理了储蓄卡的客户信息</a></li>
+<li><a href="#35-%E6%AF%8F%E4%BB%BD%E9%87%91%E9%A2%9D%E5%9C%A830000~50000%E4%B9%8B%E9%97%B4%E7%9A%84%E7%90%86%E8%B4%A2%E4%BA%A7%E5%93%81">3.5 每份金额在30000～50000之间的理财产品</a></li>
+<li><a href="#36-%E5%95%86%E5%93%81%E6%94%B6%E7%9B%8A%E7%9A%84%E4%BC%97%E6%95%B0">3.6 商品收益的众数</a></li>
+<li><a href="#37-%E6%9C%AA%E8%B4%AD%E4%B9%B0%E4%BB%BB%E4%BD%95%E7%90%86%E8%B4%A2%E4%BA%A7%E5%93%81%E7%9A%84%E6%AD%A6%E6%B1%89%E5%B1%85%E6%B0%91">3.7 未购买任何理财产品的武汉居民</a></li>
+<li><a href="#38-%E6%8C%81%E6%9C%89%E4%B8%A4%E5%BC%A0%E4%BF%A1%E7%94%A8%E5%8D%A1%E7%9A%84%E7%94%A8%E6%88%B7">3.8 持有两张信用卡的用户</a></li>
+<li><a href="#39-%E8%B4%AD%E4%B9%B0%E4%BA%86%E8%B4%A7%E5%B8%81%E5%9E%8B%E5%9F%BA%E9%87%91%E7%9A%84%E5%AE%A2%E6%88%B7%E4%BF%A1%E6%81%AF">3.9 购买了货币型基金的客户信息</a></li>
+<li><a href="#310-%E6%8A%95%E8%B5%84%E6%80%BB%E6%94%B6%E7%9B%8A%E5%89%8D%E4%B8%89%E5%90%8D%E7%9A%84%E5%AE%A2%E6%88%B7">3.10 投资总收益前三名的客户</a></li>
+<li><a href="#311-%E9%BB%84%E5%A7%93%E5%AE%A2%E6%88%B7%E6%8C%81%E5%8D%A1%E6%95%B0%E9%87%8F">3.11 黄姓客户持卡数量</a></li>
+<li><a href="#312-%E5%AE%A2%E6%88%B7%E7%90%86%E8%B4%A2-%E4%BF%9D%E9%99%A9%E4%B8%8E%E5%9F%BA%E9%87%91%E6%8A%95%E8%B5%84%E6%80%BB%E9%A2%9D">3.12 客户理财、保险与基金投资总额</a></li>
+<li><a href="#313-%E5%AE%A2%E6%88%B7%E6%80%BB%E8%B5%84%E4%BA%A7">3.13 客户总资产</a></li>
+<li><a href="#314-%E7%AC%ACn%E9%AB%98%E9%97%AE%E9%A2%98">3.14 第N高问题</a></li>
+<li><a href="#315-%E5%9F%BA%E9%87%91%E6%94%B6%E7%9B%8A%E4%B8%A4%E7%A7%8D%E6%96%B9%E5%BC%8F%E6%8E%92%E5%90%8D">3.15 基金收益两种方式排名</a></li>
+<li><a href="#316-%E6%8C%81%E6%9C%89%E5%AE%8C%E5%85%A8%E7%9B%B8%E5%90%8C%E5%9F%BA%E9%87%91%E7%BB%84%E5%90%88%E7%9A%84%E5%AE%A2%E6%88%B7">3.16 持有完全相同基金组合的客户</a></li>
+<li><a href="#317-%E8%B4%AD%E4%B9%B0%E5%9F%BA%E9%87%91%E7%9A%84%E9%AB%98%E5%B3%B0%E6%9C%9F">3.17 购买基金的高峰期</a></li>
+<li><a href="#318-%E8%87%B3%E5%B0%91%E6%9C%89%E4%B8%80%E5%BC%A0%E4%BF%A1%E7%94%A8%E5%8D%A1%E4%BD%99%E9%A2%9D%E8%B6%85%E8%BF%875000%E5%85%83%E7%9A%84%E5%AE%A2%E6%88%B7%E4%BF%A1%E6%81%AF">3.18 至少有一张信用卡余额超过5000元的客户信息</a></li>
+<li><a href="#319-%E4%BB%A5%E6%97%A5%E5%8E%86%E8%A1%A8%E6%A0%BC%E5%BC%8F%E6%98%BE%E7%A4%BA%E6%AF%8F%E6%97%A5%E5%9F%BA%E9%87%91%E8%B4%AD%E4%B9%B0%E6%80%BB%E9%87%91%E9%A2%9D">3.19 以日历表格式显示每日基金购买总金额</a></li>
+</ul>
+</li>
+<li><a href="#%E5%9B%9B-%E5%AE%9E%E8%AE%AD4-%E6%95%B0%E6%8D%AE%E6%9F%A5%E8%AF%A2select%E4%B9%8B%E4%BA%8C">四、实训4 数据查询(Select)之二</a>
+<ul>
+<li><a href="#41-%E6%9F%A5%E8%AF%A2%E9%94%80%E5%94%AE%E6%80%BB%E9%A2%9D%E5%89%8D%E4%B8%89%E7%9A%84%E7%90%86%E8%B4%A2%E4%BA%A7%E5%93%81">4.1 查询销售总额前三的理财产品</a></li>
+<li><a href="#42-%E6%8A%95%E8%B5%84%E7%A7%AF%E6%9E%81%E4%B8%94%E5%81%8F%E5%A5%BD%E7%90%86%E8%B4%A2%E7%B1%BB%E4%BA%A7%E5%93%81%E7%9A%84%E5%AE%A2%E6%88%B7">4.2 投资积极且偏好理财类产品的客户</a></li>
+<li><a href="#43-%E6%9F%A5%E8%AF%A2%E8%B4%AD%E4%B9%B0%E4%BA%86%E6%89%80%E6%9C%89%E7%95%85%E9%94%80%E7%90%86%E8%B4%A2%E4%BA%A7%E5%93%81%E7%9A%84%E5%AE%A2%E6%88%B7">4.3 查询购买了所有畅销理财产品的客户</a></li>
+<li><a href="#44-%E6%9F%A5%E6%89%BE%E7%9B%B8%E4%BC%BC%E7%9A%84%E7%90%86%E8%B4%A2%E4%BA%A7%E5%93%81">4.4 查找相似的理财产品</a></li>
+<li><a href="#45-%E6%9F%A5%E8%AF%A2%E4%BB%BB%E6%84%8F%E4%B8%A4%E4%B8%AA%E5%AE%A2%E6%88%B7%E7%9A%84%E7%9B%B8%E5%90%8C%E7%90%86%E8%B4%A2%E4%BA%A7%E5%93%81%E6%95%B0">4.5 查询任意两个客户的相同理财产品数</a></li>
+<li><a href="#46-%E6%9F%A5%E6%89%BE%E7%9B%B8%E4%BC%BC%E7%9A%84%E7%90%86%E8%B4%A2%E5%AE%A2%E6%88%B7">4.6 查找相似的理财客户</a></li>
+</ul>
+</li>
+<li><a href="#%E4%BA%94-%E5%AE%9E%E8%AE%AD5-%E6%95%B0%E6%8D%AE%E7%9A%84%E6%8F%92%E5%85%A5-%E4%BF%AE%E6%94%B9%E4%B8%8E%E5%88%A0%E9%99%A4insertupdatedelete">五、实训5 数据的插入、修改与删除(Insert,Update,Delete)</a>
+<ul>
+<li><a href="#51-%E6%8F%92%E5%85%A5%E5%A4%9A%E6%9D%A1%E5%AE%8C%E6%95%B4%E7%9A%84%E5%AE%A2%E6%88%B7%E4%BF%A1%E6%81%AF">5.1 插入多条完整的客户信息</a></li>
+<li><a href="#52-%E6%8F%92%E5%85%A5%E4%B8%8D%E5%AE%8C%E6%95%B4%E7%9A%84%E5%AE%A2%E6%88%B7%E4%BF%A1%E6%81%AF">5.2 插入不完整的客户信息</a></li>
+<li><a href="#53-%E6%89%B9%E9%87%8F%E6%8F%92%E5%85%A5%E6%95%B0%E6%8D%AE">5.3 批量插入数据</a></li>
+<li><a href="#54-%E5%88%A0%E9%99%A4%E6%B2%A1%E6%9C%89%E9%93%B6%E8%A1%8C%E5%8D%A1%E7%9A%84%E5%AE%A2%E6%88%B7%E4%BF%A1%E6%81%AF">5.4 删除没有银行卡的客户信息</a></li>
+<li><a href="#55-%E5%86%BB%E7%BB%93%E5%AE%A2%E6%88%B7%E8%B5%84%E4%BA%A7">5.5 冻结客户资产</a></li>
+<li><a href="#56-%E8%BF%9E%E6%8E%A5%E6%9B%B4%E6%96%B0">5.6 连接更新</a></li>
+</ul>
+</li>
+<li><a href="#%E5%85%AD-%E8%A7%86%E5%9B%BE">六、视图</a>
+<ul>
+<li><a href="#61-%E5%88%9B%E5%BB%BA%E6%89%80%E6%9C%89%E4%BF%9D%E9%99%A9%E8%B5%84%E4%BA%A7%E7%9A%84%E8%AF%A6%E7%BB%86%E8%AE%B0%E5%BD%95%E8%A7%86%E5%9B%BE">6.1 创建所有保险资产的详细记录视图</a></li>
+<li><a href="#62-%E5%9F%BA%E4%BA%8E%E8%A7%86%E5%9B%BE%E7%9A%84%E6%9F%A5%E8%AF%A2">6.2 基于视图的查询</a></li>
+</ul>
+</li>
+<li><a href="#%E4%B8%83-%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B%E4%B8%8E%E4%BA%8B%E5%8A%A1">七、存储过程与事务</a>
+<ul>
+<li><a href="#71-%E4%BD%BF%E7%94%A8%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6%E8%AF%AD%E5%8F%A5%E7%9A%84%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B">7.1 使用流程控制语句的存储过程</a></li>
+<li><a href="#72-%E4%BD%BF%E7%94%A8%E6%B8%B8%E6%A0%87%E7%9A%84%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B">7.2 使用游标的存储过程</a></li>
+<li><a href="#73-%E4%BD%BF%E7%94%A8%E4%BA%8B%E5%8A%A1%E7%9A%84%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B">7.3 使用事务的存储过程</a></li>
+</ul>
+</li>
+<li><a href="#%E5%85%AB-%E8%A7%A6%E5%8F%91%E5%99%A8">八、触发器</a>
+<ul>
+<li><a href="#81-%E4%B8%BA%E6%8A%95%E8%B5%84%E8%A1%A8property%E5%AE%9E%E7%8E%B0%E4%B8%9A%E5%8A%A1%E7%BA%A6%E6%9D%9F%E8%A7%84%E5%88%99-%E6%A0%B9%E6%8D%AE%E6%8A%95%E8%B5%84%E7%B1%BB%E5%88%AB%E5%88%86%E5%88%AB%E5%BC%95%E7%94%A8%E4%B8%8D%E5%90%8C%E8%A1%A8%E7%9A%84%E4%B8%BB%E7%A0%81">8.1 为投资表property实现业务约束规则-根据投资类别分别引用不同表的主码</a></li>
+</ul>
+</li>
+<li><a href="#%E4%B9%9D-%E7%94%A8%E6%88%B7%E8%87%AA%E5%AE%9A%E4%B9%89%E5%87%BD%E6%95%B0">九、用户自定义函数</a>
+<ul>
+<li><a href="#91-%E5%88%9B%E5%BB%BA%E5%87%BD%E6%95%B0%E5%B9%B6%E5%9C%A8%E8%AF%AD%E5%8F%A5%E4%B8%AD%E4%BD%BF%E7%94%A8%E5%AE%83">9.1 创建函数并在语句中使用它</a></li>
+</ul>
+</li>
+<li><a href="#%E5%8D%81-%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0">十、数据库设计与实现</a>
+<ul>
+<li><a href="#101-%E4%BB%8E%E6%A6%82%E5%BF%B5%E6%A8%A1%E5%9E%8B%E5%88%B0mysql%E5%AE%9E%E7%8E%B0">10.1 从概念模型到MySQL实现</a></li>
+</ul>
+</li>
+<li><a href="#%E5%8D%81%E4%B8%80-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91java%E7%AF%87">十一、数据库应用开发(JAVA篇)</a>
+<ul>
+<li><a href="#111-jdbc%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84%E5%92%8C%E7%AE%80%E5%8D%95%E7%9A%84%E6%9F%A5%E8%AF%A2">11.1 JDBC体系结构和简单的查询</a></li>
+<li><a href="#112-%E7%94%A8%E6%88%B7%E7%99%BB%E5%BD%95">11.2 用户登录</a></li>
+<li><a href="#113-%E6%B7%BB%E5%8A%A0%E6%96%B0%E5%AE%A2%E6%88%B7">11.3 添加新客户</a></li>
+<li><a href="#114-%E9%93%B6%E8%A1%8C%E5%8D%A1%E9%94%80%E6%88%B7">11.4 银行卡销户</a></li>
+<li><a href="#115-%E5%AE%A2%E6%88%B7%E4%BF%AE%E6%94%B9%E5%AF%86%E7%A0%81">11.5 客户修改密码</a></li>
+<li><a href="#116-%E4%BA%8B%E5%8A%A1%E4%B8%8E%E8%BD%AC%E8%B4%A6%E6%93%8D%E4%BD%9C">11.6 事务与转账操作</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+                    </div>
+                    <div class="tog">
+                        <div class="toggleContainer">
+                            <div class="toggle">
+                                <i class="fas fa-angle-double-up"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <!---------------------------- 评论系统👇 ------------------------->
+                    <div id="comment" class="comment">
+                        <div class="commentcontainer">
+                            
+                                
+                            
+                        </div>
+                    </div>
+                    <!---------------------------- 评论系统👆 ------------------------->
+                </div>
+                <!-- main标签，pjax渲染时加载以上内容👆 -->
+                <div class="col-md-1 col-lg-2"></div>
+                <div id="bg">
+                </div>
+            </div>
+            <!-- ----------------左侧菜单栏html 👆-------------------------------------->
+            
+        </div>
+        <!-- aplayer播放器加载👇 -->
+            
+        <!-- aplayer播放器加载👆 -->
+    </div>
+    <!-- 背景图加载方式👇 -->
+    <div id="bgchoice" style="display: none">link
+                </div>
+                
+                <div id="bgurl" style="display:none">https://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/background.png</div>
+                
+    <!-- 背景图加载方式👆 -->
+</body>
+
+<script>
+    //初始化
+    //更换twikoo头像
+    setTimeout(replaceAvatar,1000);
+    setTimeout(replaceAvatar,2000);
+    setTimeout(replaceAvatar,8000);
+    // --------为每张图片添加懒加载（lazyload）标签-->懒加载功能 👇------------
+    lazyload();
+    //为文章内所有代码块添加代码复制功能 👇
+    codeinit();
+    // ------代码高亮显示功能-------------
+    hljs.initHighlightingOnLoad();
+    if (shareChoice)
+        shareInit();
+    if (donateChoice)
+        donateInit();
+</script>
+
+<!------------------ 加载live2d模型功能（看板娘）👇 ---------------->
+
+<script type="text/javascript">
+    var message_Path = '/live2d/'
+    var home_Path = document.getElementById("domainname").innerHTML + "/"; //此处修改为你的域名，必须带斜杠
+</script>
+<script type="text/javascript" src="https://2006wzt.github.io/media/js/live2d.js"></script>
+<script type="text/javascript" src="https://2006wzt.github.io/media/live2d/js/message.js"></script>
+<script type="text/javascript">
+    loadlive2d("live2d", "https://2006wzt.github.io/media/live2d/assets/tororo.model.json");
+</script>
+
+<!------------------ 加载live2d模型功能（看板娘）👆 ---------------->
+
+
+<!----------------------- 返回顶部按钮功能👇 --------------------->
+<script>
+    $(function () {
+        $('.toggleContainer').click(function () {
+            $('html,body').animate({
+                scrollTop: '0px'
+            }, 800);
+        });
+        $(window).scroll(function () {
+            var st = $(window).scrollTop();
+            if (st > 30) {
+                $(".toggleContainer").fadeIn(400);
+            } else {
+                $(".toggleContainer").fadeOut(100);
+            }
+        });
+    });
+</script>
+<!----------------------- 返回顶部按钮功能👆 --------------------->
+
+
+<!------------ 加载全局背景图功能👇（开始时没有写好，这功能有点鸡肋/(ㄒoㄒ)/~~） -->
+<script>
+    var bgchoice = "link"
+    var bg = $('#bg');
+    var bgurl = document.getElementById("bgurl").innerHTML;
+    if (bgchoice == 'default')
+    {
+        for (var i = 0; i < 3; i++)
+            bgurl = bgurl.replace("\\", "/");
+        bgurl = "https://2006wzt.github.io/" + bgurl;
+    }
+    bg.css("background", "url('" + bgurl + "')");
+
+    window.onload = function () {
+        aplayerbtnInit();
+    }
+</script>
+<!------------ 加载全局背景图功能👆（开始时没有写好，这功能有点鸡肋/(ㄒoㄒ)/~~） -->
+
+
+
+
+<script src="https://2006wzt.github.io/media/js/index.js"></script>
+
+
+<script>
+    //加载后的事件同步（阅读量、移动端评论等
+    window.onload = function () {
+    //代码块高亮渲染
+    document.querySelectorAll('pre code').forEach((block) => {
+            hljs.highlightBlock(block);
+    });
+        getHotnum();
+        var sharepc = $(".share").eq(0).html();
+        $(".share").eq(1).html(sharepc);   //插件只会寻找一个分享标签渲染，所以需要手动添加到移动端
+        aplayerbtnInit();
+        $(".hljs").css({
+            "padding": "20px"
+        })
+    }
+</script>
+
+<!-- <script src="https://2006wzt.github.io/media/js/av-min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/leancloud-storage@3.13.0/dist/av-min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/leancloud-storage@4.6.1/dist/av-live-query-min.js"></script> -->
