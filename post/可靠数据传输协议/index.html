@@ -1,0 +1,2988 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="description" content="可靠数据传输协议Rdt
+一、实验要求
+1.1 实验目标和内容
+1.1.1 实验目的
+通过该实验了解和掌握运输层可靠数据传输原理以及具体实现方法。
+1.1.2 实验环境
+● 语言工具：基于 C++语言实现。
+● 操作系统：Windows、Li..." />
+    <meta name="keywords" content="C/C++" />
+    <link rel="stylesheet" href="https://2006wzt.github.io/media/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://2006wzt.github.io/styles/main.css">
+    <!-- 代码渲染风格css -->
+    
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.18.1/build/styles/dracula.min.css">
+    
+    <!-- 代码高亮插件 -->
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.18.1/build/highlight.min.js"></script>
+    <!-- 代码复制插件 -->
+    <script src="https://cdn.jsdelivr.net/gh/850552586/ericamcdn@0.1/js/clipboard.min.js"></script>
+    <!-- live2d插件 -->
+    <link rel="stylesheet" href="https://2006wzt.github.io/media/css/live2d.css">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js"></script>
+    <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+    <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/5.13.1/css/all.min.css" rel="stylesheet">
+    <!-- 数学公式 -->
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/katex.min.css"
+        integrity="sha384-9tPv11A+glH/on/wEu99NVwDPwkMQESOocs/ZGXPoIiLE8MU/qkqUcZ3zzL+6DuH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/katex.min.js"
+        integrity="sha384-U8Vrjwb8fuHMt6ewaCy8uqeUXv4oitYACKdB0VziCerzt011iQ/0TqlSlv8MReCm" crossorigin="anonymous">
+        </script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/contrib/auto-render.min.js"
+        integrity="sha384-aGfk5kvhIq5x1x5YdvCp4upKZYnA8ckafviDpmWEKp4afOZEqOli7gqSnh8I6enH" crossorigin="anonymous">
+        </script>
+    <script>
+        renderMathInElement(document.body, {
+            delimiters: [{
+                left: "$$",
+                right: "$$",
+                display: true
+            },
+            {
+                left: "$",
+                right: "$",
+                display: false
+            }
+            ]
+        });
+    </script>
+    
+    <title>可靠数据传输协议实验</title>
+
+    <!-- 大纲索引css调整 -->
+    
+    <style>
+        .markdownIt-TOC {
+            margin-left: 28%;
+            padding-left: 2px;
+            width: 80%;
+        }
+
+        .markdownIt-TOC li {
+            padding-left: 8%;
+        }
+    </style>
+    
+</head>
+
+<body>
+    <div id="landlord">
+        <div class="message" style="opacity:0"></div>
+        <canvas id="live2d" width="240" height="250" class="live2d"></canvas>
+    </div>
+    <div id="domainname" style="display:none">https://2006wzt.github.io</div>
+    <div id="content">
+        <div>
+            <!----------- 移动端导航栏👇 ----------------->
+            <div id="bar">
+                <style>
+  .navmobile {
+    z-index: 15;
+    max-height: 40vh;
+    overflow-y: scroll;
+    overflow-x: hidden;
+  }
+
+  @media screen and (max-width: 1200px) {
+    .navbar {
+      max-width: 100vw;
+    }
+  }
+
+  @media screen and (max-width:1200px) and (min-width: 768px) {
+    @media (min-width: 768px) {
+      .navbar-nav {
+        float: right;
+        margin: 0;
+      }
+    }
+  }
+
+  @media screen and (max-width:768px) {
+    .mbapspan {
+      padding: 0;
+    }
+  }
+</style>
+<div class="pjaxloading"  onclick="pjaxloadingClose()">
+  <div class="loadingbackground"></div>
+  <div id="loading">
+    <div class="loading">
+    </div>
+  </div>
+</div>
+<nav class="navbar navbar-inverse navbar-fixed-top navmobile">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#barmenu"
+        aria-expanded="false" id="barbutton">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a data-pjax class="navbar-brand" style="color:white" href="https://2006wzt.github.io">My Brain&nbsp;&nbsp;|</a>
+      <span class="navbar-brand mbapspan"><i id="mbaplayer" class="fa fa-play-circle-o" aria-hidden="true"
+          style="font-size: 28px;top: 12px;position: absolute;" onclick="aplayerPlay();"></i></span>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="barmenu">
+      <ul class="nav navbar-nav">
+        
+        
+        <li>
+          <a data-pjax href="/" style="color:white">
+            首页
+          </a>
+        </li>
+        
+        
+        
+        <li>
+          <a data-pjax href="/archives" style="color:white">
+            归档
+          </a>
+        </li>
+        
+        
+        
+        <li>
+          <a data-pjax href="/tags" style="color:white">
+            标签
+          </a>
+        </li>
+        
+        
+        
+        <li>
+          <a data-pjax href="/post/about" style="color:white">
+            关于
+          </a>
+        </li>
+        
+        
+        
+        
+          
+        <li><a data-pjax href="https://2006wzt.github.io/friends" style="color:white">友链</a></li>
+
+        
+        </ul>
+      </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+  </nav>
+
+
+  <!-- 引入jQuery核心js文件 -->
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js"></script>
+  <script>
+    let btstate = false;
+    var bt = $("#barbutton");
+    var bm = $("#barmenu");
+    bt.click(function () {
+      dropdown();
+    })
+    function dropdown() {
+      console.log(btstate);
+      //下拉
+      if (btstate == false) {
+        bt.removeClass("collapsed");
+        bt.attr("aria-expanded", "true");
+        bm.attr("aria-expanded", "true")
+        bm.fadeIn(700);
+        btstate = true;
+      }
+      else {
+        bt.addClass("collapsed");
+        bt.attr("aria-expanded", "false");
+        bm.removeClass("in");
+        bm.hide();
+        bm.attr("aria-expanded", "false");
+        btstate = false;
+      }
+    }
+  </script> 
+            </div>
+            <!----------- 移动端导航栏👆 ----------------->
+
+            <!--------------- pc端菜单栏👇 ---------------->
+            <div class="side"><head>
+    <link rel="stylesheet" href="https://2006wzt.github.io/media/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://2006wzt.github.io/styles/main.css">
+    
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.18.1/build/styles/dracula.min.css">
+    
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.18.1/build/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/850552586/ericamcdn@0.1/js/clipboard.min.js"></script>
+    <link rel="stylesheet" href="https://2006wzt.github.io/media/css/live2d.css">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
+    <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+    <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/5.13.1/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <!-- fancybox -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+    <script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+
+
+    <!--------- 数学公式👇---- -->
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/katex.min.css"
+        integrity="sha384-9tPv11A+glH/on/wEu99NVwDPwkMQESOocs/ZGXPoIiLE8MU/qkqUcZ3zzL+6DuH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/katex.min.js"
+        integrity="sha384-U8Vrjwb8fuHMt6ewaCy8uqeUXv4oitYACKdB0VziCerzt011iQ/0TqlSlv8MReCm" crossorigin="anonymous">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/contrib/auto-render.min.js"
+        integrity="sha384-aGfk5kvhIq5x1x5YdvCp4upKZYnA8ckafviDpmWEKp4afOZEqOli7gqSnh8I6enH" crossorigin="anonymous">
+    </script>
+    <script>
+        renderMathInElement(document.body, {
+            delimiters: [{
+                    left: "$$",
+                    right: "$$",
+                    display: true
+                },
+                {
+                    left: "$",
+                    right: "$",
+                    display: false
+                }
+            ]
+        });
+    </script>
+    
+    <!--------- 数学公式👆----------------- -->
+    <!--------- daovocie功能👇 ------------------->
+    
+    <!--------- daovocie功能👆 ------------------->
+    <!-- -----------------twikoo评论系统引入👇 --------->
+    <script src="https://cdn.jsdelivr.net/npm/twikoo@1.3.1/dist/twikoo.all.min.js"></script>
+    <!-- -----------------twikoo评论系统引入👆 --------->
+    <!---------------- leancloud api 功能依赖引入👇 -------->
+    <script src="https://cdn.jsdelivr.net/npm/leancloud-storage@3.13.0/dist/av-min.js"></script>
+    <!---------------- leancloud api 功能依赖引入👆 -------->
+    <!------------------ valine评论系统引入👇 ------------------>
+    <script src="https://2006wzt.github.io/media/js/valine.min.js"></script>
+    <!------------------ valine评论系统引入👆 ------------------>
+    <!---------------- 今日诗词api功能依赖👇 ----------------------->
+    <script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>
+    <!---------------- 今日诗词api功能依赖👆 ----------------------->
+    <!---------------- 今日诗词api功能依赖👇 ----------------------->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/ispeak-bber/ispeak-bber.min.js" charset="utf-8"></script>
+    <!---------------- 哔哔功能依赖👆 ----------------------->
+
+
+</head>
+
+<style>
+    body {
+        overflow-x: hidden;
+        height: 100vh;
+        overflow-y: scroll;
+        cursor: url("https://2006wzt.github.io/media/images/mouse_cursor.png"), auto
+    }
+</style>
+
+<body>
+    <!--=------ 页面加载动态画面👇 --------------->
+    <div class="pjaxloading" onclick="pjaxloadingClose()">
+        <div class="loadingbackground"></div>
+        <div id="loading-aname">
+            <div class="loading-aname">
+            </div>
+        </div>
+    </div>
+    <!--=------ 页面加载动态画面👆 --------------->
+
+    <!--------------- 左侧菜单栏👇 ------------------------>
+    
+    <div id=side>
+        <div class="r_m_div">
+            <a onclick="showAaplayer()"><i style="font-size: 20px;"><img
+                        src='https://2006wzt.github.io/media/images/music.png' alt="音乐播放器" class="musicbtn"></i></a>
+        </div>
+        <div class="avatar-border">
+            <img src="https://2006wzt.github.io/images/avatar.png?v=1669017208870" class="avatar">
+        </div>
+        <div class="sitename">My Brain</div>
+        <span class="description" data-text='["There is no end to learning. "]'>&nbsp;</span>
+        <div class="siteinfocontainer">
+            <span class="siteinfo">文章</span>
+            <span class="siteinfo">标签</span>
+        </div>
+        <div class="siteinfocontainer">
+            <span class="siteinfo" id="siteinfo-postsnum"></span>
+            <span class="siteinfo">7</span>
+        </div>
+        
+        <div class="search">
+            <!-- <input type="text" class="search-input" placeholder="标题搜索(●'◡'●)" /> -->
+            <input type="text" class="search-input" placeholder="标题搜索 ⚆_⚆ つ♡">
+            <div class="search-results"></div>
+        </div>
+        
+    <div class="share-button">
+        <span>Know me😊</span>
+        
+        <a href="https://github.com/2006wzt" target="_blank"><i style="font-size: 20px;"><img class="icon"
+                    src="https://2006wzt.github.io/media/images/github.png" alt=""></i></a>
+        
+        
+        <a onclick="showqq()"><i style="font-size: 20px;"><img class="icon"
+                    src="https://2006wzt.github.io/media/images/QQ.png" alt=""></i></a>
+        
+        
+        
+        <a href="https://space.bilibili.com/662167120" target="_blank"><i style="font-size: 20px;"><img class="icon"
+                    src="https://2006wzt.github.io/media/images/bilibili.png" alt=""></i></a>
+        
+        
+        
+        
+        
+    </div>
+    <div id="qq" style="display:none">1335287851</div>
+    <!------------ 加载菜单按钮👇 ------------------------->
+    <div class="menucontainer">
+        
+        
+        <div class="mchocie description">
+            <a data-pjax href="/" class="menubutton" style="margin-right: 15px;">
+                <i><img class="icon menuicon" src="" alt="首页"></i>&nbsp;<span
+                    data-text="首页">首页</span>
+            </a>
+        </div>
+        
+        
+        
+        <div class="mchocie description">
+            <a data-pjax href="/archives" class="menubutton" style="margin-right: 15px;">
+                <i><img class="icon menuicon" src="" alt="归档"></i>&nbsp;<span
+                    data-text="归档">归档</span>
+            </a>
+        </div>
+        
+        
+        
+        <div class="mchocie description">
+            <a data-pjax href="/tags" class="menubutton" style="margin-right: 15px;">
+                <i><img class="icon menuicon" src="" alt="标签"></i>&nbsp;<span
+                    data-text="标签">标签</span>
+            </a>
+        </div>
+        
+        
+        
+        <div class="mchocie description">
+            <a data-pjax href="/post/about" class="menubutton" style="margin-right: 15px;">
+                <i><img class="icon menuicon" src="" alt="关于"></i>&nbsp;<span
+                    data-text="关于">关于</span>
+            </a>
+        </div>
+        
+        
+
+        
+        
+        
+        <div class="mchocie description">
+            <a data-pjax href="https://2006wzt.github.io/friends" class="menubutton" style="margin-right: 15px;">
+                <i><img class="icon menuicon" src="" alt="友人帐"></i>&nbsp;<span data-text="友人帐">友人帐</span>
+            </a>
+        </div>
+        
+        <!--  -->
+    </div>
+    <!------------ 加载菜单按钮👆 ------------------------->
+    <hr>
+    <style>
+    .copyright {
+        font-size: 15px;
+        color: #d9d9d9;
+    }
+
+
+    @media screen and (min-width: 1200px) {
+        .foot {
+            width: 100%;
+            height: 130px;
+        }
+    }
+
+    @media screen and (max-width: 1200px) {
+        .foot {
+            display: none;
+        }
+    }
+</style>
+
+<body>
+    <div class="foot">
+        <div id="footinfo">Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | Theme: <a
+                href="https://github.com/850552586/gridea-theme-fog">Fog</a>
+            <div>
+                
+                <div id="sitegotimeDate">载入天数...</div>
+                <div id="sitegotimes">载入时分秒...</div>
+                <div id="cussitetime" style="display:none">07/18/2022</div>
+                
+            </div>
+            <div>
+                
+            </div>
+            <div class="copyright" style="color:white;text-align: center;">
+            </div>
+        </div>
+
+
+
+    </div>
+</body>
+
+<script>
+    //----------------------站点运行时间
+    var now = new Date();
+
+    function createtime() {
+        var sitegotime = document.getElementById("cussitetime").innerHTML + " 00:00:00";
+        var grt = new Date(sitegotime); //此处修改你的建站时间或者网站上线时间 
+        now.setTime(now.getTime() + 250);
+        days = (now - grt) / 1000 / 60 / 60 / 24;
+        dnum = Math.floor(days);
+        hours = (now - grt) / 1000 / 60 / 60 - (24 * dnum);
+        hnum = Math.floor(hours);
+        if (String(hnum).length == 1) {
+            hnum = "0" + hnum;
+        }
+        minutes = (now - grt) / 1000 / 60 - (24 * 60 * dnum) - (60 * hnum);
+        mnum = Math.floor(minutes);
+        if (String(mnum).length == 1) {
+            mnum = "0" + mnum;
+        }
+        seconds = (now - grt) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum);
+        snum = Math.round(seconds);
+        if (String(snum).length == 1) {
+            snum = "0" + snum;
+        }
+        document.getElementById("sitegotimeDate").innerHTML = "本站已安全运行 " + dnum + " 天 ";
+        document.getElementById("sitegotimes").innerHTML = hnum + " 小时 " + mnum + " 分 " + snum + " 秒";
+    }
+
+    let intervalId = setInterval("createtime()", 250);
+</script>
+
+    </div>
+
+    <img class="moon" src="https://2006wzt.github.io/media/images/moon.png" onclick="moonlight()">
+    <script src="https://2006wzt.github.io/media/js/wordshow.js"></script>
+    
+    <!--------------- 左侧菜单栏👆 ------------------------>
+
+    <!----------------- 顶部菜单栏👇 ------------------------>
+    
+    <!----------------- 顶部菜单栏👆 ------------------------>
+
+<!--核心功能加载-->
+<script src="https://2006wzt.github.io/media/js/mainfunc.js"></script>
+
+<!------------- Fog1.0版本彩蛋👇 -------------->
+    <!-- <section id="terrestrial" class="popup">
+        <a href="#" class="back">&lt; back</a>
+    </section>
+
+    <div class="flycontainer">
+        <div class="flyword">御风飞行中...</div>
+    </div>
+
+    <script>
+        $("#fog_go").click(function(){fog_go()});
+        async function fog_go(){
+            $(".bars").hide()
+            $("#live2d").hide()
+            await sleep(3000);
+            $(".flycontainer").css("display","flex");
+            $(".popup").fadeOut(500)
+            await sleep(2000);
+            var sitename = "My Brain";
+            getFogUser(sitename);
+        }
+
+        function fog_goregis(){
+            var sitename = "My Brain";
+            var siteurl = "https://2006wzt.github.io";
+            regisFogUser(sitename,siteurl);
+        }
+        fog_goregis();
+    </script> -->
+<!------------- Fog1.0版本彩蛋👆 -------------->
+<script>
+    function change_topmenu(){
+        tmcolor = "antiquewhite"
+        tsnamecolor = "antiquewhite"
+        $(".navbar-inverse .navbar-nav>li>a").css("color",tmcolor)
+        $(".navbar-inverse .navbar-brand").css("color",tsnamecolor)
+        $(".navbar-fixed-top").css("border-radius","0 0 10px 10px")
+    }
+</script>
+
+<!------ 根据自定义配置声明变量👇 --------------------->
+    
+    <script>
+        var postnumChoice = false
+    </script>
+    
+    
+    <script>
+        var shareChoice = true
+    </script>
+    
+    
+    <script>
+        var donateChoice = false
+    </script>
+    
+    
+    <script>
+        var searchChoice = true
+    </script>
+    
+    <script>let postsnum = 0;</script>
+    <div id="side-posttitle" style="display: none;">
+    
+    
+    可靠数据传输协议实验
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    数据库系统实验
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    Socket编程实验
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    CSP-精炼
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    深度学习实战（二）：知识回顾
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    深度学习实战（一）：深度学习导论
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    算法刷题小记
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    机器学习实战（十四）：树模型
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    机器学习实战（十三）：核函数
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    机器学习实战（十二）：参数权衡
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    机器学习实战（十一）：经验风险最小化
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    机器学习实战（十）：支持向量机
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    机器学习实战（九）：线性回归
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    机器学习实战（八）：梯度下降
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    机器学习实战（七）：逻辑回归
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    机器学习实战（六）：朴素贝叶斯
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    机器学习实战（五）：概率估计
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    机器学习实战（四）：感知机算法
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    机器学习实战（三）：KNN算法
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    机器学习实战（二）：监督学习
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    机器学习实战（一）：机器学习导论
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    Python入门与实战
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    
+    
+    
+    </div>
+    
+        <script>
+            var menupos = 'left';
+            $("#siteinfo-postsnum").html(postsnum);
+        </script>
+    
+    <script>
+        let commentsHide = false
+    </script>
+    <!------ 根据自定义配置声明变量👆 --------------------->
+
+
+    <!----------根据自定义配置设置图标信息👇---------->
+    <script>
+        var icondict = new Array();
+    </script>
+    
+        
+    
+    <!----------根据自定义配置设置图标信息👆---------->
+</body>
+
+<script src="https://2006wzt.github.io/media/share/dist/Share.js"></script>
+<!-- 页面pjax测试 -->
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery.pjax/2.0.1/jquery.pjax.js"></script>
+<!--确保jQuery已经在此之前加载-->
+<!-- <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script> -->
+<script src="https://2006wzt.github.io/media/js/all-pjax.js"></script>
+<script>
+    //-------------------------------说说功能👇--------------------------------------
+    let talksall = [];
+    let talks = [];
+    let talkindex = 0;
+    get();
+
+    function get() {
+        var t = JSON.parse('[]');
+        talkindex = t.length - 1;
+        for (var i = 0; i <= t.length - 1; i++) {
+            var d = {};
+            d["time"] = t[i].time;
+            d["author"] = t[i].author;
+            d["text"] = t[i].text;
+            d["img"] = t[i].img;
+            talksall.push(d);
+        }
+    }
+
+    function add() {
+        for (var i = talkindex; i >= 0 && i > talkindex - 3; i--) {
+            talks.push(talksall[i]);
+        }
+        talkindex = (talkindex - 3) >= 0 ? (talkindex - 3) : -1;
+        if (talkindex < 0) $("#getmorebt").hide();
+        show();
+    }
+
+    function show() {
+        var talkT = document.getElementById("talkContainer");
+        talkT.innerHTML = "";
+        for (var i = 0; i < talks.length; i++) {
+            if (talks[i].img != '') {
+                talkT.innerHTML += '\
+            <div class="talk" v-for="t in talks"> \
+                <span data-fancybox="images" href="' + talks[i].img + '"><img src="' + talks[i].img + '" class="talkimg"></span> \
+                <div class="ainfo">\
+                    <div class="ainfo-intro">\
+                        <div class="author">' + talks[i].author + '</div>·\
+                        <div class="time">' + talks[i].time + '</div>\
+                    </div>\
+                </div>\
+                <div class="talkcontent">' + talks[i].text + '\
+                </div\>\
+            ';
+            } else {
+                talkT.innerHTML += '\
+            <div class="talk" v-for="t in talks"> \
+                <div class="ainfo">\
+                    <div class="ainfo-intro">\
+                        <div class="author">' + talks[i].author + '</div>·\
+                        <div class="time">' + talks[i].time + '</div>\
+                    </div>\
+                </div>\
+                <div class="talkcontent">' + talks[i].text + '\
+                </div\>\
+            ';
+            }
+        }
+    }
+    //-------------------------------说说功能👆--------------------------------------
+</script>
+
+<!---->
+<script>
+    function replaceAvatar() {
+        twikoo_avatar = $(".tk-avatar-img");
+        for (var i = 0; i < twikoo_avatar.length; i++) {
+            var asrc = twikoo_avatar.eq(i).attr('src');
+            if (asrc.search('cn.gravatar.com') != -1) {
+                twikoo_avatar.eq(i).attr('src', 'https://2006wzt.github.io/media/images/comavatar.png');
+            }
+        }
+    }
+
+    function showWechat() {
+        var wechat = '';
+        alert("博主微信号：" + wechat);
+        return false;
+    }
+</script>
+
+<script>
+    /**
+     * https://github.com/tangkaichuan/gridea-search
+     */
+    // 检查缓存是否最新
+    function checkCache() {
+        var caches_postsnum = localStorage.getItem("postsnum");
+        var pt = document.getElementById("side-posttitle").innerHTML;
+        pt = pt.replace(/\s+/g, '').replace(/<script>.*?<\/script>/gi, "")
+        var ptlen = pt.length;
+        var ptlen_storage = localStorage.getItem("poststitlelen");
+        if (caches_postsnum != postsnum || ptlen != ptlen_storage) {
+            console.log("更新缓存");
+            return false
+        }
+        return true;
+    }
+
+    (function () {
+        var CACHES = checkCache()
+        if (!CACHES) {
+            var NOW = Date.now()
+            var API_CONTENT = '../api-content/index.html' + '?_=' + NOW
+            preload(API_CONTENT);
+            getContents(show_getContentresult);
+        }
+
+        function show_getContentresult(data) {
+            console.log("获取成功");
+            var postslen = data["posts"].length;
+            localStorage.setItem('postsnum', postslen);
+            var poststitlelen = 0;
+            var pt = document.getElementById("side-posttitle").innerHTML;
+            pt = pt.replace(/\s+/g, '').replace(/<script>.*?<\/script>/gi, "");
+            localStorage.setItem('poststitlelen', pt.length);
+        }
+
+
+
+        // preload
+        function preload(url) {
+            var preloadLink = document.createElement('link')
+            preloadLink.href = url
+            preloadLink.rel = 'preload'
+            preloadLink.as = 'fetch'
+            preloadLink.crossOrigin = 'anonymous'
+            document.head.appendChild(preloadLink)
+        }
+
+        // 异步 GET 请求
+        function get(obj) {
+            var xhr = new XMLHttpRequest()
+            xhr.open('get', obj.url, true)
+            xhr.send(null)
+            xhr.onreadystatechange = function () {
+                // 异步请求：响应状态为4，数据加载完毕
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        obj.success(xhr.responseText)
+                    } else {
+                        obj.error(xhr.status)
+                    }
+                }
+            }
+        }
+
+        // 获取博客全文 api
+        function getContents(callback) {
+            if (CACHES) {
+                callback(CACHES.contents)
+            } else {
+                get({
+                    url: API_CONTENT,
+                    success: function (data) {
+                        callback(JSON.parse(data));
+                        localStorage.setItem('ContentsCache', data);
+                        getStorageContent();
+                    }
+                })
+            }
+        }
+    })()
+    //------------------------核心功能--pjax全局渲染👇-------------------
+    let talkinit = false;
+    $(document).pjax('a[data-pjax]', '#main', {
+        fragment: '#main',
+        timeout: 8000
+    }).on('pjax:complete', function () {
+        //代码块高亮渲染
+        document.querySelectorAll('pre code').forEach((block) => {
+            hljs.highlightBlock(block);
+        });
+        //文章热度
+        if(postnumChoice){
+            getHotnum();
+        }
+        //文章索引
+        toginit();
+        //清空搜索栏
+        if (searchChoice) {
+            searchInit();
+            searchInput.value = "";
+        }
+        var pl = window.location.pathname;
+        //说说更新
+        if (pl.search("talk") != -1 && !talkinit) {
+            add();
+            talkinit = true;
+        } else if (pl.search("talk") != -1) {
+            show();
+        }
+        if (pl.search("post") != -1) {
+            if (shareChoice)
+                shareInit();
+            if (donateChoice)
+                donateInit();
+            if ("default" == "default"&&!commentsHide) {
+                $("#comment").hide()
+                commentsHide = true
+            }
+            lazyload();
+            codeinit();
+            if ("default" == "twikoo") {
+                //twikoo头像更换
+                setTimeout(replaceAvatar, 3000);
+                setTimeout(replaceAvatar, 8000); //部分博主站点速度加载过慢，再添加一个延迟
+            }
+        }
+        if (btstate == true)
+            dropdown();
+    }).on('pjax:start', function () {
+        $(".pjaxloading").fadeIn(50);
+    }).on('pjax:end', function () {
+        $(".pjaxloading").fadeOut(50);
+    });
+    //------------------------核心功能--pjax全局渲染👆-------------------
+
+    //-------------------------------------------------搜索
+    // 获取搜索框、搜索按钮、清空搜索、结果输出对应的元素
+    if (searchChoice) {
+        var searchInput = document.querySelector('.search-input');
+        var searchResults = document.querySelector('.search-results');
+    }
+    // 申明保存文章的标题、链接、内容的数组变量
+    var searchValue = '',
+        arrItems = [],
+        arrLinks = [],
+        arrTitles = [],
+        arrContents = [],
+        arrResults = [],
+        indexItem = [],
+        itemLength = 0;
+    var tmpDiv = document.createElement('div');
+    tmpDiv.className = 'result-item';
+
+
+    function getStorageContent() {
+        var data = localStorage.getItem('ContentsCache');
+        data = JSON.parse(data);
+        posts = data["posts"];
+        for (var i = 0; i < posts.length; i++) {
+            arrLinks[i] = posts[i].link;
+            arrTitles[i] = posts[i].title;
+            arrContents[i] = posts[i].content;
+            itemLength++;
+        }
+    }
+    if (checkCache())
+        getStorageContent();
+    // 输入框内容变化后就开始匹配，可以不用点按钮
+    // 经测试，onkeydown, onchange 等方法效果不太理想，
+    // 存在输入延迟等问题，最后发现触发 input 事件最理想，
+    // 并且可以处理中文输入法拼写的变化
+    searchInput.oninput = function () {
+        setTimeout(searchConfirm, 0);
+    }
+    searchInput.onfocus = function () {
+        searchResults.style.display = 'block';
+    }
+
+    function searchConfirm() {
+        if (searchInput.value == '') {
+            searchResults.style.display = 'none';
+        } else if (searchInput.value.search(/^\s+$/) >= 0) {
+            // 检测输入值全是空白的情况
+            searchInit();
+            var itemDiv = tmpDiv.cloneNode(true);
+            itemDiv.innerText = '请输入有效内容...';
+            searchResults.appendChild(itemDiv);
+        } else {
+            // 合法输入值的情况
+            searchInit();
+            searchValue = searchInput.value;
+            // 在标题、内容中查找
+            searchMatching(arrTitles, arrContents, searchValue);
+        }
+    }
+
+    // 每次搜索完成后的初始化
+    function searchInit() {
+        arrResults = [];
+        indexItem = [];
+        searchResults.innerHTML = '';
+        searchResults.style.display = 'block';
+    }
+
+    function searchMatching(arr1, arr2, input) {
+        // 忽略输入大小写
+        input = new RegExp(input, 'i');
+        var step = 10;
+        // 在所有文章标题、内容中匹配查询值
+        for (i = 0; i < itemLength; i++) {
+            var indexContent = arr2[i].search(input);
+            //标题匹配
+            if (arr1[i].search(input) != -1) {
+                indexItem.push(i); // 保存匹配值的索引
+                if (indexContent != -1) {
+                    startindex = (indexContent - step) >= 0 ? (indexContent - step) : 0;
+                    var searchcontent = arr2[i].slice(indexContent - step, indexContent + 5)
+                    arrResults.push("....." + searchcontent + ".....");
+                } else
+                    arrResults.push("");
+            }
+            //内容匹配
+            else if (indexContent != -1) {
+                indexItem.push(i); // 保存匹配值的索引
+
+                startindex = (indexContent - step) >= 0 ? (indexContent - step) : 0;
+                var searchcontent = arr2[i].slice(indexContent - step, indexContent + 5)
+                arrResults.push("....." + searchcontent + ".....");
+            }
+        }
+
+        // 输出总共匹配到的数目
+        var totalDiv = tmpDiv.cloneNode(true);
+        totalDiv.innerHTML = '<b>总匹配：' + indexItem.length + ' 项<hr></b>';
+        searchResults.appendChild(totalDiv);
+
+        // 未匹配到内容的情况
+        if (indexItem.length == 0) {
+            var itemDiv = tmpDiv.cloneNode(true);
+            itemDiv.innerText = '未匹配到内容...';
+            searchResults.appendChild(itemDiv);
+        }
+
+        // 将所有匹配内容进行组合
+        for (i = 0; i < arrResults.length; i++) {
+            var itemDiv = tmpDiv.cloneNode(true);
+            itemDiv.innerHTML = '<a data-pjax class="searchresults" href="' + arrLinks[indexItem[i]] + '"><b>[' +
+                arrTitles[indexItem[i]] +
+                ']</b><p>' + arrResults[i] + '</p></a><hr />';
+            searchResults.appendChild(itemDiv);
+        }
+    }
+</script>
+
+
+
+<!--------------------- 菜单栏图标加载功能👇 ----------------------->
+<script>
+var menulist = $(".menuicon");
+var menulength = menulist.length;
+for (var i = 0; i < menulength; i++) {
+    var altname = menulist.eq(i).attr("alt");
+    var iconurl = icondict[altname];
+    if (iconurl == undefined || iconurl == '')
+        continue;
+    if (iconurl == 'Home') {
+        menulist.eq(i).attr("src", "https://2006wzt.github.io/media/images/Home.png");
+menulist.eq(i).show();
+} else if (iconurl == 'Archive') {
+menulist.eq(i).attr("src", "https://2006wzt.github.io/media/images/Archive.png");
+menulist.eq(i).show();
+} else if (iconurl == 'Tag') {
+menulist.eq(i).attr("src", "https://2006wzt.github.io/media/images/Tag.png");
+menulist.eq(i).show();
+} else if (iconurl == 'About') {
+menulist.eq(i).attr("src", "https://2006wzt.github.io/media/images/About.png");
+menulist.eq(i).show();
+} else if (iconurl == 'Talk') {
+menulist.eq(i).attr("src", "https://2006wzt.github.io/media/images/Talk.png");
+menulist.eq(i).show();
+} else if (iconurl == 'Friends') {
+menulist.eq(i).attr("src", "https://2006wzt.github.io/media/images/Friends.png");
+menulist.eq(i).show();
+} else if (iconurl == 'Fly') {
+menulist.eq(i).attr("src", "https://2006wzt.github.io/media/images/wind.png");
+menulist.eq(i).show();
+} else {
+menulist.eq(i).attr("src", iconurl);
+menulist.eq(i).show();
+}
+}
+</script>
+<!--------------------- 菜单栏图标加载功能👆 ----------------------->
+
+<script>
+    //--------------------bber-onetalk加载👇--------------------------------
+    function bberonetalkLoad(){
+        bberjsonurl = '';
+        if ( $("#bber-talk").length > 0 ) {
+        jsonUrl = bberjsonurl
+        $.getJSON(jsonUrl+"?t="+Date.parse( new Date()),function(res){
+        var bberHtml = ''
+        $.each(res.data, function(i, item){
+            d = new Date(item.date)
+            date = d.getFullYear()+'/'+(d.getMonth()+1)+'/'+d.getDate() +' '+d.getHours()+':'+d.getMinutes()+':'+d.getSeconds()
+            dataTime = '<span class="datatime">'+date+'</span>'
+            bberHtml += '<li class="item item-'+(i+1)+'">'+dataTime+'： <a data-pjax href="https://2006wzt.github.io/bber">'+item.content+'</a></li>'
+        });
+        $('#bber-talk').append('<span class="index-talk-icon"><svg viewBox="0 0 1024 1024" width="21" height="21"><path d="M184.32 891.667692c-12.603077 0-25.206154-2.363077-37.809231-7.876923-37.021538-14.966154-59.864615-49.624615-59.864615-89.009231v-275.692307c0-212.676923 173.292308-385.969231 385.969231-385.969231h78.76923c212.676923 0 385.969231 173.292308 385.969231 385.969231 0 169.353846-137.846154 307.2-307.2 307.2H289.083077l-37.021539 37.021538c-18.904615 18.116923-43.323077 28.356923-67.741538 28.356923zM472.615385 195.347692c-178.018462 0-322.953846 144.935385-322.953847 322.953846v275.692308c0 21.267692 15.753846 29.144615 20.48 31.507692 4.726154 2.363077 22.055385 7.876923 37.021539-7.08923l46.473846-46.473846c6.301538-6.301538 14.178462-9.452308 22.055385-9.452308h354.461538c134.695385 0 244.184615-109.489231 244.184616-244.184616 0-178.018462-144.935385-322.953846-322.953847-322.953846H472.615385z"></path><path d="M321.378462 512m-59.076924 0a59.076923 59.076923 0 1 0 118.153847 0 59.076923 59.076923 0 1 0-118.153847 0Z"></path><path d="M518.301538 512m-59.076923 0a59.076923 59.076923 0 1 0 118.153847 0 59.076923 59.076923 0 1 0-118.153847 0Z"></path><path d="M715.224615 512m-59.076923 0a59.076923 59.076923 0 1 0 118.153846 0 59.076923 59.076923 0 1 0-118.153846 0Z"></path></svg></span><ul class="talk-list">'+bberHtml+'</ul>')
+        //Lately({ 'target': '#bber-talk .datatime' });
+        });
+        function Roll (){
+        var list_li = $('.talk-list li'),cur_li = list_li.first(),last_li = list_li.last();
+        last_li.after(cur_li);
+        };
+        setInterval(Roll,3000);
+    }
+    }
+  //--------------------bber-onetalk加载👆--------------------------------
+</script>
+
+<script>
+    var ClicksideState = 1
+    var cur_readingmode = false
+    function readingmode(){
+        if (!cur_readingmode){
+            if(menupos == 'left'){
+                if(ClicksideState==1)
+                menu_openclose1()
+            }
+            $("#tab1").fadeOut(50)
+            $("#bg").fadeOut(50)
+            $(".navbar").fadeOut(50)
+            $(".markdownIt-TOC li a").css("color","black")
+            cur_readingmode = true
+        }else{
+            if(menupos == 'left'){
+                if(ClicksideState==0)
+                    menu_openclose1()
+            }
+            $("#tab1").fadeIn(50)
+            $("#bg").fadeIn(50)
+            $(".navbar").fadeIn(50)
+            $(".markdownIt-TOC li a").css("color","antiquewhite")
+            cur_readingmode = false  
+        }
+    }
+</script>
+
+
+<!----夜间模式👇-->
+<script>
+    var moonlightState = false
+    function moonlight(){
+        if(!moonlightState){
+            $("#bg").fadeOut(200)
+            $('body').css("background","rgba(0,0,0,0.8)")
+            $(".markdownIt-TOC li a").css("color","white")
+            $(".text p, .text ul").css("color","white")
+            $("#articlecontent").css("color","white")
+            $(".post-copyright").css("background","rgba(10,10,10,0.5)")
+            $('blockquote').css("background","rgba(10,10,10,0.6)")
+            $("#articlecontent").css("background","rgba(10,10,10,0.5)")
+            moonlightState = true
+            $(".moon").attr("src","https://2006wzt.github.io/media/images/sun.png")
+        }else{
+            $("#bg").show()
+            $(".markdownIt-TOC li a").css("color","antiquewhite")
+            $(".text p, .text ul").css("color","rgba(0, 0, 0, 0.7)")
+            $("#articlecontent").css("color","black")
+            $(".post-copyright").css("background","#f9f9f9")
+            $('blockquote').css("background","#eff8f0")
+            $("#articlecontent").css("background","white")
+            $(".moon").attr("src","https://2006wzt.github.io/media/images/moon.png")
+            $('body').css("background","white")
+            moonlightState = false
+        }
+    }
+</script>
+<!----夜间模式👆--></div>
+            <!--------------- pc端菜单栏👆 ---------------->
+
+            <!-- ----------------左侧菜单栏html 👇-------------------------------------->
+            
+            <div>
+                <div id="tab1" class="tab">
+                    <div class="bars">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                    <div class="close"></div>
+                </div>
+                <div class="col-md-1 col-lg-3"></div>
+                <!-- main标签，pjax渲染时加载以下内容👇 -->
+                <div id="main" class="col-xs-12 col-sm-12 col-md-12 col-lg-7" style="padding:0;">
+                    <div class="readingmode" onclick="readingmode()">阅</div>
+                    <link rel="stylesheet" href="https://2006wzt.github.io/media/css/font-awesome.css">
+
+<body>
+    <div class="allcontent" id="postdetail">
+        <div class="postshow postpadding" style="padding-bottom: 0;">
+            
+            <div class="postdetailimg">
+                <img src="https://2006wzt.github.io/post-images/可靠数据传输协议.jpeg" class="postimage" style="cursor:auto">
+            </div>
+            <div class="postinfo-detail">
+                <div class="postdate"><i class="fa fa-calendar"></i>2022-11-21</div>
+                <div class="poststatus postdate"><i class="fa fa-clock-o"></i> 63 min read</div>
+                <div class="posttag">
+                    
+                    <a data-pjax href="https://2006wzt.github.io/tag/ebXlXX0IT/" class="postlink">
+                        <i class="fa fa-tag"></i> C/C++
+                    </a>
+                    
+                </div>
+            </div>
+            
+        <div id="articlecontent">
+            <div id="texttitle" style="text-align: center">
+                <h2 id="ptitle">可靠数据传输协议实验</h2>
+                <!-- id 将作为查询条件 -->
+                <div id="pl" style="display:none">https://2006wzt.github.io/post/可靠数据传输协议/</div>
+                <div id="rootaddr" style="display:none">https://2006wzt.github.io</div>
+                
+            </div>
+            <div class="text ">
+                <h1 id="可靠数据传输协议rdt">可靠数据传输协议Rdt</h1>
+<h2 id="一-实验要求">一、实验要求</h2>
+<h3 id="11-实验目标和内容">1.1 实验目标和内容</h3>
+<h4 id="111-实验目的">1.1.1 实验目的</h4>
+<p>通过该实验了解和掌握运输层可靠数据传输原理以及具体实现方法。</p>
+<h4 id="112-实验环境">1.1.2 实验环境</h4>
+<p>● 语言工具：基于 C++语言实现。<br>
+● 操作系统：Windows、Linux 操作系统。<br>
+● 其它要求：基于模拟网络环境 API 实现。</p>
+<h4 id="113-实验要求">1.1.3 实验要求</h4>
+<p>● 可靠运输层协议实验只考虑单向传输，即：只有发送方发生数据报文，接收方仅仅接收报文并给出确认报文。<br>
+● 要求实现具体协议时，指定编码报文序号的二进制位数（例如 3 位二进制编码报文序号）以及窗口大小（例如大小为 4），报文段序号必须按照指定的二进制位数进行编码。<br>
+● 代码实现不需要基于 Socket API，不需要利用多线程，不需要任何 UI 界面。<br>
+● 提交实验设计报告和源代码；实验设计报告必须按照实验报告模板完成，源代码必须加详细注释。<br>
+● 代码编译运行成功后，运行给实验指导老师或者助教检查。</p>
+<h4 id="114-实验内容">1.1.4 实验内容</h4>
+<p>本实验包括三个级别的内容，具体包括：<br>
+● 实现基于 GBN 的可靠传输协议，分值为 50%。<br>
+● 实现基于 SR 的可靠传输协议，分值为 30%。<br>
+● 在实现 GBN 协议的基础上，根据 TCP 的可靠数据传输机制实现一个简化版的 TCP协议，分值 20%，要求：</p>
+<blockquote>
+<p>● 报文段格式、接收方缓冲区大小和 GBN 协议一样保持不变；<br>
+● 报文段序号按照报文段为单位进行编号；<br>
+● 单一的超时计时器，不需要估算 RTT 动态调整定时器 Timeout 参数；<br>
+● 支持快速重传和超时重传，重传时只重传最早发送且没被确认的报文段；<br>
+● 确认号为收到的最后一个报文段序号；<br>
+● 不考虑流量控制、拥塞控制</p>
+</blockquote>
+<h3 id="12-检查表">1.2 检查表</h3>
+<img src="http://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/LG(L(FZ%3]G535E0`G}4XN0.png" style="zoom:80%;" />
+<h2 id="二-模拟网络环境介绍">二、模拟网络环境介绍</h2>
+<p>由于需要模拟真实网络环境下实际可能发生的丢包、报文损坏的情况，因此开发了一个模拟的网络环境。模拟网络环境模拟实现了应用层和网络层，而需要和学生实现的运输层Rdt 协议协同工作完成数据的可靠传输</p>
+<h3 id="21-模拟网络环境功能">2.1 模拟网络环境功能</h3>
+<p>模拟的网络环境实现了以下功能：</p>
+<blockquote>
+<p>● 应用层的数据向下递交给发送方运输层 Rdt 协议；<br>
+● 接收方运输层 Rdt 协议收到差错检测无误的报文后向上层应用层递交；<br>
+● 将发送方运输层 Rdt 协议准备好的报文通过网络层递交给接收方，在递交过程中按一定的概率会产生丢包、报文损坏；<br>
+● 定时器的启动、关闭、定时器 Timeout 后通知发送方运输层 Rdt 协议</p>
+</blockquote>
+<h3 id="22-模拟网络环境架构">2.2 模拟网络环境架构</h3>
+<img src="http://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/202211121101425.png" style="zoom:67%;" />
+<p>图 1 给出了模拟网络环境架构和学生实现的 Rdt 协议的之间的关系。二者之间需要协同工作。蓝色背景部分为模拟网络环境，橙色背景部分为 Rdt 协议的发送方（RdtSender）和接收方（RdtReceiver）。红色箭头表示 RdtSender 和 RdtReceiver 调用模拟网络环境的函数，黑色箭头表示模拟环境调用 RdtSender 和 RdtReceiver 的函数。</p>
+<p>模拟网络环境实现了以下函数以供 Rdt 协议调用：delivertoAppLayer(Message) 、sendToNetworkLayer(Packet) 、startTimer(int seqNum)、stopTimer(int seqNum)，这些函数功能将在 2.3 节介绍。</p>
+<p>Rdt 协议的发送方 RdtSender 和 Rdt 协议的接收方则是学生需要实现的功能，它们共同实现了 Rdt 协议。其中 RdtSender 必须实现三个函数：send(Message)、receive(Packet)、timeoutHandler(int seqNum)；RdtReceiver 则必须实现一个函数：receive(Packet)，这些函数的功能将在 2.3 节介绍。</p>
+<h3 id="23-模拟网络环境与学生实现的代码之间的调用关系">2.3 模拟网络环境与学生实现的代码之间的调用关系</h3>
+<p>模拟网络环境模拟实现了应用层和网络层，而需要和学生实现的运输层 Rdt 协议协同工作完成数据的可靠传输。从应用层有数据到来开始，它们之间的调用关系如下所述：<br>
+① 模拟网络环境模拟产生应用层数据，调用 Rtdsender 的 Send(Message)方法；<br>
+② RtdSender 的 Send(Message)方法调用模拟网络环境的 sendToNetworkLayer(Packet)方法，将数据发送到模拟网络环境的网络层；<br>
+③ RtdSender 的 Send(Message)方法调用模拟网络环境的 startTimer( )方法启动定时器；<br>
+④ 模拟网络环境调用 RdtReceiver 的 receive(Packet)方法将数据交给 RdtReceiver；<br>
+⑤ 如果校验正确，RdtReceiver 调用模拟网络环境的 delivertoAppLayer(Message)方法将数据向上递交给应用层；<br>
+⑥ RdtReceiver 调用模拟网络环境的 sendToNetworkLayer(Packet)方法发送确认；<br>
+⑦ 模拟网络环境调用 RtdSender 的 receive(Packet)方法递交确认给 RtdSender；<br>
+⑧ 如果确认正确，RtdSender 调用模拟网络环境的 stopTimer 方法关闭定时器；<br>
+⑨ 如果确认不正确，RtdSender 调用模拟网络环境的 startTimer 方法重启定时器；<br>
+⑩ 如果定时器超时，模拟网络环境调用 RtdSender 的 timeoutHandler( )方法。</p>
+<h2 id="三-数据结构-接口定义与模拟网络环境-api-介绍">三、数据结构、接口定义与模拟网络环境 API 介绍</h2>
+<h3 id="31-数据结构定义">3.1 数据结构定义</h3>
+<p>DataStructure.h 头文件里定义了应用层消息 Message 和运输层 Packet 类，同时定义了基本的参数，具体如下：</p>
+<p>**（1）Configuration：**配置类</p>
+<pre><code class="language-c++">struct Configuration{
+	static constint PAYLOAD_SIZE = 21;//定义各层协议Payload数据的大小（字节为单位）
+	static constint TIME_OUT =20;//定时器时间
+};
+</code></pre>
+<p>**（2）Message：**第五层应用层消息</p>
+<pre><code class="language-c++">struct Message {
+	char data[Configuration::PAYLOAD_SIZE]; //payload
+	Message();
+	Message(const Message &amp;msg);
+	Message&amp; operator=(const Message &amp;msg);
+	~Message();
+	void print();
+};
+</code></pre>
+<p>**（3）Packet：**第四层运输层报文段</p>
+<pre><code class="language-c++">struct Packet {
+    int seqnum; //序号
+    int acknum; //确认号
+    int checksum; //校验和
+    char payload[Configuration::PAYLOAD_SIZE]; //payload
+    Packet();
+    Packet(const Packet &amp;pkt);
+    Packet &amp;operator=(const Packet &amp;pkt);
+    bool operator==(const Packet &amp;pkt) const;
+    ~Packet();
+    void print();
+};
+</code></pre>
+<h3 id="32-rdtsender-和-rdtreceiver-接口定义">3.2 RdtSender 和 RdtReceiver 接口定义</h3>
+<p>在头文件 RdtSender.h 和 RdtReceiver.h 里分别定义 Rdt 协议发送方和接收方必须实现的接口，是通过抽象类 RdtSender 和 RdtReceiver 进行接口的定义，具体分别如下：</p>
+<p><strong>（1）RdtSender：</strong></p>
+<pre><code class="language-c++">//定义RdtSender抽象类，规定了必须实现的三个接口方法
+//具体的子类比如StopWaitRdtSender、GBNRdtSender必须给出这三个方法的具体实现
+//只考虑单向传输，即发送方只发送数据和接受确认
+struct RdtSender {
+    
+	//发送应用层下来的Message，由NetworkService调用。
+	//如果发送方成功地将Message发送到网络层，返回true;
+	//如果因为发送方处于等待确认状态或发送窗口已满而拒绝发送Message，则返回false
+	virtual bool send(Message &amp;message) = 0;
+    
+    //接受确认Ack，将被NetworkService调用
+	virtual void receive(Packet &amp;ackPkt) = 0;
+    
+    //Timeout handler，将被NetworkService调用
+	virtual void timeoutHandler(int seqNum) = 0;
+    
+    //返回RdtSender是否处于等待状态，如果发送方正等待确认或者发送窗口已满，返回true
+	virtual bool getWaitingState() = 0;
+};
+</code></pre>
+<p>这里需要特别说明的是：<br>
+（1）timeoutHandler 方法的参数 seqNum 为和该定时器关联的 Packet 的序号。虽然对于StopWait、GBN、简化版的 TCP 协议只需要一个定时器，但是该函数还是需要一个序号参数，只不过该序号是最早发出但没有被确认的 Packet 的序号。但是如果实现 SR 协议，那么该参数就有具体的意义了：它指明了是哪个 Packet 的定时器超时了。<br>
+（2）getWaitingState 函数返回 RdtSender 是否处于等待状态，对于具体的 Rdt 协议，是否处于等待状态具有不同的含义：例如对于 StopWait 协议，当发送方等待上层发送的 Packet的确认时，getWaitingState 函数应该返回 true；对于 GBN 协议，当发送方的发送窗口满了时，getWaitingState 函数应该返回 true。定义这个接口方法的原因是模拟网络环境需要调用RdtSender 的这个方法来判断是否需要将应用层下来的数据递交给 Rdt，这样学生实现RdtSender 时不需要在内部维护一个 Packet 队列了，因为当 getWaitingState 返回 true 时，应用层不会有数据下来。</p>
+<p><strong>（2）RdtReceiver：</strong></p>
+<pre><code class="language-c++">//定义RdtReceiver抽象类，规定了必须实现的一个接口方法
+//具体的子类比如StopWaitRdtReceiver、GBNRdtReceiver必须给出这一个方法的具体实现
+//只考虑单向传输，即接收方只接收数据
+struct RdtReceiver {
+	virtual void receive(Packet &amp;packet) = 0; //接收报文，将被NetworkService调用
+};
+</code></pre>
+<p>RdtReceiver 的接口定义就简单的多，这里不再解释。具体的 Rdt 协议实现类必须继承 这二个抽象类，这样就保证了不同的 Rdt 协议接口一致性。否则具体 Rdt 协议实现类的对象无法注入到模拟网络环境一起协同工作</p>
+<h3 id="33-模拟网络环境-api-接口定义">3.3 模拟网络环境 API 接口定义</h3>
+<p>模拟网络环境 API 接口定义了学生实现的具体 Rdt 协议实现类可以调用的函数，具体定义在 NetworkService.h 头文件中定义：</p>
+<pre><code class="language-c++">//定义NetworkService抽象类，规定了学生实现的RdtSender和RdtReceiver可以调用的的接口方法
+struct NetworkService {
+    //发送方启动定时器，由RdtSender调用
+    virtual void startTimer(RandomEventTarget target, int timeOut,int seqNum) = 0;
+    //发送方停止定时器，由RdtSender调用
+    virtual void stopTimer(RandomEventTarget target,int seqNum) = 0;
+    //将数据包发送到网络层，由RdtSender或RdtReceiver调用
+    virtual void sendToNetworkLayer(RandomEventTarget target, Packet pkt) = 0;
+    //将数据包向上递交到应用层，由RdtReceiver调用
+    virtual void delivertoAppLayer(RandomEventTarget target, Message msg) = 0;
+    //初始化网络环境，在main里调用
+    virtual void init() = 0;
+    //启动网络环境，在main里调用
+    virtual void start() = 0;
+    //注入具体的发送方对象，在main里调用
+    virtual void setRtdSender(RdtSender *ps) = 0;
+    //设置具体的接收对象，在main里调用
+    virtual void setRtdReceiver(RdtReceiver *ps) = 0;
+    //设置输入文件路径
+    virtual void setInputFile(const char *ifile) = 0;
+    //设置输出文件路径
+    virtual void setOutputFile(const char *ofile) = 0;
+    //设置运行模式，0：VERBOSE模式，1：安静模式
+    virtual void setRunMode(int mode = 0) = 0;
+};
+</code></pre>
+<p>这里需要特别说明的是：<br>
+（1）RandomEventTarget 是定义的枚举类型（具体定义在 3.4 里说明），用来标识发送方和接收方。 当调用 startTimer 和 stopTimer 时 ， 该参数设 为 SENDER ； 当调用sendToNetworkLayer 方法时，该参数设为对方，即如果是发送方调用 sendToNetworkLayer 方法时发送数据报文，该参数设为 RECEIVER；如是接收方调用 sendToNetworkLayer 方法时发送确认报文，该参数设为 SENDER；当接收方调用 delivertoAppLayer 方法时，该参数设为 RECEIVER<br>
+（2）startTimer 和 stopTimer 方法都需要设置 seqNum 参数，该参数应该是和该定时器相关的 Packet 序号。即使是 GBN 和简化版 TCP 这些协议，也要设置该参数（应为最早发出但未确认的 Packet 序号）。另外重新启动一个定时器前，一定要先关闭该定时器（要注意 seqNum 参数的一致性），否则模拟网络环境会提示“试图启动一个已启动的定时器”。<br>
+（3）setInputFile 和 setOutputFile 是增加的二个接口函数，设置输入文件和输出文件的路径。这是为了验证协议的正确性而添加的：模拟网络环境的发送方会读取文件，构造应用层的 Message，调用 RdtSender 的 send 方法将 Message 发送到接收方，接收 RdtReceiver 再将正确收到的报文调用 delivertoAppLayer 方法交给接收方模拟网络环境的应用层，最后写入到输出文件。如果输入文件和输出文件内容一样，说明协议工作正确。测试用的输入文件请使用发布的 input.txt 文件，如果协议工作正确，程序会产生输出文件，并且输出文件和输入文件的内容一致。<br>
+（4）setRunMode 函数也是增加的接口函数，用于设置网络模拟环境的运行模式。如果设置 mode=0（也是该函数的缺省参数），则为 Verbose 模式，网络模拟环境会输出很多模拟环境的运行信息，可以帮助学生观察协议的工作过程，特别是协议实现有问题时，可以帮助<br>
+分析协议出现的问题；如果设置为 mode=1，则为 Silence 模式，这是会关闭掉模拟环境输出的运行信息，而控制台只会输出学生协议实现代码里打印的信息。</p>
+<h3 id="34-其它定义">3.4 其它定义</h3>
+<p>在 RandomEventEnum.h 头文件里定义了枚举类型，用来标识发送方和接收方。其定义为：</p>
+<pre><code class="language-c++">/* 定义随机事件的目标*/
+enum RandomEventTarget {
+	SENDER, //数据发送方
+	RECEIVER //数据接收方
+};
+</code></pre>
+<p>在 Tool.h 头文件里，定义了可以使用的工具接口，其定义为：</p>
+<pre><code class="language-c++">struct Tool{
+    /* 打印Packet的信息*/
+    virtual void printPacket(const char * description, const Packet &amp;packet) = 0;
+    /*计算一个Packet的校验和*/
+    virtual int calculateCheckSum(const Packet &amp;packet) = 0;
+    /*产生一个均匀分布的[0-1]间的随机数*/
+    virtual double random() = 0;
+};
+</code></pre>
+<p>其中 void printPacket(const char * description, const Packet &amp;packet)函数可以用来打印调试信息， 第一 个参数为描述性字符串， 第二个 参 为要 打印 输出 的Packet； int calculateCheckSum(const Packet &amp;packet)函数计算给定 Packet 的校验和；double random()函<br>
+数是模拟网络环境所需的。这里要特别说明的是校验和的计算请调用 Tool 接口定义的方法。<br>
+在 Global.h 里声明了二个全局指针，分别指向实现了 Tool 接口和 NetworkService 接口的实例，学生代码中通过这二个指针调用工具接口提供的函数和模拟网络环境提供的函数。由于这二个指针没有封装在智能指针里，学生需要在 main 函数结束前 delete 这二个指针。</p>
+<h2 id="四-停止等待协议rdt30实现示例">四、停止等待协议（Rdt3.0）实现示例</h2>
+<h3 id="41-开发环境配置">4.1 开发环境配置</h3>
+<p><strong>（1）link 模拟网络环境静态库：</strong></p>
+<p>模拟网络环境已经被编译成静态库的 lib 文件（文件名为 netsimlib.lib），因此学生的代码工程编译时需要 link 这个 lib 文件。以 Windows 平台下的 VS2017 为例，可以有很多办法link 一个自定义的静态库 lib 文件，在 StopWait 示例工程中，是在 stdAfx.h 头文件里加上如下的编译预处理指令将静态库链接在一起：</p>
+<pre><code class="language-c++">#pragma comment (lib,&quot;D:\\DotNetProject\\VS2017\\Rdt\\Debug\\netsimlib.lib&quot;)
+</code></pre>
+<p><strong>（2）需要包含的头文件：</strong></p>
+<p>在学生代码工程里，需要包含以下头文件：</p>
+<blockquote>
+<p>● DataStructure.h<br>
+● Global.h<br>
+● NetworkService.h<br>
+● RandomEventEnum.h<br>
+● RdtReceiver.h<br>
+● RdtSender.h<br>
+● Tool.h</p>
+</blockquote>
+<p>另外还需要如下常规的头文件：</p>
+<blockquote>
+<p>● stdio.h<br>
+● string.h<br>
+● iostream</p>
+</blockquote>
+<h3 id="42-停止等待协议发送方实现">4.2 停止等待协议发送方实现</h3>
+<img src="http://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/202211141038514.png" style="zoom:60%;" />
+<p>停止等待协议发送方是通过类 StopWaitRdtSender 实现，而 StopWaitRdtSender 继承了抽象类 RdtSender，具体定义如下：</p>
+<pre><code class="language-c++">class StopWaitRdtSender :public RdtSender{
+    private:
+        int expectSequenceNumberSend; // 下一个发送序号
+        bool waitingState; // 是否处于等待Ack的状态
+        Packet packetWaitingAck; //已发送并等待Ack的数据包
+    public:
+        bool getWaitingState();
+        //发送应用层下来的Message，由NetworkServiceSimulator调用,
+        //如果发送方成功地将Message发送到网络层，返回true;
+        //如果因为发送方处于等待正确确认状态而拒绝发送Message，则返回false
+        bool send(Message &amp;message);
+        //接受确认Ack，将被NetworkServiceSimulator调用
+        void receive(Packet &amp;ackPkt);
+        //Timeout handler，将被NetworkServiceSimulator调用
+        void timeoutHandler(int seqNum);
+    public:
+        StopWaitRdtSender();
+        virtual ~StopWaitRdtSender();
+};
+</code></pre>
+<p>StopWaitRdtSender 类的函数实现具体为：</p>
+<pre><code class="language-c++">//构造函数
+StopWaitRdtSender::StopWaitRdtSender():expectSequenceNumberSend(0),waitingState(false){
+    
+}
+StopWaitRdtSender::~StopWaitRdtSender(){
+    
+}
+bool StopWaitRdtSender::getWaitingState() {
+	return waitingState;
+}
+bool StopWaitRdtSender::send(Message &amp;message) {
+    if (this-&gt;waitingState) { //发送方处于等待确认状态
+    	return false;
+	}
+    this-&gt;packetWaitingAck.acknum = -1; //忽略该字段,发送方的packet用不到acknum,ACK报文段才需要
+    this-&gt;packetWaitingAck.seqnum = this-&gt;expectSequenceNumberSend;
+    this-&gt;packetWaitingAck.checksum = 0;
+    memcpy(this-&gt;packetWaitingAck.payload, message.data, sizeof(message.data));
+    this-&gt;packetWaitingAck.checksum = pUtils-&gt;calculateCheckSum(this-&gt;packetWaitingAck);
+    pUtils-&gt;printPacket(&quot;发送方发送报文&quot;, this-&gt;packetWaitingAck);
+    //启动发送方定时器
+    pns-&gt;startTimer(SENDER, Configuration::TIME_OUT,this-&gt;packetWaitingAck.seqnum);
+    //调用模拟网络环境的sendToNetworkLayer，通过网络层发送到对方
+    pns-&gt;sendToNetworkLayer(RECEIVER, this-&gt;packetWaitingAck);
+    //进入等待状态
+    this-&gt;waitingState = true;
+    return true;
+}
+void StopWaitRdtSender::receive(Packet &amp;ackPkt) {
+    //如果发送方处于等待ack的状态，作如下处理；否则什么都不做
+    if (this-&gt;waitingState == true) { 
+        //检查校验和是否正确
+        int checkSum = pUtils-&gt;calculateCheckSum(ackPkt);
+        //如果校验和正确，并且确认序号=发送方已发送并等待确认的数据包序号
+        if (checkSum == ackPkt.checksum &amp;&amp; ackPkt.acknum == this-&gt;packetWaitingAck.seqnum) {
+            //下一个发送序号在0-1之间切换
+            this-&gt;expectSequenceNumberSend = 1 - this-&gt;expectSequenceNumberSend;
+            this-&gt;waitingState = false;
+            pUtils-&gt;printPacket(&quot;发送方正确收到确认&quot;, ackPkt);
+            //关闭定时器
+            pns-&gt;stopTimer(SENDER, this-&gt;packetWaitingAck.seqnum);
+        }
+        else {
+            pUtils-&gt;printPacket(&quot;发送方没有正确收到确认，重发上次发送的报文&quot;, this-&gt;packetWaitingAck);
+            //首先关闭定时器
+            pns-&gt;stopTimer(SENDER, this-&gt;packetWaitingAck.seqnum);
+            //重新启动发送方定时器
+            pns-&gt;startTimer(SENDER, Configuration::TIME_OUT, this-&gt;packetWaitingAck.seqnum);
+            //重新发送数据包
+            pns-&gt;sendToNetworkLayer(RECEIVER, this-&gt;packetWaitingAck);
+        }
+    }
+}
+void StopWaitRdtSender::timeoutHandler(intseqNum) {
+    //唯一一个定时器,无需考虑seqNum
+    pUtils-&gt;printPacket(&quot;发送方定时器时间到，重发上次发送的报文&quot;, this-&gt;packetWaitingAck);
+    //首先关闭定时器
+    pns-&gt;stopTimer(SENDER,seqNum);
+    //重新启动发送方定时器
+    pns-&gt;startTimer(SENDER, Configuration::TIME_OUT,seqNum);
+    //重新发送数据包
+    pns-&gt;sendToNetworkLayer(RECEIVER, this-&gt;packetWaitingAck);
+}
+</code></pre>
+<h3 id="43-停止等待协议接收方实现">4.3 停止等待协议接收方实现</h3>
+<img src="https://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/202211141041776.png" style="zoom:60%;" />
+<p>停止等待协议发送方是通过类 StopWaitRdtReceiver 实现，而 StopWaitRdtReceiver 继承了抽象类 RdtReceiver，具体定义如下：</p>
+<pre><code class="language-c++">class StopWaitRdtReceiver :publicRdtReceiver{
+    private:
+        int expectSequenceNumberRcvd; // 期待收到的下一个报文序号
+        Packet lastAckPkt; //上次发送的确认报文
+    public:
+        StopWaitRdtReceiver();
+        virtual ~StopWaitRdtReceiver();
+    public:
+    	void receive(Packet &amp;packet); //接收报文，将被NetworkService调用
+};
+</code></pre>
+<p>StopWaitRdtReceiver 类的函数实现具体为：</p>
+<pre><code class="language-c++">StopWaitRdtReceiver::StopWaitRdtReceiver():expectSequenceNumberRcvd(0){
+    //初始状态下，上次发送的确认包的确认序号为-1，
+    //使得当第一个接受的数据包出错时该确认报文的确认号为-1
+    lastAckPkt.acknum = -1; 
+    lastAckPkt.checksum = 0;
+    lastAckPkt.seqnum = -1; //忽略该字段
+	for(int i = 0; i&lt;Configuration::PAYLOAD_SIZE;i++){
+		lastAckPkt.payload[i] = '.';
+	}
+	lastAckPkt.checksum = pUtils-&gt;calculateCheckSum(lastAckPkt);
+}
+StopWaitRdtReceiver::~StopWaitRdtReceiver(){
+    
+}
+void StopWaitRdtReceiver::receive(Packet &amp;packet) {
+    //检查校验和是否正确
+    int checkSum = pUtils-&gt;calculateCheckSum(packet);
+    //如果校验和正确，同时收到报文的序号等于接收方期待收到的报文序号一致
+    if (checkSum == packet.checksum&amp;&amp;this-&gt;expectSequenceNumberRcvd == packet.seqnum) {
+    	pUtils-&gt;printPacket(&quot;接收方正确收到发送方的报文&quot;, packet);
+    	//取出Message，向上递交给应用层
+    	Message msg;
+        memcpy(msg.data, packet.payload, sizeof(packet.payload));
+        pns-&gt;delivertoAppLayer(RECEIVER, msg);
+        lastAckPkt.acknum = packet.seqnum; //确认序号等于收到的报文序号
+        lastAckPkt.checksum = pUtils-&gt;calculateCheckSum(lastAckPkt);
+        pUtils-&gt;printPacket(&quot;接收方发送确认报文&quot;, lastAckPkt);
+        //调用模拟网络环境的sendToNetworkLayer，通过网络层发送确认报文到对方
+        pns-&gt;sendToNetworkLayer(SENDER, lastAckPkt);
+        //接收序号在0-1之间切换
+        this-&gt;expectSequenceNumberRcvd = 1 - this-&gt;expectSequenceNumberRcvd; 
+    }
+    else {
+        if (checkSum != packet.checksum) {
+        	pUtils-&gt;printPacket(&quot;接收方没有正确收到发送方的报文,数据校验错误&quot;, packet);
+        }
+        else {
+        	pUtils-&gt;printPacket(&quot;接收方没有正确收到发送方的报文,报文序号不对&quot;, packet);
+        }
+        pUtils-&gt;printPacket(&quot;接收方重新发送上次的确认报文&quot;, lastAckPkt);
+        //调用模拟网络环境的sendToNetworkLayer，通过网络层发送上次的确认报文
+        pns-&gt;sendToNetworkLayer(SENDER, lastAckPkt);
+    }
+}
+</code></pre>
+<h3 id="44-启动模拟网络环境">4.4 启动模拟网络环境</h3>
+<p>模拟网络环境的启动在 main 函数里实现，具体代码为：</p>
+<pre><code class="language-c++">#include&quot;stdafx.h&quot;
+#include&quot;Global.h&quot;
+#include&quot;RdtSender.h&quot;
+#include&quot;RdtReceiver.h&quot;
+#include&quot;StopWaitRdtSender.h&quot;
+#include&quot;StopWaitRdtReceiver.h&quot;
+int main(int argc, char* argv[]){
+    //如果需要使用其它的Rdt协议，只需要实例化其他具体Rdt实现类的实例，
+    //如GBNRdtSender和GBNRdtSeceiver
+    RdtSender *ps = newStopWaitRdtSender();
+    RdtReceiver * pr = newStopWaitRdtReceiver();
+    pns-&gt;setRunMode(0); //VERBOS模式
+    //pns-&gt;setRunMode(1); //安静模式
+    pns-&gt;init();
+    pns-&gt;setRtdSender(ps);
+    pns-&gt;setRtdReceiver(pr);
+    pns-&gt;setInputFile(&quot;C:\\Users\\crackryan\\Desktop\\input.txt&quot;);
+    pns-&gt;setOutputFile(&quot;C:\\Users\\crackryan\\Desktop\\output.txt&quot;);
+    pns-&gt;start();
+    delete ps;
+    delete pr;
+    //指向唯一的工具类实例，只在main函数结束前delete
+    delete pUtils;
+    //指向唯一的模拟网络环境类实例，只在main函数结束前delete
+    delete pns;
+    return 0;
+}
+</code></pre>
+<h2 id="五-gbn协议的实现">五、GBN协议的实现</h2>
+<h3 id="51-gbn协议的原理">5.1 GBN协议的原理</h3>
+<p><font color=red><strong>允许发送方发送多个分组而不需等待确认，但已发送但未确认的分组数不能超过N</strong></font></p>
+<ul>
+<li>
+<p><strong>发送方：</strong><br>
+① 分组首部用k-比特字段表示序号（二进制）<br>
+② 已被传输但还未确认的分组的许可序号范围可以看作是一个在序号范围内大小为N的“窗口(window)”</p>
+<img src="http://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/202211141401753.png" style="zoom:50%;" />
+<p>基序号（base）：最早的未确认的分组序号<br>
+下一个序号（nextseqnum）：下一个待发分组的序号</p>
+<p>①<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mtext> </mtext><mo>[</mo><mn>0</mn><mo separator="true">,</mo><mi>b</mi><mi>a</mi><mi>s</mi><mi>e</mi><mo>−</mo><mn>1</mn><mo>]</mo><mo>:</mo><mtext> </mtext></mrow><annotation encoding="application/x-tex">~[0,base-1]:~</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mspace nobreak"> </span><span class="mopen">[</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault">b</span><span class="mord mathdefault">a</span><span class="mord mathdefault">s</span><span class="mord mathdefault">e</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">1</span><span class="mclose">]</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">:</span><span class="mspace nobreak"> </span></span></span></span>以被确认的分组<br>
+②<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mtext> </mtext><mo>[</mo><mi>b</mi><mi>a</mi><mi>s</mi><mi>e</mi><mo separator="true">,</mo><mi>n</mi><mi>e</mi><mi>x</mi><mi>t</mi><mi>s</mi><mi>e</mi><mi>q</mi><mi>n</mi><mi>u</mi><mi>m</mi><mo>−</mo><mn>1</mn><mo>]</mo><mo>:</mo><mtext> </mtext></mrow><annotation encoding="application/x-tex">~[base,nextseqnum-1]:~</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mspace nobreak"> </span><span class="mopen">[</span><span class="mord mathdefault">b</span><span class="mord mathdefault">a</span><span class="mord mathdefault">s</span><span class="mord mathdefault">e</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault">n</span><span class="mord mathdefault">e</span><span class="mord mathdefault">x</span><span class="mord mathdefault">t</span><span class="mord mathdefault">s</span><span class="mord mathdefault">e</span><span class="mord mathdefault" style="margin-right:0.03588em;">q</span><span class="mord mathdefault">n</span><span class="mord mathdefault">u</span><span class="mord mathdefault">m</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">1</span><span class="mclose">]</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">:</span><span class="mspace nobreak"> </span></span></span></span>已发送但未确认的分组<br>
+③<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mtext> </mtext><mo>[</mo><mi>n</mi><mi>e</mi><mi>x</mi><mi>t</mi><mi>s</mi><mi>e</mi><mi>q</mi><mi>n</mi><mi>u</mi><mi>m</mi><mo separator="true">,</mo><mi>b</mi><mi>a</mi><mi>s</mi><mi>e</mi><mo>+</mo><mi>N</mi><mo>−</mo><mn>1</mn><mo>]</mo><mo>:</mo><mtext> </mtext></mrow><annotation encoding="application/x-tex">~[nextseqnum,base+N-1]:~</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mspace nobreak"> </span><span class="mopen">[</span><span class="mord mathdefault">n</span><span class="mord mathdefault">e</span><span class="mord mathdefault">x</span><span class="mord mathdefault">t</span><span class="mord mathdefault">s</span><span class="mord mathdefault">e</span><span class="mord mathdefault" style="margin-right:0.03588em;">q</span><span class="mord mathdefault">n</span><span class="mord mathdefault">u</span><span class="mord mathdefault">m</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault">b</span><span class="mord mathdefault">a</span><span class="mord mathdefault">s</span><span class="mord mathdefault">e</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.76666em;vertical-align:-0.08333em;"></span><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">1</span><span class="mclose">]</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">:</span><span class="mspace nobreak"> </span></span></span></span>未发送但可以被发送的分组<br>
+④ 大于等于<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mtext> </mtext><mi>b</mi><mi>a</mi><mi>s</mi><mi>e</mi><mo>+</mo><mi>N</mi><mtext> </mtext></mrow><annotation encoding="application/x-tex">~base+N~</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.77777em;vertical-align:-0.08333em;"></span><span class="mspace nobreak"> </span><span class="mord mathdefault">b</span><span class="mord mathdefault">a</span><span class="mord mathdefault">s</span><span class="mord mathdefault">e</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="mspace nobreak"> </span></span></span></span>的分组：不能发送</p>
+<p><strong>累加确认：</strong><font color=purple><strong><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mtext> </mtext><mi>A</mi><mi>C</mi><mi>K</mi><mo>(</mo><mi>n</mi><mo>)</mo><mtext> </mtext></mrow><annotation encoding="application/x-tex">~ACK(n)~</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mspace nobreak"> </span><span class="mord mathdefault">A</span><span class="mord mathdefault" style="margin-right:0.07153em;">C</span><span class="mord mathdefault" style="margin-right:0.07153em;">K</span><span class="mopen">(</span><span class="mord mathdefault">n</span><span class="mclose">)</span><span class="mspace nobreak"> </span></span></span></span>对序号n之前包括n在内的所有分组进行确认</strong> </font><br>
+<strong>ACK-only：</strong><font color=purple>只对<strong>正确按序到达</strong>的分组发送ACK</font><br>
+<strong>超时重发：</strong><font color=purple><strong>为最早已发送但未确认的分组设置定时器（只需要一个定时器）</strong></font><br>
+<strong>为什么要限制滑动窗口大小：</strong><font color=purple><strong>为了流量控制</strong></font></p>
+<img src="https://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/202211141402498.png" style="zoom:60%;" />
+</li>
+<li>
+<p><strong>接收方：</strong></p>
+<p>失序分组或损坏分组:<br>
+① <font color=purple><strong>丢弃 (不缓存) -&gt; 接收方无缓存!</strong></font><br>
+② <font color=purple>重发正确按序到达的最高序号分组的ACK</font><br>
+③ <font color=purple>每次发送的ACK一定是对正确按序到达的最高序号分组的确认</font></p>
+<img src="https://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/202211141405476.png" style="zoom:67%;" />
+</li>
+</ul>
+<h3 id="52-gbn协议发送方实现">5.2 GBN协议发送方实现</h3>
+<p><code>stdafx.h</code> 实现如下：</p>
+<pre><code class="language-c++">// stdafx.h : 标准系统包含文件的包含文件，
+// 或是经常使用但不常更改的
+// 特定于项目的包含文件
+//
+
+#pragma once
+
+#include &quot;targetver.h&quot;
+#include &lt;fstream&gt;
+#include &lt;Windows.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;tchar.h&gt;
+#include &lt;math.h&gt;
+
+// TODO: 在此处引用程序需要的其他头文件
+#pragma comment (lib,&quot;E:\\GBN\\netsimlib.lib&quot;)
+
+#include &lt;iostream&gt;
+using namespace std;
+
+//#pragma warning(disable:4482)
+
+</code></pre>
+<p>首先定义发送方的类 <code>GBNSender</code>，实现 <code>GBNSender.h</code></p>
+<pre><code class="language-c++">#ifndef STOP_WAIT_RDT_SENDER_H
+#define STOP_WAIT_RDT_SENDER_H
+#include &quot;RdtSender.h&quot;
+#include &quot;stdafx.h&quot;
+#include &lt;vector&gt;
+
+class GBNSender :public RdtSender {
+private:
+	int windowLength;				// 发送窗口大小
+	int seqLength;					// 序号对应的二进制数位数
+	int base;						// 基序号：最早的未确认的分组编号
+	int nextseqnum;					// 下一个发送序号 
+	vector &lt;Packet&gt; sndpkt;			// 发送方缓存Packet
+	bool waitingState;				// 是否处于等待Ack的状态
+	Packet packetWaitingAck;		// 已发送并等待Ack的数据包
+public:
+	bool getWaitingState();
+	bool send(const Message&amp; message);						//发送应用层下来的Message，由NetworkServiceSimulator调用,如果发送方成功地将Message发送到网络层，返回true;如果因为发送方处于等待正确确认状态而拒绝发送Message，则返回false
+	void receive(const Packet&amp; ackPkt);						//接受确认Ack，将被NetworkServiceSimulator调用	
+	void timeoutHandler(int seqNum);					//Timeout handler，将被NetworkServiceSimulator调用
+public:
+	GBNSender();
+	virtual ~GBNSender();
+};
+
+#endif
+</code></pre>
+<p>接着要根据FSM实现相应的成员函数，即编写文件 <code>GBNSender.cpp</code> ：</p>
+<pre><code class="language-c++">#include &quot;stdafx.h&quot;
+#include &quot;Global.h&quot;
+#include &quot;GBNSender.h&quot;
+
+//控制台颜色控制：滑动窗口中已发送的标记为黄色，未发送的标记为蓝色
+void color(int x) {
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), x);//设置不同数字的颜色
+}
+//构造函数
+GBNSender::GBNSender() :base(0), nextseqnum(0), waitingState(false), windowLength(4), seqLength(3) {
+
+}
+//析构函数
+GBNSender::~GBNSender() {
+
+}
+//获取等待状态——GBN用等待状态衡量当前窗口是否已满，如果未满才可以接受应用层数据
+bool GBNSender::getWaitingState() {
+	if (this-&gt;sndpkt.size() &gt;= this-&gt;windowLength) {
+		this-&gt;waitingState = true;
+	}
+	else this-&gt;waitingState = false;
+	return this-&gt;waitingState;
+}
+//向接收方发送一个packet
+bool GBNSender::send(const Message&amp; message) {
+	if (this-&gt;getWaitingState()) {//窗口满，拒绝发送
+		return false;
+	}
+	this-&gt;packetWaitingAck.acknum = -1;					//忽略该字段,发送方报文用不到
+	this-&gt;packetWaitingAck.seqnum = this-&gt;nextseqnum;	//报文段序号nextseqnum
+	this-&gt;packetWaitingAck.checksum = 0;				//初始化校验和
+	memcpy(this-&gt;packetWaitingAck.payload, message.data, sizeof(message.data));			//设置报文段内容
+	this-&gt;packetWaitingAck.checksum = pUtils-&gt;calculateCheckSum(this-&gt;packetWaitingAck);//设置校验和
+	this-&gt;sndpkt.push_back(this-&gt;packetWaitingAck);//发送方缓存窗口内的报文段
+	pUtils-&gt;printPacket(&quot;发送方发送报文&quot;, this-&gt;packetWaitingAck);
+	//只为base设置定时器，定时器超时之后发送sndpkt[base]~sndpkt[nextseqnum-1]
+	if (this-&gt;base == this-&gt;nextseqnum) {
+		pns-&gt;startTimer(SENDER, Configuration::TIME_OUT, this-&gt;packetWaitingAck.seqnum);
+	}
+	//注意序号的二进制位数的限制，所以要取余
+	this-&gt;nextseqnum = (this-&gt;nextseqnum + 1) % int(pow(2, this-&gt;seqLength));
+	//向网络层交付数据
+	pns-&gt;sendToNetworkLayer(RECEIVER, this-&gt;packetWaitingAck);
+	return true;
+}
+//收到接收方的ACK
+void GBNSender::receive(const Packet&amp; ackPkt) {
+	//只考虑校验和正确的ACK，如果收到不正确的ACK不作任何处理（因为是累加确认）
+	int checksum = pUtils-&gt;calculateCheckSum(ackPkt);
+	//还需要考虑收到的ACK是否对应窗口中的编号,即ackPkt-&gt;acknum是否在[base,base+sndpkt.size()-1]内
+	int seqLen = int(pow(2, this-&gt;seqLength));
+	int offacknum = (ackPkt.acknum - this-&gt;base + seqLen) % seqLen;
+	if (checksum == ackPkt.checksum &amp;&amp; offacknum &lt; this-&gt;sndpkt.size()) {
+
+		//控制台可视化移动前滑动窗口
+		//将移动前滑动窗口移动信息写入日志文件
+		ofstream ofs;
+		ofs.open(&quot;log.txt&quot;, ios::app);
+		cout &lt;&lt; &quot;\n移动前滑动窗口为：[&quot;;
+		ofs &lt;&lt; &quot;\n移动前滑动窗口为：[&quot;;
+		for (int i = 0; i &lt; this-&gt;windowLength; ++i) {
+			if (i&lt; this-&gt;sndpkt.size()) color(224);
+			else color(159);
+			cout &lt;&lt; (this-&gt;base + i) % seqLen;
+			ofs &lt;&lt; (this-&gt;base + i) % seqLen;
+			if (i != this-&gt;windowLength - 1) {
+				color(240);
+				cout &lt;&lt; &quot;,&quot;;
+				ofs &lt;&lt; &quot;,&quot;;
+			}
+		}
+		color(240);
+		cout &lt;&lt; &quot;]&quot; &lt;&lt; endl;
+		ofs &lt;&lt; &quot;]&quot; &lt;&lt; endl;
+		ofs.close();
+
+		//移动滑动窗口base=acknum+1，同时删除缓存中已经确认的packet
+		pUtils-&gt;printPacket(&quot;发送方正确收到确认&quot;, ackPkt);
+		//因为重启定时器前也需要关闭定时器，所以没必要判断，无脑关就行了，但是要注意关闭的定时器的序号！
+		pns-&gt;stopTimer(SENDER, this-&gt;base);
+		while (this-&gt;base != (ackPkt.acknum + 1) % seqLen) {
+			this-&gt;sndpkt.erase(this-&gt;sndpkt.begin(), this-&gt;sndpkt.begin() + 1);
+			this-&gt;base = (this-&gt;base + 1) % seqLen;
+		}
+
+		//控制台可视化移动后滑动窗口
+		//将移动后滑动窗口移动信息写入日志文件
+		ofs.open(&quot;log.txt&quot;, ios::app);
+		cout &lt;&lt; &quot;移动后滑动窗口为：[&quot;;
+		ofs &lt;&lt; &quot;移动后滑动窗口为：[&quot;;
+		for (int i = 0; i &lt; this-&gt;windowLength; ++i) {
+			if (i &lt; this-&gt;sndpkt.size()) color(224);
+			else color(159);
+			cout &lt;&lt; (this-&gt;base + i) % seqLen;
+			ofs &lt;&lt; (this-&gt;base + i) % seqLen;
+			if (i != this-&gt;windowLength - 1) {
+				color(240);
+				cout &lt;&lt; &quot;,&quot;;
+				ofs &lt;&lt; &quot;,&quot;;
+			}
+		}
+		color(240);
+		cout &lt;&lt; &quot;]\n&quot; &lt;&lt; endl;
+		ofs &lt;&lt; &quot;]&quot; &lt;&lt; endl;
+		ofs.close();
+
+		//判断定时器处理
+		if (this-&gt;sndpkt.size()!=0) {//非空，仍需重启定时器
+			pns-&gt;startTimer(SENDER, Configuration::TIME_OUT, this-&gt;base);//以基准包的序号开启计时器
+		}
+	}
+	else if (checksum != ackPkt.acknum) {//ACK传输出错，不作任何处理
+		pUtils-&gt;printPacket(&quot;ACK数据校验错误&quot;, ackPkt);
+	}
+	else pUtils-&gt;printPacket(&quot;已收到过该ACK确认&quot;, ackPkt);
+}
+//序号为seqNum的定时器超时，重传缓存的内容
+void GBNSender::timeoutHandler(int seqNum) {
+	pns-&gt;stopTimer(SENDER, seqNum);
+	pns-&gt;startTimer(SENDER, Configuration::TIME_OUT, seqNum);
+	//重发缓存的所有数据包
+	for (int i = 0; i &lt; this-&gt;sndpkt.size(); ++i) {
+		pUtils-&gt;printPacket(&quot;发送方定时器超时，重发全部缓存报文&quot;, this-&gt;sndpkt[i]);
+		pns-&gt;sendToNetworkLayer(RECEIVER, this-&gt;sndpkt[i]);
+	}
+}
+</code></pre>
+<h3 id="53-gbn协议接收方实现">5.3 GBN协议接收方实现</h3>
+<p>首先定义接收方的类 <code>GBNReceiver</code>，即编写文件 <code>GBNReceiver.h</code>：</p>
+<pre><code class="language-c++">#ifndef STOP_WAIT_RDT_RECEIVER_H
+#define STOP_WAIT_RDT_RECEIVER_H
+#include &quot;RdtReceiver.h&quot;
+class GBNReceiver :public RdtReceiver {
+private:
+	int expectedseqnum;	//期望收到的packet序号
+	int seqLength;		//序号二进制数位数
+	Packet lastAckPkt;	//上次发送的ACK报文
+public:
+	GBNReceiver();
+	virtual ~GBNReceiver();
+public:
+	void receive(const Packet&amp; packet);	//接收报文，将被NetworkService调用
+};
+#endif
+</code></pre>
+<p>接着我们实现各个成员函数的定义，即编写文件 <code>GBNReceiver.cpp</code>：</p>
+<pre><code class="language-c++">#include &quot;stdafx.h&quot;
+#include &quot;Global.h&quot;
+#include &quot;GBNReceiver.h&quot;
+//构造函数
+GBNReceiver::GBNReceiver() :expectedseqnum(0), seqLength(3) {
+	//因为我们设计的GBN中序号从0开始，因此初始化的acknum=-1
+	lastAckPkt.acknum = -1; //初始状态下，上次发送的确认包的确认序号为-1，使得当第一个接受的数据包出错时该确认报文的确认号为-1
+	lastAckPkt.checksum = 0;
+	lastAckPkt.seqnum = -1;	//忽略该字段
+	for (int i = 0; i &lt; Configuration::PAYLOAD_SIZE; i++) {
+		lastAckPkt.payload[i] = '.';
+	}
+	lastAckPkt.checksum = pUtils-&gt;calculateCheckSum(lastAckPkt);
+}
+//析构函数
+GBNReceiver::~GBNReceiver() {
+
+}
+//接收到packet报文，反馈ACK
+void GBNReceiver::receive(const Packet&amp; packet) {
+	//检查校验和是否正确
+	int checkSum = pUtils-&gt;calculateCheckSum(packet);
+	//如果校验和正确，同时收到报文的序号等于接收方期待收到的报文序号一致
+	if (checkSum == packet.checksum &amp;&amp; this-&gt;expectedseqnum == packet.seqnum) {
+		pUtils-&gt;printPacket(&quot;接收方正确收到发送方的报文&quot;, packet);
+
+		//取出Message，向上递交给应用层
+		Message msg;
+		memcpy(msg.data, packet.payload, sizeof(packet.payload));
+		pns-&gt;delivertoAppLayer(RECEIVER, msg);
+
+		lastAckPkt.acknum = packet.seqnum; //确认序号等于收到的报文序号
+		lastAckPkt.checksum = pUtils-&gt;calculateCheckSum(lastAckPkt);
+		pUtils-&gt;printPacket(&quot;接收方发送确认报文&quot;, lastAckPkt);
+		pns-&gt;sendToNetworkLayer(SENDER, lastAckPkt);	//调用模拟网络环境的sendToNetworkLayer，通过网络层发送确认报文到对方
+
+		this-&gt;expectedseqnum = (this-&gt;expectedseqnum + 1) % int(pow(2, this-&gt;seqLength));//接收序号在0-1之间切换
+	}
+	else {
+		if (checkSum != packet.checksum) {
+			pUtils-&gt;printPacket(&quot;接收方没有正确收到发送方的报文,数据校验错误&quot;, packet);
+		}
+		else {
+			pUtils-&gt;printPacket(&quot;接收方没有正确收到发送方的报文,报文序号不对&quot;, packet);
+		}
+		pUtils-&gt;printPacket(&quot;接收方重新发送上次的确认报文&quot;, lastAckPkt);
+		pns-&gt;sendToNetworkLayer(SENDER, lastAckPkt);	//调用模拟网络环境的sendToNetworkLayer，通过网络层发送上次的确认报文
+
+	}
+}
+</code></pre>
+<p>接收方基本是与Rdt3.0相同的</p>
+<h3 id="54-gbn主模块编写">5.4 GBN主模块编写</h3>
+<pre><code class="language-c++">//GBN.cpp：控制台程序入口点
+#include &quot;stdafx.h&quot;
+#include &quot;Global.h&quot;
+#include &quot;RdtSender.h&quot;
+#include &quot;RdtReceiver.h&quot;
+#include &quot;GBNSender.h&quot;
+#include &quot;GBNReceiver.h&quot;
+
+int main(int argc, char* argv[]){
+	system(&quot;color F0&quot;);
+	
+	//日志文件分隔头
+	ofstream ofs;
+	ofs.open(&quot;log.txt&quot;, ios::app);
+	ofs &lt;&lt; &quot;********************* 进行一次文件传输 *********************&quot; &lt;&lt; endl;
+	ofs.close();
+
+	RdtSender* ps = new GBNSender();
+	RdtReceiver* pr = new GBNReceiver();
+	//	pns-&gt;setRunMode(0);  //VERBOS模式
+	pns-&gt;setRunMode(1);  //安静模式
+	pns-&gt;init();
+	pns-&gt;setRtdSender(ps);
+	pns-&gt;setRtdReceiver(pr);
+	pns-&gt;setInputFile(&quot;E:\\GBN\\input.txt&quot;);
+	pns-&gt;setOutputFile(&quot;E:\\GBN\\output.txt&quot;);
+
+	pns-&gt;start();
+
+	delete ps;
+	delete pr;
+	delete pUtils;									//指向唯一的工具类实例，只在main函数结束前delete
+	delete pns;										//指向唯一的模拟网络环境类实例，只在main函数结束前delete
+
+	return 0;
+}
+</code></pre>
+<p>最终运行结果的部分截图如下：</p>
+<img src="https://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/202211142210737.png" style="zoom:60%;" />
+<h2 id="六-sr协议的实现">六、SR协议的实现</h2>
+<h3 id="61-sr协议原理">6.1 SR协议原理</h3>
+<p>① 选择重传：<font color=purple><strong>解决GBN大量重传分组的问题</strong></font><br>
+② <font color=purple>接收方<strong>逐个</strong>对所有正确收到（即使失序）的分组进行确认（不是累积确认）</font><br>
+③ <font color=purple>对接收到的（失序）分组进行<strong>缓存（GBN不缓存）, 以便最后对上层进行有序递交</strong></font><br>
+④ 发送方只重发怀疑丢失或损坏的分组：<font color=purple><strong>发送方为每一个没有收到ACK的分组设置定时器</strong></font><br>
+⑤ 发送窗口：<font color=purple>大小为N，范围**[sendbase, sendbase + N - 1]<strong>，限制已发送但未被确认的分组数最多为N，<strong>sendbase前的分组都被确认</strong></font><br>
+⑥ 接受窗口：<font color=purple>大小为N，范围</strong>[recvbase, recvbase + N - 1]**，落在窗口内的序号都是期待收到的分组序号，<strong>recvbase前都是按序到达，已发出确认，且已递交给上层</strong></font></p>
+<img src="http://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/202211142221056.png" style="zoom:60%;" />
+<p>注意上述<font color=pink><strong>粉色</strong></font>条的注释 “失序（已缓存）但未被确认” 应改为 <font color=red><strong>“已收到但失序（已缓存）”</strong></font></p>
+<p><strong>（1）发送方：</strong><br>
+① 从上层收到数据：<br>
+<font color=red><strong>如果下一个可用于该分组的序号在窗口内，则将数据打包并发送。否则要么缓存，要么拒绝上层</strong></font><br>
+② 超时(n)，序号为n的分组超时：<br>
+<font color=red><strong>重传分组n，重置定时器</strong></font><br>
+③ 收到<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mtext> </mtext><mi>A</mi><mi>C</mi><mi>K</mi><mo>(</mo><mi>n</mi><mo>)</mo><mtext> </mtext></mrow><annotation encoding="application/x-tex">~ACK(n)~</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mspace nobreak"> </span><span class="mord mathdefault">A</span><span class="mord mathdefault" style="margin-right:0.07153em;">C</span><span class="mord mathdefault" style="margin-right:0.07153em;">K</span><span class="mopen">(</span><span class="mord mathdefault">n</span><span class="mclose">)</span><span class="mspace nobreak"> </span></span></span></span> 在 [sendbase,sendbase+N-1]范围内：<br>
+<font color=red><strong>标记分组 n 为已接收</strong></font><br>
+④ 如果n是发送窗口基序号sendbase：<br>
+<font color=red><strong>则将窗口基序号前推到下一个未确认序号（因此，sendbase前的分组一定都被确认过了），如果不是窗口不动</strong></font><br>
+⑤ 发送方可能会收到比sendbase还小的序号的分组确认：<br>
+<font color=red><strong>这时什么都不做（因为比sendbase还早的分组都被确认）</strong></font></p>
+<p><strong>为什么发送方会收到比sendbase还小的分组确认？</strong>——<font color=purple><strong>定时太短</strong></font><br>
+例如：窗口位于sendbase-1时，序号为sendbase-1的分组定时器时间到还没收到ACK(sendbase-1)，则发送方重发该分组。<br>
+刚重发，收到了Ack(sendbase-1),窗口前移到sendbase，窗口移动后，又收到了Ack(sendbase-1)</p>
+<p><strong>（2）接收方：</strong><br>
+① 分组序号n在[rcvbase, rcvbase+N-1]范围内<br>
+（ⅰ）<font color=red><strong>分组正确接收，发送n的确认ACK(n)（不管是否为重复分组及是否失序），如果分组是以前没收到过的：将其缓存</strong></font><br>
+（ⅱ）<font color=red><strong>如果该分组序号=recvbase，则将从该分组开始序号连续的分组一起交给上层，然后，窗口按向上交付的分组的数量向前移动</strong></font><br>
+② 分组序号n 在 [rcvbase-N,rcvbase-1]范围内：<br>
+<font color=red><strong>虽然曾经确认过，仍再次发送n的确认ACK(n)，若不发确认，发送方窗口无法向前移动</strong></font><br>
+③ 其他情况：<font color=red><strong>忽略该分组</strong></font></p>
+<p><strong>为什么接收方会收到[recvbase-N，recvbase - 1]范围内的分组？并且必须给出确认？</strong><br>
+因为<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mtext> </mtext><mi>A</mi><mi>C</mi><mi>K</mi><mo>(</mo><mi>n</mi><mo>)</mo><mtext> </mtext></mrow><annotation encoding="application/x-tex">~ACK(n)~</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mspace nobreak"> </span><span class="mord mathdefault">A</span><span class="mord mathdefault" style="margin-right:0.07153em;">C</span><span class="mord mathdefault" style="margin-right:0.07153em;">K</span><span class="mopen">(</span><span class="mord mathdefault">n</span><span class="mclose">)</span><span class="mspace nobreak"> </span></span></span></span>可能会丢失。假设接受方按序收到N个分组，向发送方发送确认后接受窗口向前移动N位，但是确认分组全部丢失，导致发送方重发，发送方最多只能发N个，因此接收方会收到[recvbase-N，recvbase - 1]范围内的分组，接收方这时必须给出确认，否则发送方窗口无法向前移动</p>
+<p><strong>为什么接收方收到比recvbase-N更早的分组后不用发确认了？</strong><br>
+因为比recvbase-N更早的分组（如recvbase-N-1 ），发送方一定收到确认了。<br>
+当接受窗口位于recvbase时，意味着接收方一定按序收到了从[recvbase-N, recvbase - 1]的分组，这意味着发送方窗口一定到了recvbase-N，因此发送方一定收到了比recvbase-N更早的确认</p>
+<img src="https://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/202211142237344.png" style="zoom:50%;" />
+<h3 id="62-sr协议发送方实现">6.2 SR协议发送方实现</h3>
+<p><code>stdafx.h</code>：</p>
+<pre><code class="language-c++">// stdafx.h : 标准系统包含文件的包含文件，
+// 或是经常使用但不常更改的
+// 特定于项目的包含文件
+//
+
+#pragma once
+
+#include &quot;targetver.h&quot;
+#include &lt;fstream&gt;
+#include &lt;Windows.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;tchar.h&gt;
+#include &lt;math.h&gt;
+
+// TODO: 在此处引用程序需要的其他头文件
+#pragma comment (lib,&quot;E:\\SR\\netsimlib.lib&quot;)
+
+#include &lt;iostream&gt;
+using namespace std;
+
+//#pragma warning(disable:4482)
+//控制台颜色控制：滑动窗口中已发送的标记为黄色，未发送的标记为蓝色，已确认的标记为绿色
+inline void color(int x) {
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), x);//设置不同数字的颜色
+}
+</code></pre>
+<p><code>SRSender.h</code>：</p>
+<pre><code class="language-c++">#ifndef STOP_WAIT_RDT_SENDER_H
+#define STOP_WAIT_RDT_SENDER_H
+#include &quot;RdtSender.h&quot;
+#include &quot;stdafx.h&quot;
+#include &lt;vector&gt;
+//SR协议中我们不仅需要缓存分组，还需要缓存分组的状态（是否被确认），不妨将这两个量封装成一个类
+struct pktWithState {//带确认状态的packet
+	bool ack;	//是否收到ack确认
+	Packet pkt;	//相应packet
+};
+class SRSender :public RdtSender {
+private:
+	int windowLength;				//发送方窗口大小
+	int seqLength;					// 序号对应的二进制数位数
+	int sendbase;					//发送方基序号
+	int nextseqnum;					//下一个将要发送的分组的序号
+	vector&lt;pktWithState&gt; sndpkt;	//缓存带状态分组
+	bool waitingState;				// 是否处于等待Ack的状态
+	Packet packetWaitingAck;		// 已发送并等待Ack的数据包
+public:
+	bool getWaitingState();
+	bool send(const Message&amp; message);						//发送应用层下来的Message，由NetworkServiceSimulator调用,如果发送方成功地将Message发送到网络层，返回true;如果因为发送方处于等待正确确认状态而拒绝发送Message，则返回false
+	void receive(const Packet&amp; ackPkt);						//接受确认Ack，将被NetworkServiceSimulator调用	
+	void timeoutHandler(int seqNum);					//Timeout handler，将被NetworkServiceSimulator调用
+public:
+	SRSender();
+	virtual ~SRSender();
+};
+#endif
+</code></pre>
+<p><code>SRSender.cpp</code>：</p>
+<pre><code class="language-c++">#include &quot;stdafx.h&quot;
+#include &quot;Global.h&quot;
+#include &quot;SRSender.h&quot;
+//控制台颜色控制：滑动窗口中已发送的标记为黄色，未发送的标记为蓝色，已确认的标记为绿色
+//构造函数
+SRSender::SRSender() :sendbase(0), nextseqnum(0), waitingState(false), windowLength(4), seqLength(3) {
+
+}
+//析构函数
+SRSender::~SRSender() {
+
+}
+//判断窗口是否已满
+bool SRSender::getWaitingState() {
+	if (this-&gt;sndpkt.size() &gt;= this-&gt;windowLength) {
+		this-&gt;waitingState = true;
+	}
+	else this-&gt;waitingState = false;
+	return this-&gt;waitingState;
+}
+//向接收方发送数据报
+bool SRSender::send(const Message&amp; message) {
+	if (this-&gt;getWaitingState()) {//窗口满，拒绝发送
+		return false;
+	}
+	this-&gt;packetWaitingAck.acknum = -1;					//忽略该字段,发送方报文用不到
+	this-&gt;packetWaitingAck.seqnum = this-&gt;nextseqnum;	//报文段序号nextseqnum
+	this-&gt;packetWaitingAck.checksum = 0;				//初始化校验和
+	memcpy(this-&gt;packetWaitingAck.payload, message.data, sizeof(message.data));			//设置报文段内容
+	this-&gt;packetWaitingAck.checksum = pUtils-&gt;calculateCheckSum(this-&gt;packetWaitingAck);//设置校验和
+	//创建带状态分组
+	pktWithState packet0;
+	packet0.ack = false;
+	packet0.pkt = this-&gt;packetWaitingAck;
+	this-&gt;sndpkt.push_back(packet0);//发送方缓存窗口内的报文段
+	pUtils-&gt;printPacket(&quot;发送方发送报文&quot;, this-&gt;packetWaitingAck);
+	//此处不需要判断，因为要给所有分组设置定时器
+	pns-&gt;startTimer(SENDER, Configuration::TIME_OUT, this-&gt;packetWaitingAck.seqnum);
+	//注意序号的二进制位数的限制，所以要取余
+	this-&gt;nextseqnum = (this-&gt;nextseqnum + 1) % int(pow(2, this-&gt;seqLength));
+	//向网络层交付数据
+	pns-&gt;sendToNetworkLayer(RECEIVER, this-&gt;packetWaitingAck);
+	return true;
+}
+void SRSender::receive(const Packet&amp; ackPkt) {
+	//只考虑校验和正确的ACK，如果收到不正确的ACK不作任何处理（因为是累加确认）
+	int checksum = pUtils-&gt;calculateCheckSum(ackPkt);
+	//还需要考虑收到的ACK是否对应窗口中的编号,即ackPkt-&gt;acknum是否在[base,base+sndpkt.size()-1]内
+	int seqLen = int(pow(2, this-&gt;seqLength));
+	int offacknum = (ackPkt.acknum - this-&gt;sendbase + seqLen) % seqLen;
+	//ACK正确且在窗口范围内,并且该分组ACK未确认
+	if (checksum == ackPkt.checksum &amp;&amp; offacknum &lt; this-&gt;sndpkt.size() &amp;&amp; !this-&gt;sndpkt[offacknum].ack) {
+		//标记相应的分组已经收到，并关闭其定时器
+		this-&gt;sndpkt[offacknum].ack = true;
+		pns-&gt;stopTimer(SENDER, ackPkt.acknum);
+		pUtils-&gt;printPacket(&quot;发送方正确收到确认&quot;, ackPkt);
+		//控制台可视化移动前滑动窗口
+		//将移动前滑动窗口移动信息写入日志文件
+		ofstream ofs;
+		ofs.open(&quot;log.txt&quot;, ios::app);
+		cout &lt;&lt; &quot;\n发送方移动前滑动窗口为：[&quot;;
+		ofs &lt;&lt; &quot;\n发送方移动前滑动窗口为：[&quot;;
+		for (int i = 0; i &lt; this-&gt;windowLength; ++i) {
+			if (i &lt; this-&gt;sndpkt.size()) {
+				if (this-&gt;sndpkt[i].ack) color(175);
+				else color(224);
+			}
+			else color(159);
+			cout &lt;&lt; (this-&gt;sendbase + i) % seqLen;
+			ofs &lt;&lt; (this-&gt;sendbase + i) % seqLen;
+			if (i != this-&gt;windowLength - 1) {
+				color(240);
+				cout &lt;&lt; &quot;,&quot;;
+				ofs &lt;&lt; &quot;,&quot;;
+			}
+		}
+		color(240);
+		cout &lt;&lt; &quot;]&quot; &lt;&lt; endl;
+		ofs &lt;&lt; &quot;]&quot; &lt;&lt; endl;
+		ofs.close();
+		//判断sendbase对应的分组ack是否为true，我们只需要遍历sndpkt即可
+		//如果发送方缓存非空且sendbase开始的分组ack为true
+		while (this-&gt;sndpkt.size() &gt; 0 &amp;&amp; this-&gt;sndpkt.front().ack) {
+			this-&gt;sndpkt.erase(this-&gt;sndpkt.begin(), this-&gt;sndpkt.begin() + 1);
+			this-&gt;sendbase = (this-&gt;sendbase + 1) % seqLen;
+		}
+		//控制台可视化移动后滑动窗口
+		//将移动后滑动窗口移动信息写入日志文件
+		ofs.open(&quot;log.txt&quot;, ios::app);
+		cout &lt;&lt; &quot;发送方移动后滑动窗口为：[&quot;;
+		ofs &lt;&lt; &quot;发送方移动后滑动窗口为：[&quot;;
+		for (int i = 0; i &lt; this-&gt;windowLength; ++i) {
+			if (i &lt; this-&gt;sndpkt.size()) {
+				if (this-&gt;sndpkt[i].ack) color(175);
+				else color(224);
+			}
+			else color(159);
+			cout &lt;&lt; (this-&gt;sendbase + i) % seqLen;
+			ofs &lt;&lt; (this-&gt;sendbase + i) % seqLen;
+			if (i != this-&gt;windowLength - 1) {
+				color(240);
+				cout &lt;&lt; &quot;,&quot;;
+				ofs &lt;&lt; &quot;,&quot;;
+			}
+		}
+		color(240);
+		cout &lt;&lt; &quot;]\n&quot; &lt;&lt; endl;
+		ofs &lt;&lt; &quot;]&quot; &lt;&lt; endl;
+		ofs.close();
+	}
+	else if (checksum != ackPkt.acknum) {//ACK传输出错，不作任何处理
+		pUtils-&gt;printPacket(&quot;ACK数据校验错误&quot;, ackPkt);
+	}
+	else pUtils-&gt;printPacket(&quot;已收到过该ACK确认&quot;, ackPkt);
+}
+void SRSender::timeoutHandler(int seqNum) {
+	//超时只重传序号为seqNum的packet
+	pns-&gt;stopTimer(SENDER, seqNum);
+	pns-&gt;startTimer(SENDER, Configuration::TIME_OUT, seqNum);
+	int seqLen = int(pow(2, this-&gt;seqLength));
+	int offacknum = (seqNum - this-&gt;sendbase + seqLen) % seqLen;//序号对应的packet在sndpkt中的下标
+	pUtils-&gt;printPacket(&quot;发送方定时器超时，重发全部缓存报文&quot;, this-&gt;sndpkt[offacknum].pkt);
+	pns-&gt;sendToNetworkLayer(RECEIVER, this-&gt;sndpkt[offacknum].pkt); 
+}
+</code></pre>
+<h3 id="63-sr协议接收方实现">6.3 SR协议接收方实现</h3>
+<p><code>SRReceiver.h</code>：</p>
+<pre><code class="language-c++">#ifndef STOP_WAIT_RDT_RECEIVER_H
+#define STOP_WAIT_RDT_RECEIVER_H
+#include &quot;RdtReceiver.h&quot;
+#include &quot;SRSender.h&quot;
+#include &quot;stdafx.h&quot;
+#include &lt;vector&gt;
+
+class SRReceiver :public RdtReceiver {
+private:
+	int windowLength;				//接收方窗口大小
+	int seqLength;					//序号的二进制位数
+	int rcvbase;					//接收方基序号
+	vector&lt;pktWithState&gt; rcvpkt;	//接收方缓存
+	Packet lastAckPkt;				//收到分组对应的ACK数据报
+public:
+	SRReceiver();
+	virtual ~SRReceiver();
+public:
+	void receive(const Packet&amp; packet);	//接收报文，将被NetworkService调用
+};
+#endif
+</code></pre>
+<p><code>SRReceiver.cpp</code>：</p>
+<pre><code class="language-c++">#include &quot;stdafx.h&quot;
+#include &quot;Global.h&quot;
+#include &quot;SRReceiver.h&quot;
+//控制台颜色控制：滑动窗口中已收到的标记为粉色，失序未收到的标记位灰色，未失序未收到的标记为蓝色
+//构造函数
+SRReceiver::SRReceiver() :windowLength(4), seqLength(3), rcvbase(0) {
+	//初始化数据包
+	lastAckPkt.acknum = -1; //初始状态下，上次发送的确认包的确认序号为-1，使得当第一个接受的数据包出错时该确认报文的确认号为-1
+	lastAckPkt.checksum = 0;
+	lastAckPkt.seqnum = -1;	//忽略该字段
+	for (int i = 0; i &lt; Configuration::PAYLOAD_SIZE; i++) {
+		lastAckPkt.payload[i] = '.';
+	}
+	lastAckPkt.checksum = pUtils-&gt;calculateCheckSum(lastAckPkt);
+	//为了解决失序的问题，我们提前初始化窗口中的报文，根据下标进行插入即可避免失序问题难以解决
+	for (int i = 0; i &lt; this-&gt;windowLength; ++i) {
+		pktWithState packet0;
+		packet0.ack = false;		//注意此处接收方的rcvpkt[i].ack是该分组是否提交的标志
+		packet0.pkt.seqnum = -1;
+		packet0.pkt.acknum = -1;
+		packet0.pkt.checksum = -1;
+		this-&gt;rcvpkt.push_back(packet0);
+	}
+}
+//析构函数
+SRReceiver::~SRReceiver() {
+
+}
+//接收到packet报文
+void SRReceiver::receive(const Packet&amp; packet) {
+	//检查校验和是否正确
+	int checkSum = pUtils-&gt;calculateCheckSum(packet);
+	//检查报文序号是否在窗口内
+	int seqLen = int(pow(2, this-&gt;seqLength));
+	int offseqnum = (packet.seqnum - this-&gt;rcvbase + seqLen) % seqLen;//下标
+	//正确收到报文,报文序号在发送方窗口内,收到的是不重复的报文
+	if (checkSum == packet.checksum &amp;&amp; offseqnum &lt; this-&gt;windowLength &amp;&amp; !this-&gt;rcvpkt[offseqnum].ack) {
+		this-&gt;rcvpkt[offseqnum].ack = true;
+		this-&gt;rcvpkt[offseqnum].pkt = packet;
+		//窗口可视化
+		//移动窗口的过程录入日志
+		ofstream ofs;
+		ofs.open(&quot;log.txt&quot;, ios::app);
+		cout &lt;&lt; &quot;\n接收方移动前滑动窗口为：[&quot;;
+		ofs &lt;&lt; &quot;\n接收方移动前滑动窗口为：[&quot;;
+		//首先获得下标最大的ack为true的下标
+		int maxSeqNum=0;
+		for (int i = 0; i &lt; this-&gt;windowLength; ++i) {
+			if (this-&gt;rcvpkt[i].ack) maxSeqNum = i;
+		}
+		for (int i = 0; i &lt; this-&gt;windowLength; ++i) {
+			if (!this-&gt;rcvpkt[i].ack &amp;&amp; i &lt; maxSeqNum) {//失序且未收到的分组
+				color(143);
+			}
+			else if (this-&gt;rcvpkt[i].ack) {//已收到的分组
+				color(463);
+			}
+			else if (i &gt; maxSeqNum) {
+				color(159);
+			}
+			cout &lt;&lt; (this-&gt;rcvbase + i) % seqLen;
+			ofs &lt;&lt; (this-&gt;rcvbase + i) % seqLen;
+			if (i != this-&gt;windowLength - 1) {
+				color(240);
+				cout &lt;&lt; &quot;,&quot;;
+				ofs &lt;&lt; &quot;,&quot;;
+			}
+		}
+		color(240);
+		cout &lt;&lt; &quot;]&quot; &lt;&lt; endl;
+		ofs &lt;&lt; &quot;]&quot; &lt;&lt; endl;
+		ofs.close();
+		//判断是否可以按序上交
+		pUtils-&gt;printPacket(&quot;接收方正确收到发送方的报文&quot;, packet);
+		while (this-&gt;rcvpkt.front().ack) {
+			//取出Message，向上递交给应用层
+			Message msg;
+			memcpy(msg.data, this-&gt;rcvpkt.front().pkt.payload, sizeof(this-&gt;rcvpkt.front().pkt.payload));
+			pns-&gt;delivertoAppLayer(RECEIVER, msg);
+			//rcvbase+=1
+			this-&gt;rcvbase = (this-&gt;rcvbase + 1) % seqLen;
+			//删除缓存中的第一个packet，尾部再插入一个packet
+			this-&gt;rcvpkt.erase(this-&gt;rcvpkt.begin(), this-&gt;rcvpkt.begin() + 1);
+			pktWithState packet0;
+			packet0.ack = false;		//注意此处接收方的rcvpkt[i].ack是该分组是否提交的标志
+			packet0.pkt.seqnum = -1;
+			packet0.pkt.acknum = -1;
+			packet0.pkt.checksum = -1;
+			this-&gt;rcvpkt.push_back(packet0);
+		}
+		//窗口可视化
+		//移动窗口的过程录入日志
+		ofstream ofs;
+		ofs.open(&quot;log.txt&quot;, ios::app);
+		cout &lt;&lt; &quot;接收方移动后滑动窗口为：[&quot;;
+		ofs &lt;&lt; &quot;接收方移动后滑动窗口为：[&quot;;
+		//首先获得下标最大的ack为true的下标
+		int maxSeqNum = 0;
+		for (int i = 0; i &lt; this-&gt;windowLength; ++i) {
+			if (this-&gt;rcvpkt[i].ack) maxSeqNum = i;
+		}
+		for (int i = 0; i &lt; this-&gt;windowLength; ++i) {
+			if (!this-&gt;rcvpkt[i].ack &amp;&amp; i &lt; maxSeqNum) {//失序且未收到的分组
+				color(143);
+			}
+			else if (this-&gt;rcvpkt[i].ack) {//已收到的分组
+				color(463);
+			}
+			else if (i &gt; maxSeqNum) {
+				color(159);
+			}
+			cout &lt;&lt; (this-&gt;rcvbase + i) % seqLen;
+			ofs &lt;&lt; (this-&gt;rcvbase + i) % seqLen;
+			if (i != this-&gt;windowLength - 1) {
+				color(240);
+				cout &lt;&lt; &quot;,&quot;;
+				ofs &lt;&lt; &quot;,&quot;;
+			}
+		}
+		color(240);
+		cout &lt;&lt; &quot;]\n&quot; &lt;&lt; endl;
+		ofs &lt;&lt; &quot;]&quot; &lt;&lt; endl;
+		ofs.close();
+		//发送ACK(n)
+		lastAckPkt.acknum = packet.seqnum; //确认序号等于收到的报文序号
+		lastAckPkt.checksum = pUtils-&gt;calculateCheckSum(lastAckPkt);
+		pUtils-&gt;printPacket(&quot;接收方发送确认报文&quot;, lastAckPkt);
+		pns-&gt;sendToNetworkLayer(SENDER, lastAckPkt);	//调用模拟网络环境的sendToNetworkLayer，通过网络层发送确认报文到对方
+	}
+	else {
+		if (checkSum != packet.checksum) {
+			pUtils-&gt;printPacket(&quot;接收方没有正确收到发送方的报文,数据校验错误&quot;, packet);
+		}
+		else {//收到窗口外或者重复的分组，反馈其相应的ACK(n)
+			pUtils-&gt;printPacket(&quot;接收方正确收到发送方的报文,但是收到了重复分组&quot;, packet);
+			lastAckPkt.acknum = packet.seqnum; //确认序号等于收到的报文序号
+			lastAckPkt.checksum = pUtils-&gt;calculateCheckSum(lastAckPkt);
+			pUtils-&gt;printPacket(&quot;接收方重新发送已经收到过的分组的确认报文&quot;, lastAckPkt);
+			pns-&gt;sendToNetworkLayer(SENDER, lastAckPkt);	//调用模拟网络环境的sendToNetworkLayer，通过网络层发送上次的确认报文
+		}
+	}
+}
+</code></pre>
+<h3 id="64-sr主模块实现">6.4 SR主模块实现</h3>
+<p><code>SR.cpp</code>：</p>
+<pre><code class="language-c++">//GBN.cpp：控制台程序入口点
+#include &quot;stdafx.h&quot;
+#include &quot;Global.h&quot;
+#include &quot;RdtSender.h&quot;
+#include &quot;RdtReceiver.h&quot;
+#include &quot;SRSender.h&quot;
+#include &quot;SRReceiver.h&quot;
+
+int main(int argc, char* argv[]) {
+	system(&quot;color F0&quot;);
+
+	//日志文件分隔头
+	ofstream ofs;
+	ofs.open(&quot;log.txt&quot;, ios::app);
+	ofs &lt;&lt; &quot;********************* 进行一次文件传输 *********************&quot; &lt;&lt; endl;
+	ofs.close();
+
+	RdtSender* ps = new SRSender();
+	RdtReceiver* pr = new SRReceiver();
+	//	pns-&gt;setRunMode(0);  //VERBOS模式
+	pns-&gt;setRunMode(1);  //安静模式
+	pns-&gt;init();
+	pns-&gt;setRtdSender(ps);
+	pns-&gt;setRtdReceiver(pr);
+	pns-&gt;setInputFile(&quot;E:\\SR\\input.txt&quot;);
+	pns-&gt;setOutputFile(&quot;E:\\SR\\output.txt&quot;);
+
+	pns-&gt;start();
+
+	delete ps;
+	delete pr;
+	delete pUtils;									//指向唯一的工具类实例，只在main函数结束前delete
+	delete pns;										//指向唯一的模拟网络环境类实例，只在main函数结束前delete
+
+	return 0;
+}
+</code></pre>
+<p>部分输出结果如下：</p>
+<img src="http://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/202211151019674.png" style="zoom:60%;" />
+<h2 id="七-tcp协议实现">七、TCP协议实现</h2>
+<p>本次实验的实现要求如下：</p>
+<blockquote>
+<p>● 报文段格式、接收方缓冲区大小和 GBN 协议一样保持不变；<br>
+● 报文段序号按照报文段为单位进行编号；<br>
+● 单一的超时计时器，不需要估算 RTT 动态调整定时器 Timeout 参数；<br>
+● 支持快速重传和超时重传，重传时只重传最早发送且没被确认的报文段；<br>
+● 确认号为收到的最后一个报文段序号；<br>
+● 不考虑流量控制、拥塞控制</p>
+</blockquote>
+<h3 id="71-tcp原理">7.1 TCP原理</h3>
+<p><strong>TCP在IP的不可靠服务基础上提供可靠数据传输服务：</strong><br>
+① <font color=purple>流水线方式发送报文段</font><br>
+② <font color=purple>累积确认：只确认最后一个正确按序到达的报文段</font><br>
+③ <font color=purple>TCP使用一个重传定时器（最早未确认的报文段）</font><br>
+从上面几点看，TCP采用的机制很像GBN</p>
+<p><strong>处理数据流程：</strong><br>
+① <font color=purple>从应用程序接收数据</font><br>
+② <font color=purple>将数据封装入报文段中，<strong>每个报文段都包含一个序号，序号是该报文段第一个数据字节的字节流编号</strong></font><br>
+③ <font color=purple>启动定时器，超时间隔: TimeOutInterval </font><br>
+④ 超时: <font color=red><strong>重传认为超时的报文段（最早未确认的报文段），重启定时器</strong></font><br>
+⑤ 收到Ack: <font color=red><strong>如果是对以前的未确认报文段的确认(Ack&gt;Sendbase)，更新SendBase，如果当前有未被确认的报文段，TCP要重启定时器</strong></font></p>
+<p><strong>快速重传：</strong><font color=red><strong>超时周期往往太长，增加重发丢失分组的延时，通过重复的ACK检测丢失报文段，在超时到来之前重传报文段</strong></font><br>
+① <font color=purple><strong>发送方常要连续发送大量报文段，如果一个报文段丢失，会引起很多连续的重复ACK</strong></font><br>
+② <font color=purple><strong>如果发送方收到一个数据的3个重复ACK，它会认为确认数据之后的报文段丢失</strong></font></p>
+<p>我们本个实验实现的TCP与实际的TCP还是有区别的，该TCP几乎与GBN协议相同，但是</p>
+<h3 id="72-tcp发送方实现">7.2 TCP发送方实现</h3>
+<p><code>stdafx.h</code>：</p>
+<pre><code class="language-c++">// stdafx.h : 标准系统包含文件的包含文件，
+// 或是经常使用但不常更改的
+// 特定于项目的包含文件
+//
+
+#pragma once
+
+#include &quot;targetver.h&quot;
+#include &lt;fstream&gt;
+#include &lt;Windows.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;tchar.h&gt;
+#include &lt;math.h&gt;
+
+// TODO: 在此处引用程序需要的其他头文件
+#pragma comment (lib,&quot;E:\\TCP\\netsimlib.lib&quot;)
+
+#include &lt;iostream&gt;
+using namespace std;
+
+//#pragma warning(disable:4482)
+//控制台颜色控制：滑动窗口中已发送的标记为黄色，未发送的标记为蓝色，已确认的标记为绿色
+inline void color(int x) {
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), x);//设置不同数字的颜色
+}
+</code></pre>
+<p><code>TCPSender.h</code>：</p>
+<pre><code class="language-c++">#ifndef STOP_WAIT_RDT_SENDER_H
+#define STOP_WAIT_RDT_SENDER_H
+#include &quot;RdtSender.h&quot;
+#include &quot;stdafx.h&quot;
+#include &lt;vector&gt;
+class TCPSender :public RdtSender {
+private:
+	int windowLength;				// 发送方窗口大小
+	int seqLength;					// 序号对应的二进制数位数
+	int sendbase;					// 发送方基序号
+	int nextseqnum;					// 下一个将要发送的分组的序号
+	int redAckNum;					//冗余ACK个数
+	vector&lt;Packet&gt; sndpkt;	// 缓存带状态分组
+	bool waitingState;				// 是否处于等待Ack的状态
+	Packet packetWaitingAck;		// 已发送并等待Ack的数据包
+public:
+	bool getWaitingState();
+	bool send(const Message&amp; message);						//发送应用层下来的Message，由NetworkServiceSimulator调用,如果发送方成功地将Message发送到网络层，返回true;如果因为发送方处于等待正确确认状态而拒绝发送Message，则返回false
+	void receive(const Packet&amp; ackPkt);						//接受确认Ack，将被NetworkServiceSimulator调用	
+	void timeoutHandler(int seqNum);					//Timeout handler，将被NetworkServiceSimulator调用
+public:
+	TCPSender();
+	virtual ~TCPSender();
+};
+#endif
+</code></pre>
+<p><code>TCPSender.cpp</code>：</p>
+<pre><code class="language-c++">#include &quot;stdafx.h&quot;
+#include &quot;Global.h&quot;
+#include &quot;TCPSender.h&quot;
+//控制台颜色控制：滑动窗口中已发送的标记为黄色，未发送的标记为蓝色
+//构造函数
+TCPSender::TCPSender() :windowLength(4), seqLength(3), sendbase(0), nextseqnum(0), redAckNum(0), waitingState(false) {
+
+}
+//析构函数
+TCPSender::~TCPSender() {
+
+}
+//判断窗口是否已满
+bool TCPSender::getWaitingState() {
+	if (this-&gt;sndpkt.size() &gt;= this-&gt;windowLength) {
+		this-&gt;waitingState = true;
+	}
+	else this-&gt;waitingState = false;
+	return this-&gt;waitingState;
+}
+//向接收方发送一个packet-&gt;与GBN完全相同，发送nextseqnum对应的packet即可，只为base设置定时器
+bool TCPSender::send(const Message&amp; message) {
+	if (this-&gt;getWaitingState()) {//窗口满，拒绝发送
+		return false;
+	}
+	this-&gt;packetWaitingAck.acknum = -1;					//忽略该字段,发送方报文用不到
+	this-&gt;packetWaitingAck.seqnum = this-&gt;nextseqnum;	//报文段序号nextseqnum
+	this-&gt;packetWaitingAck.checksum = 0;				//初始化校验和
+	memcpy(this-&gt;packetWaitingAck.payload, message.data, sizeof(message.data));			//设置报文段内容
+	this-&gt;packetWaitingAck.checksum = pUtils-&gt;calculateCheckSum(this-&gt;packetWaitingAck);//设置校验和
+	this-&gt;sndpkt.push_back(this-&gt;packetWaitingAck);//发送方缓存窗口内的报文段
+	pUtils-&gt;printPacket(&quot;发送方发送报文&quot;, this-&gt;packetWaitingAck);
+	//只为base设置定时器，定时器超时之后发送sndpkt[base]~sndpkt[nextseqnum-1]
+	if (this-&gt;sendbase == this-&gt;nextseqnum) {
+		pns-&gt;startTimer(SENDER, Configuration::TIME_OUT, this-&gt;packetWaitingAck.seqnum);
+	}
+	//注意序号的二进制位数的限制，所以要取余
+	this-&gt;nextseqnum = (this-&gt;nextseqnum + 1) % int(pow(2, this-&gt;seqLength));
+	//向网络层交付数据
+	pns-&gt;sendToNetworkLayer(RECEIVER, this-&gt;packetWaitingAck);
+	return true;
+}
+//接收ACK的同时要支持快速重传
+void TCPSender::receive(const Packet&amp; ackPkt) {
+	//只考虑校验和正确的ACK，如果收到不正确的ACK不作任何处理（因为是累加确认）
+	int checksum = pUtils-&gt;calculateCheckSum(ackPkt);
+	//还需要考虑收到的ACK是否对应窗口中的编号,即ackPkt-&gt;acknum是否在[base,base+sndpkt.size()-1]内
+	int seqLen = int(pow(2, this-&gt;seqLength));
+	int offacknum = (ackPkt.acknum - this-&gt;sendbase + seqLen) % seqLen;
+	if (checksum == ackPkt.checksum &amp;&amp; offacknum &lt; this-&gt;sndpkt.size()) {
+		//控制台可视化移动前滑动窗口
+		//将移动前滑动窗口移动信息写入日志文件
+		ofstream ofs;
+		ofs.open(&quot;log.txt&quot;, ios::app);
+		cout &lt;&lt; &quot;\n移动前滑动窗口为：[&quot;;
+		ofs &lt;&lt; &quot;\n移动前滑动窗口为：[&quot;;
+		for (int i = 0; i &lt; this-&gt;windowLength; ++i) {
+			if (i &lt; this-&gt;sndpkt.size()) color(224);
+			else color(159);
+			cout &lt;&lt; (this-&gt;sendbase + i) % seqLen;
+			ofs &lt;&lt; (this-&gt;sendbase + i) % seqLen;
+			if (i != this-&gt;windowLength - 1) {
+				color(240);
+				cout &lt;&lt; &quot;,&quot;;
+				ofs &lt;&lt; &quot;,&quot;;
+			}
+		}
+		color(240);
+		cout &lt;&lt; &quot;]&quot; &lt;&lt; endl;
+		ofs &lt;&lt; &quot;]&quot; &lt;&lt; endl;
+		ofs.close();
+
+		//移动滑动窗口base=acknum+1，同时删除缓存中已经确认的packet
+		pUtils-&gt;printPacket(&quot;发送方正确收到确认&quot;, ackPkt);
+		//因为重启定时器前也需要关闭定时器，所以没必要判断，无脑关就行了，但是要注意关闭的定时器的序号！
+		pns-&gt;stopTimer(SENDER, this-&gt;sendbase);
+		while (this-&gt;sendbase != (ackPkt.acknum + 1) % seqLen) {
+			this-&gt;sndpkt.erase(this-&gt;sndpkt.begin(), this-&gt;sndpkt.begin() + 1);
+			this-&gt;sendbase = (this-&gt;sendbase + 1) % seqLen;
+		}
+		//控制台可视化移动后滑动窗口
+		//将移动后滑动窗口移动信息写入日志文件
+		ofs.open(&quot;log.txt&quot;, ios::app);
+		cout &lt;&lt; &quot;移动后滑动窗口为：[&quot;;
+		ofs &lt;&lt; &quot;移动后滑动窗口为：[&quot;;
+		for (int i = 0; i &lt; this-&gt;windowLength; ++i) {
+			if (i &lt; this-&gt;sndpkt.size()) color(224);
+			else color(159);
+			cout &lt;&lt; (this-&gt;sendbase + i) % seqLen;
+			ofs &lt;&lt; (this-&gt;sendbase + i) % seqLen;
+			if (i != this-&gt;windowLength - 1) {
+				color(240);
+				cout &lt;&lt; &quot;,&quot;;
+				ofs &lt;&lt; &quot;,&quot;;
+			}
+		}
+		color(240);
+		cout &lt;&lt; &quot;]\n&quot; &lt;&lt; endl;
+		ofs &lt;&lt; &quot;]&quot; &lt;&lt; endl;
+		ofs.close();
+		//每次收到正确ACK都要将冗余置零
+		this-&gt;redAckNum = 0;
+		//判断定时器处理
+		if (this-&gt;sndpkt.size() != 0) {//非空，仍需重启定时器
+			pns-&gt;startTimer(SENDER, Configuration::TIME_OUT, this-&gt;sendbase);//以基准包的序号开启计时器
+		}
+	}
+	else if (checksum != ackPkt.checksum) {//ACK传输出错，不作任何处理
+		pUtils-&gt;printPacket(&quot;ACK数据校验错误&quot;, ackPkt);
+	}
+	//接收方未按序收到正确的报文时，会反馈上次收到的ACK，即这个冗余的ACK序号只可能是base-1
+	else {
+		pUtils-&gt;printPacket(&quot;发送方已正确收到过该报文确认&quot;, ackPkt);
+		this-&gt;redAckNum++;
+		if (this-&gt;redAckNum == 3 &amp;&amp; this-&gt;sndpkt.size() &gt; 0) {
+			//快速重传写入日志
+			ofstream ofs;
+			ofs.open(&quot;log.txt&quot;, ios::app);
+			ofs &lt;&lt; &quot;进行一次快速重传，重传分组的序号为：&quot; &lt;&lt; this-&gt;sendbase &lt;&lt; endl;
+			ofs.close();
+			color(252);
+			pUtils-&gt;printPacket(&quot;发送方进行快速重传，重传最早发送且没被确认的报文段&quot;, this-&gt;sndpkt.front());
+			color(240);
+			pns-&gt;sendToNetworkLayer(RECEIVER, this-&gt;sndpkt.front());
+			this-&gt;redAckNum = 0;
+		}
+	}
+}
+void TCPSender::timeoutHandler(int seqNum) {
+	pns-&gt;stopTimer(SENDER, seqNum);										//首先关闭定时器
+	pns-&gt;startTimer(SENDER, Configuration::TIME_OUT, seqNum);			//重新启动发送方定时器
+	//重新发送最早发送且没被确认的报文段
+	pUtils-&gt;printPacket(&quot;发送方定时器时间到，重发最早发送且没被确认的报文段&quot;, this-&gt;sndpkt.front());
+	pns-&gt;sendToNetworkLayer(RECEIVER, this-&gt;sndpkt.front());	            
+}
+</code></pre>
+<h3 id="73-tcp接收方实现">7.3 TCP接收方实现</h3>
+<p><code>TCPReceiver.h</code>：</p>
+<pre><code class="language-c++">#ifndef STOP_WAIT_RDT_RECEIVER_H
+#define STOP_WAIT_RDT_RECEIVER_H
+#include &quot;RdtReceiver.h&quot;
+#include &quot;stdafx.h&quot;
+
+class TCPReceiver :public RdtReceiver {
+private:
+	int expectedseqnum;	//期望收到的packet序号
+	int seqLength;		//序号二进制数位数
+	Packet lastAckPkt;	//上次发送的ACK报文
+public:
+	TCPReceiver();
+	virtual ~TCPReceiver();
+public:
+	void receive(const Packet&amp; packet);	//接收报文，将被NetworkService调用
+};
+#endif
+</code></pre>
+<p><code>TCPReceiver.cpp</code>：</p>
+<pre><code class="language-c++">#include &quot;stdafx.h&quot;
+#include &quot;Global.h&quot;
+#include &quot;GBNReceiver.h&quot;
+//构造函数
+GBNReceiver::GBNReceiver() :expectedseqnum(0), seqLength(3) {
+	//因为我们设计的GBN中序号从0开始，因此初始化的acknum=-1
+	lastAckPkt.acknum = -1; //初始状态下，上次发送的确认包的确认序号为-1，使得当第一个接受的数据包出错时该确认报文的确认号为-1
+	lastAckPkt.checksum = 0;
+	lastAckPkt.seqnum = -1;	//忽略该字段
+	for (int i = 0; i &lt; Configuration::PAYLOAD_SIZE; i++) {
+		lastAckPkt.payload[i] = '.';
+	}
+	lastAckPkt.checksum = pUtils-&gt;calculateCheckSum(lastAckPkt);
+}
+//析构函数
+GBNReceiver::~GBNReceiver() {
+
+}
+//接收到packet报文，反馈ACK
+void GBNReceiver::receive(const Packet&amp; packet) {
+	//检查校验和是否正确
+	int checkSum = pUtils-&gt;calculateCheckSum(packet);
+	//如果校验和正确，同时收到报文的序号等于接收方期待收到的报文序号一致
+	if (checkSum == packet.checksum &amp;&amp; this-&gt;expectedseqnum == packet.seqnum) {
+		pUtils-&gt;printPacket(&quot;接收方正确收到发送方的报文&quot;, packet);
+
+		//取出Message，向上递交给应用层
+		Message msg;
+		memcpy(msg.data, packet.payload, sizeof(packet.payload));
+		pns-&gt;delivertoAppLayer(RECEIVER, msg);
+
+		lastAckPkt.acknum = packet.seqnum; //确认序号等于收到的报文序号
+		lastAckPkt.checksum = pUtils-&gt;calculateCheckSum(lastAckPkt);
+		pUtils-&gt;printPacket(&quot;接收方发送确认报文&quot;, lastAckPkt);
+		pns-&gt;sendToNetworkLayer(SENDER, lastAckPkt);	//调用模拟网络环境的sendToNetworkLayer，通过网络层发送确认报文到对方
+
+		this-&gt;expectedseqnum = (this-&gt;expectedseqnum + 1) % int(pow(2, this-&gt;seqLength));//接收序号在0-1之间切换
+	}
+	else {
+		if (checkSum != packet.checksum) {
+			pUtils-&gt;printPacket(&quot;接收方没有正确收到发送方的报文,数据校验错误&quot;, packet);
+		}
+		else {
+			pUtils-&gt;printPacket(&quot;接收方没有正确收到发送方的报文,报文序号不对&quot;, packet);
+		}
+		pUtils-&gt;printPacket(&quot;接收方重新发送上次的确认报文&quot;, lastAckPkt);
+		pns-&gt;sendToNetworkLayer(SENDER, lastAckPkt);	//调用模拟网络环境的sendToNetworkLayer，通过网络层发送上次的确认报文
+	}
+}
+</code></pre>
+<h3 id="74-tcp主模块">7.4 TCP主模块</h3>
+<p><code>TCP.cpp</code>：</p>
+<pre><code class="language-c++">//GBN.cpp：控制台程序入口点
+#include &quot;stdafx.h&quot;
+#include &quot;Global.h&quot;
+#include &quot;RdtSender.h&quot;
+#include &quot;RdtReceiver.h&quot;
+#include &quot;TCPSender.h&quot;
+#include &quot;TCPReceiver.h&quot;
+
+int main(int argc, char* argv[]) {
+	system(&quot;color F0&quot;);
+
+	//日志文件分隔头
+	ofstream ofs;
+	ofs.open(&quot;log.txt&quot;, ios::app);
+	ofs &lt;&lt; &quot;********************* 进行一次文件传输 *********************&quot; &lt;&lt; endl;
+	ofs.close();
+
+	RdtSender* ps = new TCPSender();
+	RdtReceiver* pr = new TCPReceiver();
+	//	pns-&gt;setRunMode(0);  //VERBOS模式
+	pns-&gt;setRunMode(1);  //安静模式
+	pns-&gt;init();
+	pns-&gt;setRtdSender(ps);
+	pns-&gt;setRtdReceiver(pr);
+	pns-&gt;setInputFile(&quot;E:\\TCP\\input.txt&quot;);
+	pns-&gt;setOutputFile(&quot;E:\\TCP\\output.txt&quot;);
+
+	pns-&gt;start();
+
+	delete ps;
+	delete pr;
+	delete pUtils;									//指向唯一的工具类实例，只在main函数结束前delete
+	delete pns;										//指向唯一的模拟网络环境类实例，只在main函数结束前delete
+
+	return 0;
+}
+</code></pre>
+
+            </div>
+            <hr style="width: 80%;">
+            
+            <div class="postfooter">
+                <ul class="post-copyright">
+                    <li><strong>文章作者：</strong>w_CS</li>
+            <li><strong>原文链接：</strong>https://2006wzt.github.io/post/可靠数据传输协议/</li>
+            <li><strong>版权声明：</strong>本博客所有文章除特别声明外，均采用<i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA
+                许可协议。转载请注明出处！</li>
+            </ul>
+        </div>
+        
+            <div class="shareContainer">
+                <div class="share" style="height:30px;">
+                    <a class="qq" href=""><i><img class="shareicon"
+                                src="https://2006wzt.github.io/media/images/qqs.png" alt=""></i></a>
+                    <a class="wechat" href=""><i><img class="shareicon"
+                                src="https://2006wzt.github.io/media/images/wechats.png" alt=""></i></a>
+                    <a class="weibo" href=""><i><img class="shareicon"
+                                src="https://2006wzt.github.io/media/images/weibos.png" alt=""></i></a>
+                    <a class="qzone" href=""><i><img class="shareicon"
+                                src="https://2006wzt.github.io/media/images/qzones.png" alt=""></i></a>
+                    <a class="douban" href=""><i><img class="shareicon"
+                                src="https://2006wzt.github.io/media/images/doubans.png" alt=""></i></a>
+                    <a class="facebook" href=""><i><img class="shareicon"
+                                src="https://2006wzt.github.io/media/images/facebooks.png" alt=""></i></a>
+                    <a class="twitter" href=""><i><img class="shareicon"
+                                src="https://2006wzt.github.io/media/images/twitter.png" alt=""></i></a>
+                </div>
+            </div>
+            
+        <div id="otherpost">
+            
+            
+            <a data-pjax class="next-post-pc" href="https://2006wzt.github.io/post/数据库系统概论实验/"  style="color: black;">
+                <div id="npcontainer">
+                    
+                    <img src="https://2006wzt.github.io/post-images/数据库系统概论实验.png" style="width: 100%;" class="opimg">
+                    
+                    <h4 class="optitle">数据库系统实验</h4>
+                </div>
+            </a>
+            <div class="next-post">
+                下一篇 <a  data-pjax href="https://2006wzt.github.io/post/数据库系统概论实验/">数据库系统实验</a>
+            </div>
+            
+        </div>
+    </div>
+    </div>
+    </div>
+    <!-- 弹窗 -->
+    <div id="myModal" class="modal">
+        <img class="modal-content" id="img01">
+    </div>
+</body>
+<script>
+    //文章阅读热度
+    var pl = $("#pl").html();
+    var rootaddr = $("#rootaddr").html();
+    pl = pl.replace(rootaddr, "");
+    $("#hotnum").attr('id', pl);
+</script>
+                    <div class="toc-container">
+                        <ul class="markdownIt-TOC">
+<li><a href="#%E5%8F%AF%E9%9D%A0%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93%E5%8D%8F%E8%AE%AErdt">可靠数据传输协议Rdt</a>
+<ul>
+<li><a href="#%E4%B8%80-%E5%AE%9E%E9%AA%8C%E8%A6%81%E6%B1%82">一、实验要求</a>
+<ul>
+<li><a href="#11-%E5%AE%9E%E9%AA%8C%E7%9B%AE%E6%A0%87%E5%92%8C%E5%86%85%E5%AE%B9">1.1 实验目标和内容</a>
+<ul>
+<li><a href="#111-%E5%AE%9E%E9%AA%8C%E7%9B%AE%E7%9A%84">1.1.1 实验目的</a></li>
+<li><a href="#112-%E5%AE%9E%E9%AA%8C%E7%8E%AF%E5%A2%83">1.1.2 实验环境</a></li>
+<li><a href="#113-%E5%AE%9E%E9%AA%8C%E8%A6%81%E6%B1%82">1.1.3 实验要求</a></li>
+<li><a href="#114-%E5%AE%9E%E9%AA%8C%E5%86%85%E5%AE%B9">1.1.4 实验内容</a></li>
+</ul>
+</li>
+<li><a href="#12-%E6%A3%80%E6%9F%A5%E8%A1%A8">1.2 检查表</a></li>
+</ul>
+</li>
+<li><a href="#%E4%BA%8C-%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%BB%9C%E7%8E%AF%E5%A2%83%E4%BB%8B%E7%BB%8D">二、模拟网络环境介绍</a>
+<ul>
+<li><a href="#21-%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%BB%9C%E7%8E%AF%E5%A2%83%E5%8A%9F%E8%83%BD">2.1 模拟网络环境功能</a></li>
+<li><a href="#22-%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%BB%9C%E7%8E%AF%E5%A2%83%E6%9E%B6%E6%9E%84">2.2 模拟网络环境架构</a></li>
+<li><a href="#23-%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%BB%9C%E7%8E%AF%E5%A2%83%E4%B8%8E%E5%AD%A6%E7%94%9F%E5%AE%9E%E7%8E%B0%E7%9A%84%E4%BB%A3%E7%A0%81%E4%B9%8B%E9%97%B4%E7%9A%84%E8%B0%83%E7%94%A8%E5%85%B3%E7%B3%BB">2.3 模拟网络环境与学生实现的代码之间的调用关系</a></li>
+</ul>
+</li>
+<li><a href="#%E4%B8%89-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E6%8E%A5%E5%8F%A3%E5%AE%9A%E4%B9%89%E4%B8%8E%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%BB%9C%E7%8E%AF%E5%A2%83-api-%E4%BB%8B%E7%BB%8D">三、数据结构、接口定义与模拟网络环境 API 介绍</a>
+<ul>
+<li><a href="#31-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E5%AE%9A%E4%B9%89">3.1 数据结构定义</a></li>
+<li><a href="#32-rdtsender-%E5%92%8C-rdtreceiver-%E6%8E%A5%E5%8F%A3%E5%AE%9A%E4%B9%89">3.2 RdtSender 和 RdtReceiver 接口定义</a></li>
+<li><a href="#33-%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%BB%9C%E7%8E%AF%E5%A2%83-api-%E6%8E%A5%E5%8F%A3%E5%AE%9A%E4%B9%89">3.3 模拟网络环境 API 接口定义</a></li>
+<li><a href="#34-%E5%85%B6%E5%AE%83%E5%AE%9A%E4%B9%89">3.4 其它定义</a></li>
+</ul>
+</li>
+<li><a href="#%E5%9B%9B-%E5%81%9C%E6%AD%A2%E7%AD%89%E5%BE%85%E5%8D%8F%E8%AE%AErdt30%E5%AE%9E%E7%8E%B0%E7%A4%BA%E4%BE%8B">四、停止等待协议（Rdt3.0）实现示例</a>
+<ul>
+<li><a href="#41-%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE">4.1 开发环境配置</a></li>
+<li><a href="#42-%E5%81%9C%E6%AD%A2%E7%AD%89%E5%BE%85%E5%8D%8F%E8%AE%AE%E5%8F%91%E9%80%81%E6%96%B9%E5%AE%9E%E7%8E%B0">4.2 停止等待协议发送方实现</a></li>
+<li><a href="#43-%E5%81%9C%E6%AD%A2%E7%AD%89%E5%BE%85%E5%8D%8F%E8%AE%AE%E6%8E%A5%E6%94%B6%E6%96%B9%E5%AE%9E%E7%8E%B0">4.3 停止等待协议接收方实现</a></li>
+<li><a href="#44-%E5%90%AF%E5%8A%A8%E6%A8%A1%E6%8B%9F%E7%BD%91%E7%BB%9C%E7%8E%AF%E5%A2%83">4.4 启动模拟网络环境</a></li>
+</ul>
+</li>
+<li><a href="#%E4%BA%94-gbn%E5%8D%8F%E8%AE%AE%E7%9A%84%E5%AE%9E%E7%8E%B0">五、GBN协议的实现</a>
+<ul>
+<li><a href="#51-gbn%E5%8D%8F%E8%AE%AE%E7%9A%84%E5%8E%9F%E7%90%86">5.1 GBN协议的原理</a></li>
+<li><a href="#52-gbn%E5%8D%8F%E8%AE%AE%E5%8F%91%E9%80%81%E6%96%B9%E5%AE%9E%E7%8E%B0">5.2 GBN协议发送方实现</a></li>
+<li><a href="#53-gbn%E5%8D%8F%E8%AE%AE%E6%8E%A5%E6%94%B6%E6%96%B9%E5%AE%9E%E7%8E%B0">5.3 GBN协议接收方实现</a></li>
+<li><a href="#54-gbn%E4%B8%BB%E6%A8%A1%E5%9D%97%E7%BC%96%E5%86%99">5.4 GBN主模块编写</a></li>
+</ul>
+</li>
+<li><a href="#%E5%85%AD-sr%E5%8D%8F%E8%AE%AE%E7%9A%84%E5%AE%9E%E7%8E%B0">六、SR协议的实现</a>
+<ul>
+<li><a href="#61-sr%E5%8D%8F%E8%AE%AE%E5%8E%9F%E7%90%86">6.1 SR协议原理</a></li>
+<li><a href="#62-sr%E5%8D%8F%E8%AE%AE%E5%8F%91%E9%80%81%E6%96%B9%E5%AE%9E%E7%8E%B0">6.2 SR协议发送方实现</a></li>
+<li><a href="#63-sr%E5%8D%8F%E8%AE%AE%E6%8E%A5%E6%94%B6%E6%96%B9%E5%AE%9E%E7%8E%B0">6.3 SR协议接收方实现</a></li>
+<li><a href="#64-sr%E4%B8%BB%E6%A8%A1%E5%9D%97%E5%AE%9E%E7%8E%B0">6.4 SR主模块实现</a></li>
+</ul>
+</li>
+<li><a href="#%E4%B8%83-tcp%E5%8D%8F%E8%AE%AE%E5%AE%9E%E7%8E%B0">七、TCP协议实现</a>
+<ul>
+<li><a href="#71-tcp%E5%8E%9F%E7%90%86">7.1 TCP原理</a></li>
+<li><a href="#72-tcp%E5%8F%91%E9%80%81%E6%96%B9%E5%AE%9E%E7%8E%B0">7.2 TCP发送方实现</a></li>
+<li><a href="#73-tcp%E6%8E%A5%E6%94%B6%E6%96%B9%E5%AE%9E%E7%8E%B0">7.3 TCP接收方实现</a></li>
+<li><a href="#74-tcp%E4%B8%BB%E6%A8%A1%E5%9D%97">7.4 TCP主模块</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+                    </div>
+                    <div class="tog">
+                        <div class="toggleContainer">
+                            <div class="toggle">
+                                <i class="fas fa-angle-double-up"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <!---------------------------- 评论系统👇 ------------------------->
+                    <div id="comment" class="comment">
+                        <div class="commentcontainer">
+                            
+                                
+                            
+                        </div>
+                    </div>
+                    <!---------------------------- 评论系统👆 ------------------------->
+                </div>
+                <!-- main标签，pjax渲染时加载以上内容👆 -->
+                <div class="col-md-1 col-lg-2"></div>
+                <div id="bg">
+                </div>
+            </div>
+            <!-- ----------------左侧菜单栏html 👆-------------------------------------->
+            
+        </div>
+        <!-- aplayer播放器加载👇 -->
+            
+        <!-- aplayer播放器加载👆 -->
+    </div>
+    <!-- 背景图加载方式👇 -->
+    <div id="bgchoice" style="display: none">link
+                </div>
+                
+                <div id="bgurl" style="display:none">https://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/background.png</div>
+                
+    <!-- 背景图加载方式👆 -->
+</body>
+
+<script>
+    //初始化
+    //更换twikoo头像
+    setTimeout(replaceAvatar,1000);
+    setTimeout(replaceAvatar,2000);
+    setTimeout(replaceAvatar,8000);
+    // --------为每张图片添加懒加载（lazyload）标签-->懒加载功能 👇------------
+    lazyload();
+    //为文章内所有代码块添加代码复制功能 👇
+    codeinit();
+    // ------代码高亮显示功能-------------
+    hljs.initHighlightingOnLoad();
+    if (shareChoice)
+        shareInit();
+    if (donateChoice)
+        donateInit();
+</script>
+
+<!------------------ 加载live2d模型功能（看板娘）👇 ---------------->
+
+<script type="text/javascript">
+    var message_Path = '/live2d/'
+    var home_Path = document.getElementById("domainname").innerHTML + "/"; //此处修改为你的域名，必须带斜杠
+</script>
+<script type="text/javascript" src="https://2006wzt.github.io/media/js/live2d.js"></script>
+<script type="text/javascript" src="https://2006wzt.github.io/media/live2d/js/message.js"></script>
+<script type="text/javascript">
+    loadlive2d("live2d", "https://2006wzt.github.io/media/live2d/assets/tororo.model.json");
+</script>
+
+<!------------------ 加载live2d模型功能（看板娘）👆 ---------------->
+
+
+<!----------------------- 返回顶部按钮功能👇 --------------------->
+<script>
+    $(function () {
+        $('.toggleContainer').click(function () {
+            $('html,body').animate({
+                scrollTop: '0px'
+            }, 800);
+        });
+        $(window).scroll(function () {
+            var st = $(window).scrollTop();
+            if (st > 30) {
+                $(".toggleContainer").fadeIn(400);
+            } else {
+                $(".toggleContainer").fadeOut(100);
+            }
+        });
+    });
+</script>
+<!----------------------- 返回顶部按钮功能👆 --------------------->
+
+
+<!------------ 加载全局背景图功能👇（开始时没有写好，这功能有点鸡肋/(ㄒoㄒ)/~~） -->
+<script>
+    var bgchoice = "link"
+    var bg = $('#bg');
+    var bgurl = document.getElementById("bgurl").innerHTML;
+    if (bgchoice == 'default')
+    {
+        for (var i = 0; i < 3; i++)
+            bgurl = bgurl.replace("\\", "/");
+        bgurl = "https://2006wzt.github.io/" + bgurl;
+    }
+    bg.css("background", "url('" + bgurl + "')");
+
+    window.onload = function () {
+        aplayerbtnInit();
+    }
+</script>
+<!------------ 加载全局背景图功能👆（开始时没有写好，这功能有点鸡肋/(ㄒoㄒ)/~~） -->
+
+
+
+
+<script src="https://2006wzt.github.io/media/js/index.js"></script>
+
+
+<script>
+    //加载后的事件同步（阅读量、移动端评论等
+    window.onload = function () {
+    //代码块高亮渲染
+    document.querySelectorAll('pre code').forEach((block) => {
+            hljs.highlightBlock(block);
+    });
+        getHotnum();
+        var sharepc = $(".share").eq(0).html();
+        $(".share").eq(1).html(sharepc);   //插件只会寻找一个分享标签渲染，所以需要手动添加到移动端
+        aplayerbtnInit();
+        $(".hljs").css({
+            "padding": "20px"
+        })
+    }
+</script>
+
+<!-- <script src="https://2006wzt.github.io/media/js/av-min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/leancloud-storage@3.13.0/dist/av-min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/leancloud-storage@4.6.1/dist/av-live-query-min.js"></script> -->
