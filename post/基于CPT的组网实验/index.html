@@ -1,0 +1,2452 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="description" content="基于CPT的组网实验
+一、实验目标和内容
+1.1 实验目的
+● 了解 IP 协议、网络层协议和数据链路层协议的工作原理及机制
+● 掌握 IP 地址的规划方法
+● 掌握路由协议的配置方法
+● 掌握路由器及二/三层交换机的配置方法
+● 了解 V..." />
+    <meta name="keywords" content="Internet" />
+    <link rel="stylesheet" href="https://2006wzt.github.io/media/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://2006wzt.github.io/styles/main.css">
+    <!-- 代码渲染风格css -->
+    
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.18.1/build/styles/dracula.min.css">
+    
+    <!-- 代码高亮插件 -->
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.18.1/build/highlight.min.js"></script>
+    <!-- 代码复制插件 -->
+    <script src="https://cdn.jsdelivr.net/gh/850552586/ericamcdn@0.1/js/clipboard.min.js"></script>
+    <!-- live2d插件 -->
+    <link rel="stylesheet" href="https://2006wzt.github.io/media/css/live2d.css">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js"></script>
+    <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+    <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/5.13.1/css/all.min.css" rel="stylesheet">
+    <!-- 数学公式 -->
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/katex.min.css"
+        integrity="sha384-9tPv11A+glH/on/wEu99NVwDPwkMQESOocs/ZGXPoIiLE8MU/qkqUcZ3zzL+6DuH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/katex.min.js"
+        integrity="sha384-U8Vrjwb8fuHMt6ewaCy8uqeUXv4oitYACKdB0VziCerzt011iQ/0TqlSlv8MReCm" crossorigin="anonymous">
+        </script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/contrib/auto-render.min.js"
+        integrity="sha384-aGfk5kvhIq5x1x5YdvCp4upKZYnA8ckafviDpmWEKp4afOZEqOli7gqSnh8I6enH" crossorigin="anonymous">
+        </script>
+    <script>
+        renderMathInElement(document.body, {
+            delimiters: [{
+                left: "$$",
+                right: "$$",
+                display: true
+            },
+            {
+                left: "$",
+                right: "$",
+                display: false
+            }
+            ]
+        });
+    </script>
+    
+    <title>基于CPT的组网实验</title>
+
+    <!-- 大纲索引css调整 -->
+    
+    <style>
+        .markdownIt-TOC {
+            margin-left: 28%;
+            padding-left: 2px;
+            width: 80%;
+        }
+
+        .markdownIt-TOC li {
+            padding-left: 8%;
+        }
+    </style>
+    
+</head>
+
+<body>
+    <div id="landlord">
+        <div class="message" style="opacity:0"></div>
+        <canvas id="live2d" width="240" height="250" class="live2d"></canvas>
+    </div>
+    <div id="domainname" style="display:none">https://2006wzt.github.io</div>
+    <div id="content">
+        <div>
+            <!----------- 移动端导航栏👇 ----------------->
+            <div id="bar">
+                <style>
+  .navmobile {
+    z-index: 15;
+    max-height: 40vh;
+    overflow-y: scroll;
+    overflow-x: hidden;
+  }
+
+  @media screen and (max-width: 1200px) {
+    .navbar {
+      max-width: 100vw;
+    }
+  }
+
+  @media screen and (max-width:1200px) and (min-width: 768px) {
+    @media (min-width: 768px) {
+      .navbar-nav {
+        float: right;
+        margin: 0;
+      }
+    }
+  }
+
+  @media screen and (max-width:768px) {
+    .mbapspan {
+      padding: 0;
+    }
+  }
+</style>
+<div class="pjaxloading"  onclick="pjaxloadingClose()">
+  <div class="loadingbackground"></div>
+  <div id="loading">
+    <div class="loading">
+    </div>
+  </div>
+</div>
+<nav class="navbar navbar-inverse navbar-fixed-top navmobile">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#barmenu"
+        aria-expanded="false" id="barbutton">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a data-pjax class="navbar-brand" style="color:white" href="https://2006wzt.github.io">My Brain&nbsp;&nbsp;|</a>
+      <span class="navbar-brand mbapspan"><i id="mbaplayer" class="fa fa-play-circle-o" aria-hidden="true"
+          style="font-size: 28px;top: 12px;position: absolute;" onclick="aplayerPlay();"></i></span>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="barmenu">
+      <ul class="nav navbar-nav">
+        
+        
+        <li>
+          <a data-pjax href="/" style="color:white">
+            首页
+          </a>
+        </li>
+        
+        
+        
+        <li>
+          <a data-pjax href="/archives" style="color:white">
+            归档
+          </a>
+        </li>
+        
+        
+        
+        <li>
+          <a data-pjax href="/tags" style="color:white">
+            标签
+          </a>
+        </li>
+        
+        
+        
+        <li>
+          <a data-pjax href="/post/about" style="color:white">
+            关于
+          </a>
+        </li>
+        
+        
+        
+        
+          
+        <li><a data-pjax href="https://2006wzt.github.io/friends" style="color:white">友链</a></li>
+
+        
+        </ul>
+      </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+  </nav>
+
+
+  <!-- 引入jQuery核心js文件 -->
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js"></script>
+  <script>
+    let btstate = false;
+    var bt = $("#barbutton");
+    var bm = $("#barmenu");
+    bt.click(function () {
+      dropdown();
+    })
+    function dropdown() {
+      console.log(btstate);
+      //下拉
+      if (btstate == false) {
+        bt.removeClass("collapsed");
+        bt.attr("aria-expanded", "true");
+        bm.attr("aria-expanded", "true")
+        bm.fadeIn(700);
+        btstate = true;
+      }
+      else {
+        bt.addClass("collapsed");
+        bt.attr("aria-expanded", "false");
+        bm.removeClass("in");
+        bm.hide();
+        bm.attr("aria-expanded", "false");
+        btstate = false;
+      }
+    }
+  </script> 
+            </div>
+            <!----------- 移动端导航栏👆 ----------------->
+
+            <!--------------- pc端菜单栏👇 ---------------->
+            <div class="side"><head>
+    <link rel="stylesheet" href="https://2006wzt.github.io/media/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://2006wzt.github.io/styles/main.css">
+    
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.18.1/build/styles/dracula.min.css">
+    
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.18.1/build/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/850552586/ericamcdn@0.1/js/clipboard.min.js"></script>
+    <link rel="stylesheet" href="https://2006wzt.github.io/media/css/live2d.css">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
+    <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+    <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/5.13.1/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <!-- fancybox -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+    <script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+
+
+    <!--------- 数学公式👇---- -->
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/katex.min.css"
+        integrity="sha384-9tPv11A+glH/on/wEu99NVwDPwkMQESOocs/ZGXPoIiLE8MU/qkqUcZ3zzL+6DuH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/katex.min.js"
+        integrity="sha384-U8Vrjwb8fuHMt6ewaCy8uqeUXv4oitYACKdB0VziCerzt011iQ/0TqlSlv8MReCm" crossorigin="anonymous">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/contrib/auto-render.min.js"
+        integrity="sha384-aGfk5kvhIq5x1x5YdvCp4upKZYnA8ckafviDpmWEKp4afOZEqOli7gqSnh8I6enH" crossorigin="anonymous">
+    </script>
+    <script>
+        renderMathInElement(document.body, {
+            delimiters: [{
+                    left: "$$",
+                    right: "$$",
+                    display: true
+                },
+                {
+                    left: "$",
+                    right: "$",
+                    display: false
+                }
+            ]
+        });
+    </script>
+    
+    <!--------- 数学公式👆----------------- -->
+    <!--------- daovocie功能👇 ------------------->
+    
+    <!--------- daovocie功能👆 ------------------->
+    <!-- -----------------twikoo评论系统引入👇 --------->
+    <script src="https://cdn.jsdelivr.net/npm/twikoo@1.3.1/dist/twikoo.all.min.js"></script>
+    <!-- -----------------twikoo评论系统引入👆 --------->
+    <!---------------- leancloud api 功能依赖引入👇 -------->
+    <script src="https://cdn.jsdelivr.net/npm/leancloud-storage@3.13.0/dist/av-min.js"></script>
+    <!---------------- leancloud api 功能依赖引入👆 -------->
+    <!------------------ valine评论系统引入👇 ------------------>
+    <script src="https://2006wzt.github.io/media/js/valine.min.js"></script>
+    <!------------------ valine评论系统引入👆 ------------------>
+    <!---------------- 今日诗词api功能依赖👇 ----------------------->
+    <script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>
+    <!---------------- 今日诗词api功能依赖👆 ----------------------->
+    <!---------------- 今日诗词api功能依赖👇 ----------------------->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/ispeak-bber/ispeak-bber.min.js" charset="utf-8"></script>
+    <!---------------- 哔哔功能依赖👆 ----------------------->
+
+
+</head>
+
+<style>
+    body {
+        overflow-x: hidden;
+        height: 100vh;
+        overflow-y: scroll;
+        cursor: url("https://2006wzt.github.io/media/images/mouse_cursor.png"), auto
+    }
+</style>
+
+<body>
+    <!--=------ 页面加载动态画面👇 --------------->
+    <div class="pjaxloading" onclick="pjaxloadingClose()">
+        <div class="loadingbackground"></div>
+        <div id="loading-aname">
+            <div class="loading-aname">
+            </div>
+        </div>
+    </div>
+    <!--=------ 页面加载动态画面👆 --------------->
+
+    <!--------------- 左侧菜单栏👇 ------------------------>
+    
+    <div id=side>
+        <div class="r_m_div">
+            <a onclick="showAaplayer()"><i style="font-size: 20px;"><img
+                        src='https://2006wzt.github.io/media/images/music.png' alt="音乐播放器" class="musicbtn"></i></a>
+        </div>
+        <div class="avatar-border">
+            <img src="https://2006wzt.github.io/images/avatar.png?v=1670684407492" class="avatar">
+        </div>
+        <div class="sitename">My Brain</div>
+        <span class="description" data-text='["There is no end to learning. "]'>&nbsp;</span>
+        <div class="siteinfocontainer">
+            <span class="siteinfo">文章</span>
+            <span class="siteinfo">标签</span>
+        </div>
+        <div class="siteinfocontainer">
+            <span class="siteinfo" id="siteinfo-postsnum"></span>
+            <span class="siteinfo">8</span>
+        </div>
+        
+        <div class="search">
+            <!-- <input type="text" class="search-input" placeholder="标题搜索(●'◡'●)" /> -->
+            <input type="text" class="search-input" placeholder="标题搜索 ⚆_⚆ つ♡">
+            <div class="search-results"></div>
+        </div>
+        
+    <div class="share-button">
+        <span>Know me😊</span>
+        
+        <a href="https://github.com/2006wzt" target="_blank"><i style="font-size: 20px;"><img class="icon"
+                    src="https://2006wzt.github.io/media/images/github.png" alt=""></i></a>
+        
+        
+        <a onclick="showqq()"><i style="font-size: 20px;"><img class="icon"
+                    src="https://2006wzt.github.io/media/images/QQ.png" alt=""></i></a>
+        
+        
+        
+        <a href="https://space.bilibili.com/662167120" target="_blank"><i style="font-size: 20px;"><img class="icon"
+                    src="https://2006wzt.github.io/media/images/bilibili.png" alt=""></i></a>
+        
+        
+        
+        
+        
+    </div>
+    <div id="qq" style="display:none">1335287851</div>
+    <!------------ 加载菜单按钮👇 ------------------------->
+    <div class="menucontainer">
+        
+        
+        <div class="mchocie description">
+            <a data-pjax href="/" class="menubutton" style="margin-right: 15px;">
+                <i><img class="icon menuicon" src="" alt="首页"></i>&nbsp;<span
+                    data-text="首页">首页</span>
+            </a>
+        </div>
+        
+        
+        
+        <div class="mchocie description">
+            <a data-pjax href="/archives" class="menubutton" style="margin-right: 15px;">
+                <i><img class="icon menuicon" src="" alt="归档"></i>&nbsp;<span
+                    data-text="归档">归档</span>
+            </a>
+        </div>
+        
+        
+        
+        <div class="mchocie description">
+            <a data-pjax href="/tags" class="menubutton" style="margin-right: 15px;">
+                <i><img class="icon menuicon" src="" alt="标签"></i>&nbsp;<span
+                    data-text="标签">标签</span>
+            </a>
+        </div>
+        
+        
+        
+        <div class="mchocie description">
+            <a data-pjax href="/post/about" class="menubutton" style="margin-right: 15px;">
+                <i><img class="icon menuicon" src="" alt="关于"></i>&nbsp;<span
+                    data-text="关于">关于</span>
+            </a>
+        </div>
+        
+        
+
+        
+        
+        
+        <div class="mchocie description">
+            <a data-pjax href="https://2006wzt.github.io/friends" class="menubutton" style="margin-right: 15px;">
+                <i><img class="icon menuicon" src="" alt="友人帐"></i>&nbsp;<span data-text="友人帐">友人帐</span>
+            </a>
+        </div>
+        
+        <!--  -->
+    </div>
+    <!------------ 加载菜单按钮👆 ------------------------->
+    <hr>
+    <style>
+    .copyright {
+        font-size: 15px;
+        color: #d9d9d9;
+    }
+
+
+    @media screen and (min-width: 1200px) {
+        .foot {
+            width: 100%;
+            height: 130px;
+        }
+    }
+
+    @media screen and (max-width: 1200px) {
+        .foot {
+            display: none;
+        }
+    }
+</style>
+
+<body>
+    <div class="foot">
+        <div id="footinfo">Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | Theme: <a
+                href="https://github.com/850552586/gridea-theme-fog">Fog</a>
+            <div>
+                
+                <div id="sitegotimeDate">载入天数...</div>
+                <div id="sitegotimes">载入时分秒...</div>
+                <div id="cussitetime" style="display:none">07/18/2022</div>
+                
+            </div>
+            <div>
+                
+            </div>
+            <div class="copyright" style="color:white;text-align: center;">
+            </div>
+        </div>
+
+
+
+    </div>
+</body>
+
+<script>
+    //----------------------站点运行时间
+    var now = new Date();
+
+    function createtime() {
+        var sitegotime = document.getElementById("cussitetime").innerHTML + " 00:00:00";
+        var grt = new Date(sitegotime); //此处修改你的建站时间或者网站上线时间 
+        now.setTime(now.getTime() + 250);
+        days = (now - grt) / 1000 / 60 / 60 / 24;
+        dnum = Math.floor(days);
+        hours = (now - grt) / 1000 / 60 / 60 - (24 * dnum);
+        hnum = Math.floor(hours);
+        if (String(hnum).length == 1) {
+            hnum = "0" + hnum;
+        }
+        minutes = (now - grt) / 1000 / 60 - (24 * 60 * dnum) - (60 * hnum);
+        mnum = Math.floor(minutes);
+        if (String(mnum).length == 1) {
+            mnum = "0" + mnum;
+        }
+        seconds = (now - grt) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum);
+        snum = Math.round(seconds);
+        if (String(snum).length == 1) {
+            snum = "0" + snum;
+        }
+        document.getElementById("sitegotimeDate").innerHTML = "本站已安全运行 " + dnum + " 天 ";
+        document.getElementById("sitegotimes").innerHTML = hnum + " 小时 " + mnum + " 分 " + snum + " 秒";
+    }
+
+    let intervalId = setInterval("createtime()", 250);
+</script>
+
+    </div>
+
+    <img class="moon" src="https://2006wzt.github.io/media/images/moon.png" onclick="moonlight()">
+    <script src="https://2006wzt.github.io/media/js/wordshow.js"></script>
+    
+    <!--------------- 左侧菜单栏👆 ------------------------>
+
+    <!----------------- 顶部菜单栏👇 ------------------------>
+    
+    <!----------------- 顶部菜单栏👆 ------------------------>
+
+<!--核心功能加载-->
+<script src="https://2006wzt.github.io/media/js/mainfunc.js"></script>
+
+<!------------- Fog1.0版本彩蛋👇 -------------->
+    <!-- <section id="terrestrial" class="popup">
+        <a href="#" class="back">&lt; back</a>
+    </section>
+
+    <div class="flycontainer">
+        <div class="flyword">御风飞行中...</div>
+    </div>
+
+    <script>
+        $("#fog_go").click(function(){fog_go()});
+        async function fog_go(){
+            $(".bars").hide()
+            $("#live2d").hide()
+            await sleep(3000);
+            $(".flycontainer").css("display","flex");
+            $(".popup").fadeOut(500)
+            await sleep(2000);
+            var sitename = "My Brain";
+            getFogUser(sitename);
+        }
+
+        function fog_goregis(){
+            var sitename = "My Brain";
+            var siteurl = "https://2006wzt.github.io";
+            regisFogUser(sitename,siteurl);
+        }
+        fog_goregis();
+    </script> -->
+<!------------- Fog1.0版本彩蛋👆 -------------->
+<script>
+    function change_topmenu(){
+        tmcolor = "antiquewhite"
+        tsnamecolor = "antiquewhite"
+        $(".navbar-inverse .navbar-nav>li>a").css("color",tmcolor)
+        $(".navbar-inverse .navbar-brand").css("color",tsnamecolor)
+        $(".navbar-fixed-top").css("border-radius","0 0 10px 10px")
+    }
+</script>
+
+<!------ 根据自定义配置声明变量👇 --------------------->
+    
+    <script>
+        var postnumChoice = false
+    </script>
+    
+    
+    <script>
+        var shareChoice = true
+    </script>
+    
+    
+    <script>
+        var donateChoice = false
+    </script>
+    
+    
+    <script>
+        var searchChoice = true
+    </script>
+    
+    <script>let postsnum = 0;</script>
+    <div id="side-posttitle" style="display: none;">
+    
+    
+    基于CPT的组网实验
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    可靠数据传输协议实验
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    数据库系统实验
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    Socket编程实验
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    CSP-精炼
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    深度学习实战（二）：知识回顾
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    深度学习实战（一）：深度学习导论
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    算法刷题小记
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    机器学习实战（十四）：树模型
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    机器学习实战（十三）：核函数
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    机器学习实战（十二）：参数权衡
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    机器学习实战（十一）：经验风险最小化
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    机器学习实战（十）：支持向量机
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    机器学习实战（九）：线性回归
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    机器学习实战（八）：梯度下降
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    机器学习实战（七）：逻辑回归
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    机器学习实战（六）：朴素贝叶斯
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    机器学习实战（五）：概率估计
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    机器学习实战（四）：感知机算法
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    机器学习实战（三）：KNN算法
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    机器学习实战（二）：监督学习
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    机器学习实战（一）：机器学习导论
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    Python入门与实战
+    <script>
+        postsnum += 1
+    </script>
+    
+    
+    
+    
+    
+    
+    </div>
+    
+        <script>
+            var menupos = 'left';
+            $("#siteinfo-postsnum").html(postsnum);
+        </script>
+    
+    <script>
+        let commentsHide = false
+    </script>
+    <!------ 根据自定义配置声明变量👆 --------------------->
+
+
+    <!----------根据自定义配置设置图标信息👇---------->
+    <script>
+        var icondict = new Array();
+    </script>
+    
+        
+    
+    <!----------根据自定义配置设置图标信息👆---------->
+</body>
+
+<script src="https://2006wzt.github.io/media/share/dist/Share.js"></script>
+<!-- 页面pjax测试 -->
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery.pjax/2.0.1/jquery.pjax.js"></script>
+<!--确保jQuery已经在此之前加载-->
+<!-- <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script> -->
+<script src="https://2006wzt.github.io/media/js/all-pjax.js"></script>
+<script>
+    //-------------------------------说说功能👇--------------------------------------
+    let talksall = [];
+    let talks = [];
+    let talkindex = 0;
+    get();
+
+    function get() {
+        var t = JSON.parse('[]');
+        talkindex = t.length - 1;
+        for (var i = 0; i <= t.length - 1; i++) {
+            var d = {};
+            d["time"] = t[i].time;
+            d["author"] = t[i].author;
+            d["text"] = t[i].text;
+            d["img"] = t[i].img;
+            talksall.push(d);
+        }
+    }
+
+    function add() {
+        for (var i = talkindex; i >= 0 && i > talkindex - 3; i--) {
+            talks.push(talksall[i]);
+        }
+        talkindex = (talkindex - 3) >= 0 ? (talkindex - 3) : -1;
+        if (talkindex < 0) $("#getmorebt").hide();
+        show();
+    }
+
+    function show() {
+        var talkT = document.getElementById("talkContainer");
+        talkT.innerHTML = "";
+        for (var i = 0; i < talks.length; i++) {
+            if (talks[i].img != '') {
+                talkT.innerHTML += '\
+            <div class="talk" v-for="t in talks"> \
+                <span data-fancybox="images" href="' + talks[i].img + '"><img src="' + talks[i].img + '" class="talkimg"></span> \
+                <div class="ainfo">\
+                    <div class="ainfo-intro">\
+                        <div class="author">' + talks[i].author + '</div>·\
+                        <div class="time">' + talks[i].time + '</div>\
+                    </div>\
+                </div>\
+                <div class="talkcontent">' + talks[i].text + '\
+                </div\>\
+            ';
+            } else {
+                talkT.innerHTML += '\
+            <div class="talk" v-for="t in talks"> \
+                <div class="ainfo">\
+                    <div class="ainfo-intro">\
+                        <div class="author">' + talks[i].author + '</div>·\
+                        <div class="time">' + talks[i].time + '</div>\
+                    </div>\
+                </div>\
+                <div class="talkcontent">' + talks[i].text + '\
+                </div\>\
+            ';
+            }
+        }
+    }
+    //-------------------------------说说功能👆--------------------------------------
+</script>
+
+<!---->
+<script>
+    function replaceAvatar() {
+        twikoo_avatar = $(".tk-avatar-img");
+        for (var i = 0; i < twikoo_avatar.length; i++) {
+            var asrc = twikoo_avatar.eq(i).attr('src');
+            if (asrc.search('cn.gravatar.com') != -1) {
+                twikoo_avatar.eq(i).attr('src', 'https://2006wzt.github.io/media/images/comavatar.png');
+            }
+        }
+    }
+
+    function showWechat() {
+        var wechat = '';
+        alert("博主微信号：" + wechat);
+        return false;
+    }
+</script>
+
+<script>
+    /**
+     * https://github.com/tangkaichuan/gridea-search
+     */
+    // 检查缓存是否最新
+    function checkCache() {
+        var caches_postsnum = localStorage.getItem("postsnum");
+        var pt = document.getElementById("side-posttitle").innerHTML;
+        pt = pt.replace(/\s+/g, '').replace(/<script>.*?<\/script>/gi, "")
+        var ptlen = pt.length;
+        var ptlen_storage = localStorage.getItem("poststitlelen");
+        if (caches_postsnum != postsnum || ptlen != ptlen_storage) {
+            console.log("更新缓存");
+            return false
+        }
+        return true;
+    }
+
+    (function () {
+        var CACHES = checkCache()
+        if (!CACHES) {
+            var NOW = Date.now()
+            var API_CONTENT = '../api-content/index.html' + '?_=' + NOW
+            preload(API_CONTENT);
+            getContents(show_getContentresult);
+        }
+
+        function show_getContentresult(data) {
+            console.log("获取成功");
+            var postslen = data["posts"].length;
+            localStorage.setItem('postsnum', postslen);
+            var poststitlelen = 0;
+            var pt = document.getElementById("side-posttitle").innerHTML;
+            pt = pt.replace(/\s+/g, '').replace(/<script>.*?<\/script>/gi, "");
+            localStorage.setItem('poststitlelen', pt.length);
+        }
+
+
+
+        // preload
+        function preload(url) {
+            var preloadLink = document.createElement('link')
+            preloadLink.href = url
+            preloadLink.rel = 'preload'
+            preloadLink.as = 'fetch'
+            preloadLink.crossOrigin = 'anonymous'
+            document.head.appendChild(preloadLink)
+        }
+
+        // 异步 GET 请求
+        function get(obj) {
+            var xhr = new XMLHttpRequest()
+            xhr.open('get', obj.url, true)
+            xhr.send(null)
+            xhr.onreadystatechange = function () {
+                // 异步请求：响应状态为4，数据加载完毕
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        obj.success(xhr.responseText)
+                    } else {
+                        obj.error(xhr.status)
+                    }
+                }
+            }
+        }
+
+        // 获取博客全文 api
+        function getContents(callback) {
+            if (CACHES) {
+                callback(CACHES.contents)
+            } else {
+                get({
+                    url: API_CONTENT,
+                    success: function (data) {
+                        callback(JSON.parse(data));
+                        localStorage.setItem('ContentsCache', data);
+                        getStorageContent();
+                    }
+                })
+            }
+        }
+    })()
+    //------------------------核心功能--pjax全局渲染👇-------------------
+    let talkinit = false;
+    $(document).pjax('a[data-pjax]', '#main', {
+        fragment: '#main',
+        timeout: 8000
+    }).on('pjax:complete', function () {
+        //代码块高亮渲染
+        document.querySelectorAll('pre code').forEach((block) => {
+            hljs.highlightBlock(block);
+        });
+        //文章热度
+        if(postnumChoice){
+            getHotnum();
+        }
+        //文章索引
+        toginit();
+        //清空搜索栏
+        if (searchChoice) {
+            searchInit();
+            searchInput.value = "";
+        }
+        var pl = window.location.pathname;
+        //说说更新
+        if (pl.search("talk") != -1 && !talkinit) {
+            add();
+            talkinit = true;
+        } else if (pl.search("talk") != -1) {
+            show();
+        }
+        if (pl.search("post") != -1) {
+            if (shareChoice)
+                shareInit();
+            if (donateChoice)
+                donateInit();
+            if ("default" == "default"&&!commentsHide) {
+                $("#comment").hide()
+                commentsHide = true
+            }
+            lazyload();
+            codeinit();
+            if ("default" == "twikoo") {
+                //twikoo头像更换
+                setTimeout(replaceAvatar, 3000);
+                setTimeout(replaceAvatar, 8000); //部分博主站点速度加载过慢，再添加一个延迟
+            }
+        }
+        if (btstate == true)
+            dropdown();
+    }).on('pjax:start', function () {
+        $(".pjaxloading").fadeIn(50);
+    }).on('pjax:end', function () {
+        $(".pjaxloading").fadeOut(50);
+    });
+    //------------------------核心功能--pjax全局渲染👆-------------------
+
+    //-------------------------------------------------搜索
+    // 获取搜索框、搜索按钮、清空搜索、结果输出对应的元素
+    if (searchChoice) {
+        var searchInput = document.querySelector('.search-input');
+        var searchResults = document.querySelector('.search-results');
+    }
+    // 申明保存文章的标题、链接、内容的数组变量
+    var searchValue = '',
+        arrItems = [],
+        arrLinks = [],
+        arrTitles = [],
+        arrContents = [],
+        arrResults = [],
+        indexItem = [],
+        itemLength = 0;
+    var tmpDiv = document.createElement('div');
+    tmpDiv.className = 'result-item';
+
+
+    function getStorageContent() {
+        var data = localStorage.getItem('ContentsCache');
+        data = JSON.parse(data);
+        posts = data["posts"];
+        for (var i = 0; i < posts.length; i++) {
+            arrLinks[i] = posts[i].link;
+            arrTitles[i] = posts[i].title;
+            arrContents[i] = posts[i].content;
+            itemLength++;
+        }
+    }
+    if (checkCache())
+        getStorageContent();
+    // 输入框内容变化后就开始匹配，可以不用点按钮
+    // 经测试，onkeydown, onchange 等方法效果不太理想，
+    // 存在输入延迟等问题，最后发现触发 input 事件最理想，
+    // 并且可以处理中文输入法拼写的变化
+    searchInput.oninput = function () {
+        setTimeout(searchConfirm, 0);
+    }
+    searchInput.onfocus = function () {
+        searchResults.style.display = 'block';
+    }
+
+    function searchConfirm() {
+        if (searchInput.value == '') {
+            searchResults.style.display = 'none';
+        } else if (searchInput.value.search(/^\s+$/) >= 0) {
+            // 检测输入值全是空白的情况
+            searchInit();
+            var itemDiv = tmpDiv.cloneNode(true);
+            itemDiv.innerText = '请输入有效内容...';
+            searchResults.appendChild(itemDiv);
+        } else {
+            // 合法输入值的情况
+            searchInit();
+            searchValue = searchInput.value;
+            // 在标题、内容中查找
+            searchMatching(arrTitles, arrContents, searchValue);
+        }
+    }
+
+    // 每次搜索完成后的初始化
+    function searchInit() {
+        arrResults = [];
+        indexItem = [];
+        searchResults.innerHTML = '';
+        searchResults.style.display = 'block';
+    }
+
+    function searchMatching(arr1, arr2, input) {
+        // 忽略输入大小写
+        input = new RegExp(input, 'i');
+        var step = 10;
+        // 在所有文章标题、内容中匹配查询值
+        for (i = 0; i < itemLength; i++) {
+            var indexContent = arr2[i].search(input);
+            //标题匹配
+            if (arr1[i].search(input) != -1) {
+                indexItem.push(i); // 保存匹配值的索引
+                if (indexContent != -1) {
+                    startindex = (indexContent - step) >= 0 ? (indexContent - step) : 0;
+                    var searchcontent = arr2[i].slice(indexContent - step, indexContent + 5)
+                    arrResults.push("....." + searchcontent + ".....");
+                } else
+                    arrResults.push("");
+            }
+            //内容匹配
+            else if (indexContent != -1) {
+                indexItem.push(i); // 保存匹配值的索引
+
+                startindex = (indexContent - step) >= 0 ? (indexContent - step) : 0;
+                var searchcontent = arr2[i].slice(indexContent - step, indexContent + 5)
+                arrResults.push("....." + searchcontent + ".....");
+            }
+        }
+
+        // 输出总共匹配到的数目
+        var totalDiv = tmpDiv.cloneNode(true);
+        totalDiv.innerHTML = '<b>总匹配：' + indexItem.length + ' 项<hr></b>';
+        searchResults.appendChild(totalDiv);
+
+        // 未匹配到内容的情况
+        if (indexItem.length == 0) {
+            var itemDiv = tmpDiv.cloneNode(true);
+            itemDiv.innerText = '未匹配到内容...';
+            searchResults.appendChild(itemDiv);
+        }
+
+        // 将所有匹配内容进行组合
+        for (i = 0; i < arrResults.length; i++) {
+            var itemDiv = tmpDiv.cloneNode(true);
+            itemDiv.innerHTML = '<a data-pjax class="searchresults" href="' + arrLinks[indexItem[i]] + '"><b>[' +
+                arrTitles[indexItem[i]] +
+                ']</b><p>' + arrResults[i] + '</p></a><hr />';
+            searchResults.appendChild(itemDiv);
+        }
+    }
+</script>
+
+
+
+<!--------------------- 菜单栏图标加载功能👇 ----------------------->
+<script>
+var menulist = $(".menuicon");
+var menulength = menulist.length;
+for (var i = 0; i < menulength; i++) {
+    var altname = menulist.eq(i).attr("alt");
+    var iconurl = icondict[altname];
+    if (iconurl == undefined || iconurl == '')
+        continue;
+    if (iconurl == 'Home') {
+        menulist.eq(i).attr("src", "https://2006wzt.github.io/media/images/Home.png");
+menulist.eq(i).show();
+} else if (iconurl == 'Archive') {
+menulist.eq(i).attr("src", "https://2006wzt.github.io/media/images/Archive.png");
+menulist.eq(i).show();
+} else if (iconurl == 'Tag') {
+menulist.eq(i).attr("src", "https://2006wzt.github.io/media/images/Tag.png");
+menulist.eq(i).show();
+} else if (iconurl == 'About') {
+menulist.eq(i).attr("src", "https://2006wzt.github.io/media/images/About.png");
+menulist.eq(i).show();
+} else if (iconurl == 'Talk') {
+menulist.eq(i).attr("src", "https://2006wzt.github.io/media/images/Talk.png");
+menulist.eq(i).show();
+} else if (iconurl == 'Friends') {
+menulist.eq(i).attr("src", "https://2006wzt.github.io/media/images/Friends.png");
+menulist.eq(i).show();
+} else if (iconurl == 'Fly') {
+menulist.eq(i).attr("src", "https://2006wzt.github.io/media/images/wind.png");
+menulist.eq(i).show();
+} else {
+menulist.eq(i).attr("src", iconurl);
+menulist.eq(i).show();
+}
+}
+</script>
+<!--------------------- 菜单栏图标加载功能👆 ----------------------->
+
+<script>
+    //--------------------bber-onetalk加载👇--------------------------------
+    function bberonetalkLoad(){
+        bberjsonurl = '';
+        if ( $("#bber-talk").length > 0 ) {
+        jsonUrl = bberjsonurl
+        $.getJSON(jsonUrl+"?t="+Date.parse( new Date()),function(res){
+        var bberHtml = ''
+        $.each(res.data, function(i, item){
+            d = new Date(item.date)
+            date = d.getFullYear()+'/'+(d.getMonth()+1)+'/'+d.getDate() +' '+d.getHours()+':'+d.getMinutes()+':'+d.getSeconds()
+            dataTime = '<span class="datatime">'+date+'</span>'
+            bberHtml += '<li class="item item-'+(i+1)+'">'+dataTime+'： <a data-pjax href="https://2006wzt.github.io/bber">'+item.content+'</a></li>'
+        });
+        $('#bber-talk').append('<span class="index-talk-icon"><svg viewBox="0 0 1024 1024" width="21" height="21"><path d="M184.32 891.667692c-12.603077 0-25.206154-2.363077-37.809231-7.876923-37.021538-14.966154-59.864615-49.624615-59.864615-89.009231v-275.692307c0-212.676923 173.292308-385.969231 385.969231-385.969231h78.76923c212.676923 0 385.969231 173.292308 385.969231 385.969231 0 169.353846-137.846154 307.2-307.2 307.2H289.083077l-37.021539 37.021538c-18.904615 18.116923-43.323077 28.356923-67.741538 28.356923zM472.615385 195.347692c-178.018462 0-322.953846 144.935385-322.953847 322.953846v275.692308c0 21.267692 15.753846 29.144615 20.48 31.507692 4.726154 2.363077 22.055385 7.876923 37.021539-7.08923l46.473846-46.473846c6.301538-6.301538 14.178462-9.452308 22.055385-9.452308h354.461538c134.695385 0 244.184615-109.489231 244.184616-244.184616 0-178.018462-144.935385-322.953846-322.953847-322.953846H472.615385z"></path><path d="M321.378462 512m-59.076924 0a59.076923 59.076923 0 1 0 118.153847 0 59.076923 59.076923 0 1 0-118.153847 0Z"></path><path d="M518.301538 512m-59.076923 0a59.076923 59.076923 0 1 0 118.153847 0 59.076923 59.076923 0 1 0-118.153847 0Z"></path><path d="M715.224615 512m-59.076923 0a59.076923 59.076923 0 1 0 118.153846 0 59.076923 59.076923 0 1 0-118.153846 0Z"></path></svg></span><ul class="talk-list">'+bberHtml+'</ul>')
+        //Lately({ 'target': '#bber-talk .datatime' });
+        });
+        function Roll (){
+        var list_li = $('.talk-list li'),cur_li = list_li.first(),last_li = list_li.last();
+        last_li.after(cur_li);
+        };
+        setInterval(Roll,3000);
+    }
+    }
+  //--------------------bber-onetalk加载👆--------------------------------
+</script>
+
+<script>
+    var ClicksideState = 1
+    var cur_readingmode = false
+    function readingmode(){
+        if (!cur_readingmode){
+            if(menupos == 'left'){
+                if(ClicksideState==1)
+                menu_openclose1()
+            }
+            $("#tab1").fadeOut(50)
+            $("#bg").fadeOut(50)
+            $(".navbar").fadeOut(50)
+            $(".markdownIt-TOC li a").css("color","black")
+            cur_readingmode = true
+        }else{
+            if(menupos == 'left'){
+                if(ClicksideState==0)
+                    menu_openclose1()
+            }
+            $("#tab1").fadeIn(50)
+            $("#bg").fadeIn(50)
+            $(".navbar").fadeIn(50)
+            $(".markdownIt-TOC li a").css("color","antiquewhite")
+            cur_readingmode = false  
+        }
+    }
+</script>
+
+
+<!----夜间模式👇-->
+<script>
+    var moonlightState = false
+    function moonlight(){
+        if(!moonlightState){
+            $("#bg").fadeOut(200)
+            $('body').css("background","rgba(0,0,0,0.8)")
+            $(".markdownIt-TOC li a").css("color","white")
+            $(".text p, .text ul").css("color","white")
+            $("#articlecontent").css("color","white")
+            $(".post-copyright").css("background","rgba(10,10,10,0.5)")
+            $('blockquote').css("background","rgba(10,10,10,0.6)")
+            $("#articlecontent").css("background","rgba(10,10,10,0.5)")
+            moonlightState = true
+            $(".moon").attr("src","https://2006wzt.github.io/media/images/sun.png")
+        }else{
+            $("#bg").show()
+            $(".markdownIt-TOC li a").css("color","antiquewhite")
+            $(".text p, .text ul").css("color","rgba(0, 0, 0, 0.7)")
+            $("#articlecontent").css("color","black")
+            $(".post-copyright").css("background","#f9f9f9")
+            $('blockquote').css("background","#eff8f0")
+            $("#articlecontent").css("background","white")
+            $(".moon").attr("src","https://2006wzt.github.io/media/images/moon.png")
+            $('body').css("background","white")
+            moonlightState = false
+        }
+    }
+</script>
+<!----夜间模式👆--></div>
+            <!--------------- pc端菜单栏👆 ---------------->
+
+            <!-- ----------------左侧菜单栏html 👇-------------------------------------->
+            
+            <div>
+                <div id="tab1" class="tab">
+                    <div class="bars">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                    <div class="close"></div>
+                </div>
+                <div class="col-md-1 col-lg-3"></div>
+                <!-- main标签，pjax渲染时加载以下内容👇 -->
+                <div id="main" class="col-xs-12 col-sm-12 col-md-12 col-lg-7" style="padding:0;">
+                    <div class="readingmode" onclick="readingmode()">阅</div>
+                    <link rel="stylesheet" href="https://2006wzt.github.io/media/css/font-awesome.css">
+
+<body>
+    <div class="allcontent" id="postdetail">
+        <div class="postshow postpadding" style="padding-bottom: 0;">
+            
+            <div class="postdetailimg">
+                <img src="https://2006wzt.github.io/post-images/基于CPT的组网实验.png" class="postimage" style="cursor:auto">
+            </div>
+            <div class="postinfo-detail">
+                <div class="postdate"><i class="fa fa-calendar"></i>2022-12-10</div>
+                <div class="poststatus postdate"><i class="fa fa-clock-o"></i> 45 min read</div>
+                <div class="posttag">
+                    
+                    <a data-pjax href="https://2006wzt.github.io/tag/U4B5nyx5d/" class="postlink">
+                        <i class="fa fa-tag"></i> Internet
+                    </a>
+                    
+                </div>
+            </div>
+            
+        <div id="articlecontent">
+            <div id="texttitle" style="text-align: center">
+                <h2 id="ptitle">基于CPT的组网实验</h2>
+                <!-- id 将作为查询条件 -->
+                <div id="pl" style="display:none">https://2006wzt.github.io/post/基于CPT的组网实验/</div>
+                <div id="rootaddr" style="display:none">https://2006wzt.github.io</div>
+                
+            </div>
+            <div class="text ">
+                <h1 id="基于cpt的组网实验">基于CPT的组网实验</h1>
+<h2 id="一-实验目标和内容">一、实验目标和内容</h2>
+<h3 id="11-实验目的">1.1 实验目的</h3>
+<p>● 了解 IP 协议、网络层协议和数据链路层协议的工作原理及机制<br>
+● 掌握 IP 地址的规划方法<br>
+● 掌握路由协议的配置方法<br>
+● 掌握路由器及二/三层交换机的配置方法<br>
+● 了解 VLAN 的划分原理<br>
+● 掌握访问控制的配置方法</p>
+<h3 id="12-实验环境">1.2 实验环境</h3>
+<p>Cisco Packet Tracer 仿真软件。</p>
+<h3 id="13-实验要求">1.3 实验要求</h3>
+<p>● 熟悉 Cisco Packet Tracer 仿真软件。<br>
+● 利用 Cisco Packet Tracer 仿真软件完成实验内容。<br>
+● 提交实验设计报告纸质档和电子档。<br>
+● 基于自己的实验设计报告，通过实验课的上机实验，演示给实验指导教师检查。</p>
+<h3 id="14-实验内容基本部分">1.4 实验内容（基本部分）</h3>
+<p>本部分实验为基础部分的实验，分为两项内容，每项实验内容在最终的评价中占比 30%，本部分实验将使用两张拓扑结构图配合完成实验，如图 1.1 和 1.2 所示。</p>
+<img src="https://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/202212052224363.png" style="zoom:67%;" />
+<img src="http://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/202212052225609.png" style="zoom:67%;" />
+<p><strong>第一项实验——IP 地址规划与 VLan 分配实验：</strong></p>
+<p>使用仿真软件描述网络拓扑图 1.1。</p>
+<p>① 基本内容 1</p>
+<blockquote>
+<p>● 将 PC1、PC2 设置在同一个网段，子网地址是：192.168.0.0/24;<br>
+● 将 PC3~PC8 设置在同一个网段，子网地址是：192.168.1.0/24;<br>
+● 配置路由器，使得两个子网的各 PC 机之间可以自由通信。</p>
+</blockquote>
+<p>② 基本内容 2</p>
+<blockquote>
+<p>● 将 PC1、PC2 设置在同一个网段，子网地址是：192.168.0.0/24；<br>
+● 将 PC3、PC5、PC7 设置在同一个网段，子网地址是：192.168.1.0/24；<br>
+● 将 PC4、PC6、PC8 设置在同一个网段，子网地址是：192.168.2.0/24；<br>
+● 配置交换机 1、2、3、4，使得 PC1、PC2 属于 Vlan2，PC3、PC5、PC7 属于 Vlan3，PC4、PC6、PC8属于 Vlan4；<br>
+● 测试各 PC 之间的连通性，并结合所学理论知识进行分析；<br>
+● 配置路由器，使得拓扑图上的各 PC 机之间可以自由通信，结合所学理论对你的路由器配置过程进行详细说明。</p>
+</blockquote>
+<p><strong>第二项实验——路由配置实验：</strong></p>
+<p>使用仿真软件描述网络拓扑图 1.2</p>
+<p>① 基本内容 1</p>
+<blockquote>
+<p>● 将 PC1 设置在 192.168.1.0/24 网段；<br>
+● 将 PC2 设置在 192.168.2.0/24 网段；<br>
+● 将 PC3 设置在 192.168.3.0/24 网段；<br>
+● 将 PC4 设置在 192.168.4.0/24 网段<br>
+● 设置路由器端口的 IP 地址<br>
+● 在路由器上配置 RIP 协议，使各 PC 机能互相访问</p>
+</blockquote>
+<p>② 基本内容 2</p>
+<blockquote>
+<p>● 将 PC1 设置在 192.168.1.0/24 网段；<br>
+● 将 PC2 设置在 192.168.2.0/24 网段；<br>
+● 将 PC3 设置在 192.168.3.0/24 网段；<br>
+● 将 PC4 设置在 192.168.4.0/24 网段<br>
+● 设置路由器端口的 IP 地址<br>
+● 在路由器上配置 OSPF 协议，使各 PC 机能互相访问</p>
+</blockquote>
+<p>③ 基本内容 3</p>
+<blockquote>
+<p>● 在基本内容 1 或者 2 的基础上，对路由器 A 进行访问控制配置，使得 PC1 无法访问其它 PC，也不能被其它 PC 机访问<br>
+● 在基本内容 1 或者 2 的基础上，对路由器 A 进行访问控制配置，使得 PC1 不能访问 PC2，但能访问其它 PC 机</p>
+</blockquote>
+<h3 id="15-实验内容综合部分">1.5 实验内容（综合部分）</h3>
+<p>本部分实验为综合部分的实验，在最终的评价中占比 40%。</p>
+<p><strong>实验背景：</strong><br>
+某学校申请了一个前缀为 211.69.4.0/22 的地址块，准备将整个学校连入网络。该学校有 4 个学院，1 个图书馆，3个学生宿舍。每个学院有 20 台主机，图书馆有 100 台主机，每个学生宿舍拥有 200 台主机。</p>
+<p><strong>组网需求：</strong></p>
+<blockquote>
+<p>● 图书馆能够无线上网<br>
+● 学院之间可以相互访问<br>
+● 学生宿舍之间可以相互访问<br>
+● 学院和学生宿舍之间不能相互访问<br>
+● 学院和学生宿舍皆可访问图书馆</p>
+</blockquote>
+<p>实验任务要求：</p>
+<blockquote>
+<p>● 完成网络拓扑结构的设计并在仿真软件上进行绘制(要求具有足够但最少的设备，不需要考虑设备冗余备份的问题)<br>
+● 根据理论课的内容，对全网的 IP 地址进行合理的分配<br>
+● 在绘制的网络拓扑结构图上对各类设备进行配置，并测试是否满足组网需求，如有无法满足之处，请结合理论给出解释和说明</p>
+</blockquote>
+<h3 id="16-检查表">1.6 检查表</h3>
+<img src="https://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/202212072012786.png" style="zoom:67%;" />
+<h2 id="二-cisco-packet-tracer-软件包概览">二、Cisco Packet Tracer 软件包概览</h2>
+<h3 id="21-总述">2.1 总述</h3>
+<p>Cisco Packet Tracer (简称 CPT)是由 Cisco 公司发布的一个辅助学习工具，为学习思科网络课程的初学者去设计、配置、排除网络故障提供了网络模拟环境。用户可以在软件的图形用户界面上直接使用拖曳方法建立网络拓扑，并可提供数据包在网络中行进的详细处理过程，观察网络实时运行情况。可以学习 IOS 的配置、锻炼故障排查能力。<br>
+本章内容基于 6.0 版本的 CPT 进行介绍。</p>
+<h3 id="22-拓扑图设计">2.2 拓扑图设计</h3>
+<h4 id="221-设备的选择">2.2.1 设备的选择</h4>
+<p>在 Cisco Packet Tracer（以下简称 CPT）软件的主界面如图 2.1 所示。</p>
+<img src="http://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/202212052247434.png"/>
+<p>在界面的左下角一块区域，为设备区域，这里有许多种类的硬件设备，从左向右，从上到下依次为路由器、交换 机、集线器、无线设备、设备之间的连线（Connections)、终端设备、仿真局域网、自定义设备，如图 2.2 所示。 点选了设备就可以在右方选到对应的设备种类。如果不清楚对应的设备是什么，把鼠标移动到设备上，可以看到设备的名称。</p>
+<img src="https://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/202212061605802.png"/>
+<p>设备列表中列出了网络拓扑结构图设计软件中可以使用的网络设备列表，并可供绘制拓扑结构图时使用。由于本软件是面向 Cisco 网络设备的拓扑结构图设计软件，故仅支持 Cisco 的网络设备，这些设备主要包括：</p>
+<blockquote>
+<p>● 路由器：1841、1941、2620、2621、2811、2901、2911、扩展式通用路由器<br>
+● 交换机：2950-24、2950T、2960、扩展通用交换机、网桥<br>
+● 无线设备：无线 AP、无线路由器<br>
+● 终端设备：PC 机、笔记本、服务器、打印机、IP 电话机、VOIP 终端、电话机、电视、无线手写板、智能终端、无线终端</p>
+</blockquote>
+<p>在实际工作中，可以根据实际环境需要，从上述设备列表中选择恰当的网络设备绘制拓扑结构。<br>
+需要说明的是，在进行仿真实验时，不同型号的路由器在进行仿真时，其功能和性能是完全相同的，其不同点则主要体现在：</p>
+<blockquote>
+<p>● 该路由器是固定配置（如通过 Ethernet 0 引用接口）还是模块化（如通过 Ethernet 0/0 引用接口）<br>
+● 该路由器用于普通以太网（Ethernet）还是快速以太网（Fast Ethernet）<br>
+● 不同的路由器所提供的接口的类型、数量可能是不同的</p>
+</blockquote>
+<p>路由器的上述异同在交换机的仿真使用中也是类同的。因此，在绘制网络拓扑结构图中，通常只要满足实验的需求，任何路由器和交换机均可以使用，但为了实现清晰的配置过程和配置效果，有两个原则需要注意：</p>
+<blockquote>
+<p>● 以够用为度，即：尽量选择一个简单的、接口数较少的路由器；<br>
+● 面向实际，即：尽可能的按照实际网络的情况进行设备选择</p>
+</blockquote>
+<h4 id="222-设备添加模块">2.2.2 设备添加模块</h4>
+<p>有些设备缺少必要的模块，需要双击拓扑中相应的设备给它插入对应模块。双击设备弹出对应窗口，如图 2.3所示。</p>
+<img src="https://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/202212061613356.png"/>
+<p>图 2.3 中，左侧列表就是该设备可以插入的模块列表，选择对应的模块右下角会有相应的图示。如果图示显示是你想要的接口，就按图 2.4 所示将模块拖动到设备上的空洞处就好了。</p>
+<img src="https://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/202212061615208.png"/>
+<p>出现图 2.5 这个情况表示红色箭头位置开关没有关。设备是模拟不能热插拔的，因此需要先把电源开关关掉。待插完模块之后，记得再打开电源</p>
+<img src="https://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/202212061637563.png"/>
+<p>所有的设备都配置上模块之后，就可以开始连线了。</p>
+<h4 id="223-设备的连接">2.2.3 设备的连接</h4>
+<p>下面着重讲一下线路（Connections）。用鼠标点一下它之后，在右边你会看到各种类型的线，依次为自动连接（万能的，一般不建议使用，除非真的不知道设备之间该用什么线）、控制线、直通线、交叉线、光纤、电话线、同轴电缆、DCE、DTE。各种线缆在图 2.6 中标识出来了。其中 DCE 和 DTE 是用于路由器之间的连线，实际当中，需要把DCE 和一台路由器相连，DTE 和另一台设备相连。在 CPT 仿真器中，只需要选一根就是了，若你选了 DCE 这一根线，则和这根线先连的路由器为 DCE，配置该路由器时需要配置时钟。交叉线只在路由器和电脑直连相连，或者交换机和交换机相连时才会用到。</p>
+<img src="http://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/202212061639075.png"/>
+<p>注释：Custom Made Devices（自定义设备）是做什么的呢？通过实验发现当我们用鼠标单击不放开左键位于第一行的第一个设备也就是 Router 中的任意一个拖到工作区，然后再拖一个，我们尝试用串行线 Serial DTE 连接两个路由器时发现，他们之间不会正常连接，原因是这两个设备初始化虽然都是模块化的，但是没有添加，比如多个串口等等。那么，这个 Custom Made Devices 设备就比较好了，他会自动添加一些“必须设备”的，在实验环境下每次选择设备就不用手动添加所需设备了，使用起来很方便。</p>
+<p>当你需要哪个设备的时候，先用鼠标单击一下它，然后在中央的工作区域点一下就 OK 了，或者直接用鼠标摁住这个设备把它拖上去。连线时选中一种线，然后在要连线的设备上点一下，选接口，再点另一设备，选接口就 OK 了。注意，接口不能乱选。设备加电，连接好线后，线两端显示为绿色块块，说明线路连接正常，接口已经启用。把鼠标移到该连线上，就会在线的两端显示接口类型和名称，如图 2.7 所示，配置的时候要用到它。</p>
+<img src="https://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/202212061648604.png"/>
+<h3 id="23-设备的配置与测试">2.3 设备的配置与测试</h3>
+<h4 id="231-路由器交换机添加网络配置">2.3.1 路由器/交换机添加网络配置</h4>
+<p>设备连接好以后，需要为设备添加网络配置。对于路由器、交换机设备，可以采用图形化界面来配置网络接口和路由，也可以采用命令行来配置。双击设备，会弹出窗口显示设备的物理信息，切换左上角的 Tab 页到配置页面，则为图形界面配置界面，命令行 Tab 页为命令行方式配置界面。图 2.8 为通过图形界面配置接口，窗口下部为配置过程中自动产生的命令。</p>
+<img src="https://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/202212062006547.png"/>
+<p>图 2.9 为命令行配置窗口。Cisco 路由器的部分命令使用方法具体见第三章。</p>
+<img src="https://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/202212062007010.png"/>
+<p>当配置好设备的配置以后，在主工作区域，鼠标停在设备上，会显示设备的配置信息以及当前状态，如图 2.10所示，显示的为 Route0 的接口信息，以及是否 Up。</p>
+<img src="https://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/202212062008829.png"/>
+<h4 id="232-终端添加网络配置">2.3.2 终端添加网络配置</h4>
+<p>终端设备也可以通过“配置”Tab 页来进行网络配置。<br>
+图 2.11、图 2.12 分别为终端 PC 机配置 IP 地址和网关的界面。</p>
+<img src="https://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/202212062009569.png"/>
+<img src="https://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/202212062010084.png"/>
+<p>相比路由器和交换机来说，多了一个桌面部分，可以模拟桌面的很多功能。图 2.13 为终端 PC 的桌面功能。</p>
+<img src="https://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/202212062013575.png"/>
+<p>我们主要利用“IP 地址配置”来集中配置 PC 的 IP 地址和网关，利用“命令提示符”来进行网络的测试，比如 Ping测试连通性，tracert 来测试网络的路由。</p>
+<img src="https://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/202212062017330.png"/>
+<h4 id="233-对设备进行编辑查看">2.3.3 对设备进行编辑/查看</h4>
+<p>图 2.1 中的右边区域为设备操作（编辑）区域，从上到下依次为选定/取消、移动（总体移动，移动某一设备，直接拖动它就可以了）、Place Note（先选中）、删除、查看(选中后，在路由器、PC 机上可以看到各种表，如路由表、ARP 等）、simple PDU、complex PDU</p>
+<img src="http://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/202212071707623.png"/>
+<p>图 2.16 为查看到的 Router0 的路由信息</p>
+<img src="http://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/202212071708169.png"/>
+<h4 id="234-realtime-mode实时模式和-simulation-mode模拟模式">2.3.4 Realtime mode（实时模式）和 Simulation mode（模拟模式）</h4>
+<p>注意到软件界面的最右下角有两个切换模式，分别是实时模式和模拟模式，如图 2.17 所示。</p>
+<img src="http://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/202212071710284.png"/>
+<p>实时模式顾名思义即时模式，也就是说真实模式。举个例子，两台主机通过直通双绞线连接并将它们设为同一个网段，那么 A 主机 ping B 主机时，瞬间可以完成，对吗？而模拟模式呢，切换到模拟模式后主机 A 的 cmd 里将不会立即显示 ICMP 信息，而是软件正在模拟这个瞬间的过程，以人类能够理解的方式展现出来。</p>
+<p>1）有趣的 flash 动画 怎么实现呢？你只需点击 Auto Capture（自动捕获），那么直观、生动的 Flash 动画即显示了网络数据包的来龙去脉，这是该软件的一大闪光点，随后会举例详细介绍。</p>
+<p>2）单击 Simulate mode 会出现 Event List 对话框，该对话框显示当前捕获到的数据包的详细信息，包括持续时间、源设备、目的设备、协议类型和协议详细信息，非常直观</p>
+<img src="https://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/202212072010885.png" style="zoom:67%;" />
+<p>3）要了解协议的详细信息，请单击显示不用颜色的协议类型信息 Info，这个功能非常强大，很详细的 OSI 模型信息和各层 PDU。</p>
+<img src="https://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/202212072010159.png" style="zoom:67%;" />
+<h3 id="24-网络拓扑的打开与保存">2.4 网络拓扑的打开与保存</h3>
+<p>文件菜单组包含了如下菜单项：</p>
+<blockquote>
+<p>● 新建(New)：绘制一个新的网络拓扑结构图<br>
+● 打开(Open)：打开一个磁盘上已存在的网络拓扑结构图文件(pkt 或 pkz 文件)。<br>
+● 打开例子：打开内置的若干个拓扑图，包括配置。<br>
+● 保存 /另存为(Save/Save As)：将当前正在绘制的网络拓扑结构图以及配置存储到磁盘上（文件扩展名为.pkt）。<br>
+● 另存为 PKZ： 将任何你个性化的设备图标和背景也可以应用到逻辑工作区和物理工作区当中，保存的文件就是 PKZ。<br>
+在保存 PKZ 的时候会让你选择你文件，你自定义的文件应该全选上。<br>
+● 打印(Print)：将正在绘制的网络拓扑结构图输出到打印机打印为纸质文档。<br>
+● 退出（Exit）：退出网络拓扑结构图设计软件（Boson Network Designer）。</p>
+</blockquote>
+<h2 id="三-cpt示例">三、CPT示例</h2>
+<h3 id="31-交换机配置">3.1 交换机配置</h3>
+<h4 id="311-网络拓朴图">3.1.1 网络拓朴图</h4>
+<img src="https://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/202212072045517.png"/>
+<h4 id="312-设备选型和-ip-地址规划">3.1.2 设备选型和 IP 地址规划</h4>
+<img src="https://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/202212072046443.png" style="zoom:67%;" />
+<h4 id="313-实验目标">3.1.3 实验目标</h4>
+<p>● PC1 与 PC3 能互相访问，PC2 与 PC4 能互相访问<br>
+● PC1、PC3 与 PC2、PC4 之间不能互相访问</p>
+<h4 id="314-vlan-划分">3.1.4 VLan 划分</h4>
+<p>鉴于两个交换机为同类型交换机，下述操作在两个交换机上都要进行，手册中仅说明一个交换机上的操作。</p>
+<p>（1）在 交换机上创建两个 VLAN，分别为 VLAN 2 和 VLAN 3</p>
+<pre><code class="language-verilog">Switch# config terminal //进入配置模式
+Switch(config)# vlan 2 //在交换机上添加 vlan2
+Switch(config-vlan)# exit //退出 vlan2，回到配置模式
+Switch(config)# vlan 3 //在交换机上添加 vlan3
+Switch(config-vlan)# exit //退出 vlan3，回到配置模式
+</code></pre>
+<p>（2）将 3 号端口和 4 号端口分别分配到 VLAN 2 和 VLAN 3 中</p>
+<pre><code class="language-verilog">Switch# config terminal //进入配置模式
+Switch(config)# interface Fa0/3 //配置 Fa0/3 端口
+Switch(config-if)# switchport mode access //指定该端口为访问链路
+Switch(config-if)# switchport access vlan 2 //将 3 号端口分配到 VLAN 2
+Switch(config-if)# exit
+Switch(config)# interface Fa0/4 //配置 Fa0/4 端口
+Switch(config-if)# switchport mode access //指定该端口为访问链路
+Switch(config-if)# switchport access vlan 3 //将 4 号端口分配到 VLAN 3
+Switch(config-if)# ctrl-z
+Switch# show vlan brief
+</code></pre>
+<p>（3）配置两个交换机之间的 trunk 链路</p>
+<pre><code class="language-verilog">Switch(config)# interface fa0/2
+Switch(config-if)# switchport mode trunk//配置为干道模式
+</code></pre>
+<p>备注：有些型号的设备并不仅仅只有 802.1Q 的封装，需要指定封装协议，此时命令为：</p>
+<pre><code class="language-verilog">Switch(config-if)# switchport trunk encap dot1q //配置干道接口的帧封装为 dot1q，干道两端的帧封装必须一致
+</code></pre>
+<h4 id="315-vlan-之间的路由配置">3.1.5 VLAN 之间的路由配置</h4>
+<p>（1）由于路由器仅通过接口 Fa0/0 与交换机相连，而该接口实际上连接了两个 VLAN，因此为了联通两个 VLAN，需要针对两个 VLAN 创建两个子接口 ：Fa0/0.1 和 Fa0/0.2，并且为两个子接口指明对应的 vlan</p>
+<pre><code class="language-verilog">Router1(config)# int Fa0/0.1 
+Router1(config-if)# encapsulation dot1q 2
+Router1(config-subif)# ip address 172.16.2.1 255.255.255.0
+Router1(config-subif)# exit
+Router1(config)# int Fa0/0.2
+Router1(config-if)# encapsulation dot1q 3
+Router1(config-subif)# ip addr 172.16.3.1 255.255.255.0
+Router1(config-subif)# end
+Router1(config)# int Fa0/0
+Router1(config-if)# no shutdown
+Router1(config-if)# exit
+</code></pre>
+<p>（2）交换机 SW1 的 Fa0/1 接口与路由器的 Fa0/0 接口之间的链路显然也是 Trunk 链路，因此还需要配置交换机 SW1</p>
+<pre><code class="language-verilog">Switch(config)# interface fa0/1
+Switch(config-if)# switchport mode trunk //配置为干道模式
+</code></pre>
+<h3 id="32-路由器配置">3.2 路由器配置</h3>
+<h4 id="321-网络拓朴图">3.2.1 网络拓朴图</h4>
+<img src="https://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/202212072102683.png" style="zoom:67%;" />
+<p>路由器型号：1841+HWIC-2T 模块 特点：2 个 S 口（串口），2 个 FastEthernet 口（快速以太网接口）Router 1 上 S0/1/0 端口作为 DCE，Router 2 上 S0/1/1 端口作为 DCE，路由器上其余串口为 DTE</p>
+<h4 id="322-实验目标">3.2.2 实验目标</h4>
+<p>● 分别为各路由器配置 RIP、OSPF 协议，使得 PC1、PC2、PC3 可以互访。<br>
+● 对 Router 1 配置 ACL，使得 PC1 无法访问其它网段</p>
+<h4 id="323-rip-协议配置">3.2.3 RIP 协议配置</h4>
+<p>（1）配置路由器基本参数</p>
+<ul>
+<li>路由器1配置：</li>
+</ul>
+<pre><code class="language-verilog">Router&gt;
+Router&gt;enable //进入超级用户模式
+Router#conf t //进入全局配置模式
+Router(config)#interface fa0/0 //指定以太网端口 Fa0/0
+Router(config-if)#ip address 192.168.1.1 255.255.255.0 //配置 Fa0/0 接口地址
+Router(config-if)#no shut //打开 Fa0/0 接口
+Router(config-if) #int s0/1/0 //配置 s0/1/0 接口
+Router(config-if)#ip address 192.168.4.1 255.255.255.0
+Router(config-if)#cl ra 64000 //设置时钟频率
+Router(config-if)#no shut
+Router(config-if)#end //退出端口配置
+Router#show ip route //查看路由设置
+</code></pre>
+<ul>
+<li>路由器2配置：</li>
+</ul>
+<pre><code class="language-verilog">Router&gt;
+Router&gt;enable //进入超级用户模式
+Router#conf t //进入全局配置模式
+Router(config)#interface s0/1/0 //指定以太网串口 s0/1/0
+Router(config-if)#ip address 192.168.4.2 255.255.255.0 //配置 s0/1/0 接口地址
+Router(config-if)#no shut //打开 s0/1/0 接口
+Router(config)#interface s0/1/1 //指定以太网串口 s0/1/1
+Router(config-if)#ip address 192.168.5.1 255.255.255.0 //配置 s0/1/1 接口地址
+Router(config-if)#cl ra 64000 //将路由器 Router2 设置为 DCE，并设置时钟频率
+Router(config-if)#no shut //打开 s0/1/1 接口
+Router(config-if) #int fa0/0 //配置 fa0/0 接口
+Router(config-if)#ip address 192.168.2.1 255.255.255.0
+Router(config-if)#no shut
+Router(config-if)#end //退出端口配置
+Router#show ip route //查看路由设置
+</code></pre>
+<ul>
+<li>路由器3配置：</li>
+</ul>
+<pre><code class="language-verilog">Router&gt;
+Router&gt;enable //进入超级用户模式
+Router#conf t //进入全局配置模式
+Router(config)#interface fa0/0 //指定以太网串口 fa0/0
+Router(config-if)#ip address 192.168.3.1 255.255.255.0 //配置 fa0/0 接口地址
+Router(config-if)#no shut //打开 fa0/0 接口
+Router(config-if) #int s0/1/0 //配置 s0/1/0 接口
+Router(config-if)#ip address 192.168.5.2 255.255.255.0
+Router(config-if)#no shut
+Router(config-if)#end //退出端口配置
+Router#show ip route //查看路由设置
+Router#
+</code></pre>
+<p>（2）RIP 协议配置</p>
+<ul>
+<li>在路由器 Router1 上配置 RIP 协议</li>
+</ul>
+<pre><code class="language-verilog">Router#conf t //进入全局配置模式
+Router(config)#router rip
+Router(config-router)#network 192.168.4.0
+Router(config-router)#network 192.168.1.0
+Router(config-router)#end
+</code></pre>
+<ul>
+<li>在路由器 Router2 上配置 RIP 协议</li>
+</ul>
+<pre><code class="language-verilog">Router#conf t //进入全局配置模式
+Router(config)#router rip
+Router(config-router)#network 192.168.2.0
+Router(config-router)#network 192.168.4.0
+Router(config-router)#network 192.168.5.0
+Router(config-router)#end
+</code></pre>
+<ul>
+<li>在路由器 Router3 上配置 RIP 协议</li>
+</ul>
+<pre><code class="language-verilog">Router#conf t //进入全局配置模式
+Router(config)#router rip
+Router(config-router)#network 192.168.3.0
+Router(config-router)#network 192.168.5.0
+Router(config-router)#end
+</code></pre>
+<h4 id="324-ospf-协议的配置">3.2.4 OSPF 协议的配置</h4>
+<ul>
+<li>在路由器 Router1 上配置 OSPF 协议</li>
+</ul>
+<pre><code class="language-verilog">Router#conf t //进入全局配置模式
+Router(config)#router ospf 1 //选择 ospf 协议
+Router(config-router)#network 192.168.4.0 0.0.0.255 area 0
+//0.0.0.255 是翻转掩码，0 和 1 设置刚好和子网掩码相反
+Router(config-router)#network 192.168.1.0 0.0.0.255 area 0
+Router(config-router)#end
+Router#copy run startup
+</code></pre>
+<ul>
+<li>在路由器 Router2 上配置 OSPF 协议</li>
+</ul>
+<pre><code class="language-verilog">Router#conf t //进入全局配置模式
+Router(config)#router ospf 50 //选择 ospf 协议，进程号为 50
+Router(config-router)#network 192.168.2.0 0.0.0.255 area 0
+Router(config-router)#network 192.168.4.0 0.0.0.255 area 0
+Router(config-router)#network 192.168.5.0 0.0.0.255 area 0
+Router#copy run startup
+Router(config-router)#end
+</code></pre>
+<ul>
+<li>在路由器 Router3 上配置 OSPF 协议</li>
+</ul>
+<pre><code class="language-verilog">Router#conf t //进入全局配置模式
+Router(config)#router ospf 51
+Router(config-router)#network 192.168.3.0 0.0.0.255 area 0
+Router(config-router)#network 192.168.5.0 0.0.0.255 area 0
+Router(config-router)#end
+</code></pre>
+<h4 id="325-acl-配置">3.2.5 ACL 配置</h4>
+<p>在路由器 Router1 上建立访问控制列表，使得 PC1 无法访问其它网段</p>
+<pre><code class="language-verilog">Router#conf t
+Router(config)#access-list 10 deny 192.168.1.0 0.0.0.255
+Router1(config-if)#access-list 10 permit any
+Router1(config-if)#interface fa0/0
+Router1(config-if)#ip access-group 10 in
+</code></pre>
+<h3 id="33-简单的排错">3.3 简单的排错</h3>
+<h4 id="331-使用-ping-测试连接">3.3.1 使用 Ping 测试连接</h4>
+<p>Ping 命令有助于验证 IP 级的连通性。进行故障排除时，可以使用 ping 向目标主机名或 IP 地址发送 ICMP 回显请求。需要验证主机能否连接到 TCP/IP 网络和网络资源时，使用 ping 命令。也可以使用 ping 命令将网络硬件问题和不兼容配置隔离开来。</p>
+<p>使用格式：</p>
+<pre><code>ping [-t] [-a] [-n count] [-l size] 
+</code></pre>
+<p>参数介绍：</p>
+<blockquote>
+<p>-t 让用户所在的主机不断向目标主机发送数据<br>
+-a 以IP地址格式来显示目标主机的网络地址<br>
+-n count 指定要 ping 多少次，具体次数由后面的 count 来指定<br>
+-l size 指定发送到目标主机的数据包的大小</p>
+</blockquote>
+<h4 id="332-使用-ipconfigall-查看配置">3.3.2 使用 ipconfig/all 查看配置</h4>
+<p>在进行网络问题排除时，先检查出现问题的计算机上的 TCP/IP 配置。可以使用 ipconfig 命令获得主机配置信息，包括 IP 地址、子网掩码和默认网关。</p>
+<h4 id="333-tracert">3.3.3 tracert</h4>
+<p>主要功能：判定数据包到达目的主机所经过的路径、显示数据包经过的中继节点清单和到达时间</p>
+<p>参数介绍：</p>
+<blockquote>
+<p>-d 不解析目标主机的名字<br>
+-h maximum_hops 指定搜索到目标地址的最大跳跃数<br>
+-j host_list 按照主机列表中的地址释放源路由<br>
+-w timeout 指定超时时间间隔，程序默认的时间单位是毫秒</p>
+</blockquote>
+<p>在进行故障排除时，可使用该命令确定数据包在网络上的停止位置</p>
+<h2 id="四-实验过程">四、实验过程</h2>
+<h3 id="41-lab1_1">4.1 Lab1_1</h3>
+<blockquote>
+<p>● 将 PC1、PC2 设置在同一个网段，子网地址是：192.168.0.0/24;<br>
+● 将 PC3~PC8 设置在同一个网段，子网地址是：192.168.1.0/24;<br>
+● 配置路由器，使得两个子网的各 PC 机之间可以自由通信。</p>
+</blockquote>
+<p>（1）首先将所需的网络拓扑设备拖至界面中：</p>
+<img src="https://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/202212072037964.png" style="zoom: 50%;" />
+<p>（2）根据要求配置路由器端口：</p>
+<p>① 左端口：IP：192.168.0.1，子网掩码：255.255.255.0<br>
+② 右端口：IP：192.168.1.1，子网掩码：255.255.255.0</p>
+<p>上述部分可手动配置，我们RIP不妨尝试用指令去配置</p>
+<pre><code class="language-verilog">Router#conf t //进入全局配置模式
+Router(config)#router rip
+Router(config-router)#network 192.168.0.1
+Router(config-router)#network 192.168.1.1
+Router(config-router)#end
+</code></pre>
+<p>（3）进行连线：直通线一般用于不同设备间的连接，交叉线一般用于交换机间和主机和路由器的连接</p>
+<img src="https://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/202212072349109.png" style="zoom:50%;" />
+<p>（4）验证任意主机之间是否可以进行通信，为各个主机的端口配置IP地址和网关路由器</p>
+<p>① PC1：192.168.0.2<br>
+② PC2：192.168.0.3<br>
+③ PC3：192.168.1.2<br>
+④ PC4：192.168.1.3<br>
+⑤ PC5：192.168.1.4<br>
+⑥ PC6：192.168.1.5<br>
+⑦ PC7：192.168.1.6<br>
+⑧ PC8：192.168.1.7</p>
+<img src="https://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/202212081015836.png" style="zoom:67%;" />
+<h3 id="42-lab1_2">4.2 Lab1_2</h3>
+<blockquote>
+<p>● 将 PC1、PC2 设置在同一个网段，子网地址是：192.168.0.0/24；<br>
+● 将 PC3、PC5、PC7 设置在同一个网段，子网地址是：192.168.1.0/24；<br>
+● 将 PC4、PC6、PC8 设置在同一个网段，子网地址是：192.168.2.0/24；<br>
+● 配置交换机 1、2、3、4，使得 PC1、PC2 属于 Vlan2，PC3、PC5、PC7 属于 Vlan3，PC4、PC6、PC8属于 Vlan4；<br>
+● 测试各 PC 之间的连通性，并结合所学理论知识进行分析；<br>
+● 配置路由器，使得拓扑图上的各 PC 机之间可以自由通信，结合所学理论对你的路由器配置过程进行详细说明。</p>
+</blockquote>
+<p>（1）配置交换机VLAN：</p>
+<ul>
+<li>
+<p>Switch1：PC1、PC2属于VLAN2，连接路由的端口配置为Trunk（fa0/1-trunk，fa0/2-PC1，fa0/3-PC2）</p>
+<pre><code class="language-verilog">Switch# config terminal //进入配置模式
+Switch(config)# vlan 2 //在交换机上添加 vlan2
+Switch(config-vlan)# exit //退出 vlan2，回到配置模式
+    
+Switch(config)#interface Fa0/2 //Fa0/2连接PC1
+Switch(config-if)#switchport mode access
+Switch(config-if)#switch access vlan 2
+Switch(config-if)#exit
+    
+Switch(config)#interface Fa0/3//Fa0/2连接PC2
+Switch(config-if)#switchport mode access
+Switch(config-if)#switchport access vlan 2
+Switch(config-if)#exit
+    
+Switch(config)# interface Fa0/1
+Switch(config-if)# switchport mode trunk//配置为干道模式
+</code></pre>
+</li>
+<li>
+<p>Switch2：PC3属于VLAN3，PC4属于VLAN4，其余端口配置为trunk（fa0/1,fa0/2,fa0/3-trunk，fa0/4-PC3，fa0/5-PC4）</p>
+<pre><code class="language-verilog">Switch# config terminal //进入配置模式
+Switch(config)# vlan 3 //在交换机上添加 vlan3
+Switch(config-vlan)# exit //退出 vlan3，回到配置模式
+Switch(config)# vlan 4 //在交换机上添加 vlan4
+Switch(config-vlan)# exit //退出 vlan4，回到配置模式
+    
+Switch(config)#interface Fa0/4
+Switch(config-if)#switchport mode access
+Switch(config-if)#switch access vlan 3
+Switch(config-if)#exit
+    
+Switch(config)#interface Fa0/5
+Switch(config-if)#switchport mode access
+Switch(config-if)#switchport access vlan 4
+Switch(config-if)#exit
+    
+Switch(config)# interface Fa0/1
+Switch(config-if)# switchport mode trunk//配置为干道模式
+Switch(config)# interface Fa0/2
+Switch(config-if)# switchport mode trunk//配置为干道模式
+Switch(config)# interface Fa0/3
+Switch(config-if)# switchport mode trunk//配置为干道模式
+</code></pre>
+</li>
+<li>
+<p>Switch3：PC5属于VLAN3，PC6属于VLAN4，其余端口配置为trunk（fa0/1,fa0/2-trunk，fa0/3-PC5，fa0/4-PC6）</p>
+<pre><code class="language-verilog">Switch# config terminal //进入配置模式
+Switch(config)# vlan 3 //在交换机上添加 vlan3
+Switch(config-vlan)# exit //退出 vlan3，回到配置模式
+Switch(config)# vlan 4 //在交换机上添加 vlan4
+Switch(config-vlan)# exit //退出 vlan4，回到配置模式
+    
+Switch(config)#interface Fa0/3
+Switch(config-if)#switchport mode access
+Switch(config-if)#switch access vlan 3
+Switch(config-if)#exit
+    
+Switch(config)#interface Fa0/4
+Switch(config-if)#switchport mode access
+Switch(config-if)#switchport access vlan 4
+Switch(config-if)#exit
+    
+Switch(config)# interface Fa0/1
+Switch(config-if)# switchport mode trunk//配置为干道模式
+Switch(config)# interface Fa0/2
+Switch(config-if)# switchport mode trunk//配置为干道模式
+</code></pre>
+</li>
+<li>
+<p>Switch4：PC7属于VLAN3，PC8属于VLAN4，其余端口配置为trunk（fa0/1,fa0/2-trunk，fa0/3-PC7，fa0/4-PC8）</p>
+<pre><code class="language-verilog">Switch# config terminal //进入配置模式
+Switch(config)# vlan 3 //在交换机上添加 vlan3
+Switch(config-vlan)# exit //退出 vlan3，回到配置模式
+Switch(config)# vlan 4 //在交换机上添加 vlan4
+Switch(config-vlan)# exit //退出 vlan4，回到配置模式
+    
+Switch(config)#interface Fa0/3
+Switch(config-if)#switchport mode access
+Switch(config-if)#switch access vlan 3
+Switch(config-if)#exit
+    
+Switch(config)#interface Fa0/4
+Switch(config-if)#switchport mode access
+Switch(config-if)#switchport access vlan 4
+Switch(config-if)#exit
+    
+Switch(config)# interface Fa0/1
+Switch(config-if)# switchport mode trunk//配置为干道模式
+Switch(config)# interface Fa0/2
+Switch(config-if)# switchport mode trunk//配置为干道模式
+</code></pre>
+</li>
+</ul>
+<p>（2）配置路由器：路由器fa0/0端连接网段vlan2（192.168.0.0/24），fa0/1端连接网段vlan3（192.168.1.0/24）、vlan4（192.168.2.0/24），将fa0/1划分为两个子端口：</p>
+<pre><code class="language-verilog">Router(config)#interface FastEthernet0/0
+Router(config-if)#no ip address
+Router(config-if)#exit
+    
+Router(config)#interface FastEthernet0/1
+Router(config-if)#no ip address
+Router(config-if)#exit
+    
+Router1(config)# int Fa0/0.1
+Router1(config-subif)# ip addr 192.168.0.1 255.255.255.0
+Router1(config-subif)# exit
+    
+Router1(config)# int Fa0/1.1 
+Router1(config-subif)# ip address 192.168.1.1 255.255.255.0
+Router1(config-subif)# exit
+    
+Router1(config)# int Fa0/1.2
+Router1(config-subif)# ip addr 192.168.2.1 255.255.255.0
+Router1(config-subif)# end
+</code></pre>
+<p>（3）配置主机的IP和网关路由器：网关设置为相应路由子接口，IP设置为子网中的IP，用ping验证主机间是否通信</p>
+<img src="http://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/202212081138689.png" style="zoom:67%;" />
+<h3 id="43-lab2_1">4.3 Lab2_1</h3>
+<blockquote>
+<p>● 将 PC1 设置在 192.168.1.0/24 网段；<br>
+● 将 PC2 设置在 192.168.2.0/24 网段；<br>
+● 将 PC3 设置在 192.168.3.0/24 网段；<br>
+● 将 PC4 设置在 192.168.4.0/24 网段<br>
+● 设置路由器端口的 IP 地址<br>
+● 在路由器上配置 RIP 协议，使各 PC 机能互相访问</p>
+</blockquote>
+<img src="http://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/202212052225609.png" style="zoom:67%;" />
+<p>（1）首先布置网络拓扑中的设备和连线：路由器之间使用DCE进行连接，端口配置HWIC-2T扩展；路由器和主机之间通过交叉线连接</p>
+<img src="https://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/202212091716990.png" style="zoom: 67%;" />
+<p>（2）根据要求配置路由器端口IP和主机IP</p>
+<ul>
+<li>
+<p>RouterA：Fa0/0属于子网192.168.1.0/24，Serial0/1/0属于子网192.168.5.0，Serial0/1/1属于子网192.168.6.0</p>
+<pre><code class="language-verilog">Router1(config)# interface Fa0/0
+Router1(config-subif)# ip addr 192.168.1.1 255.255.255.0
+Router1(config-subif)# exit
+    
+Router1(config)# interface Serial0/1/0
+Router1(config-subif)# ip addr 192.168.5.1 255.255.255.0
+Router1(config-subif)# exit
+    
+Router1(config)# interface Serial0/1/1
+Router1(config-subif)# ip addr 192.168.6.1 255.255.255.0
+Router1(config-subif)# end
+</code></pre>
+</li>
+<li>
+<p>RouterB：Fa0/0属于子网192.168.2.0/24，Serial0/1/0属于子网192.168.5.0，Serial0/1/1属于子网192.168.7.0</p>
+<pre><code class="language-verilog">Router1(config)# interface Fa0/0
+Router1(config-subif)# ip addr 192.168.2.1 255.255.255.0
+Router1(config-subif)# exit
+    
+Router1(config)# interface Serial0/1/0
+Router1(config-subif)# ip addr 192.168.5.2 255.255.255.0
+Router1(config-subif)# exit
+    
+Router1(config)# interface Serial0/1/1
+Router1(config-subif)# ip addr 192.168.7.1 255.255.255.0
+Router1(config-subif)# end
+</code></pre>
+</li>
+<li>
+<p>RouterC：Fa0/0属于子网192.168.3.0/24，Serial0/0/0属于子网192.168.6.0/24，Serial0/0/1属于子网192.168.7.0/24，Serial0/1/0属于子网192.168.8.0/24</p>
+<pre><code class="language-verilog">Router1(config)# interface Fa0/0
+Router1(config-subif)# ip addr 192.168.3.1 255.255.255.0
+Router1(config-subif)# exit
+    
+Router1(config)# interface Serial0/0/0
+Router1(config-subif)# ip addr 192.168.6.2 255.255.255.0
+Router1(config-subif)# exit
+    
+Router1(config)# interface Serial0/0/1
+Router1(config-subif)# ip addr 192.168.7.2 255.255.255.0
+Router1(config-subif)# exit
+
+Router1(config)# interface Serial0/1/0
+Router1(config-subif)# ip addr 192.168.8.1 255.255.255.0
+Router1(config-subif)# end
+</code></pre>
+</li>
+<li>
+<p>RouterD：Fa0/0属于子网192.168.4.0/24，Serial0/1/0属于子网192.168.8.0</p>
+<pre><code class="language-verilog">Router1(config)# interface Fa0/0
+Router1(config-subif)# ip addr 192.168.4.1 255.255.255.0
+Router1(config-subif)# exit
+    
+Router1(config)# interface Serial0/1/0
+Router1(config-subif)# ip addr 192.168.8.2 255.255.255.0
+Router1(config-subif)# end
+</code></pre>
+</li>
+</ul>
+<p>（3）为各路由器配置RIP协议：</p>
+<ul>
+<li>
+<p>RouterA：192.168.1.1、192.168.5.1、192.168.6.1</p>
+<pre><code class="language-verilog">Router(config)#router rip
+Router(config-router)#network 192.168.1.1
+Router(config-router)#network 192.168.5.1
+Router(config-router)#network 192.168.6.1
+Router(config-router)#end
+</code></pre>
+</li>
+<li>
+<p>RouterB：192.168.2.1、192.168.5.2、192.168.7.1</p>
+<pre><code class="language-verilog">Router(config)#router rip
+Router(config-router)#network 192.168.2.1
+Router(config-router)#network 192.168.5.2
+Router(config-router)#network 192.168.7.1
+Router(config-router)#end
+</code></pre>
+</li>
+<li>
+<p>RouterC：192.168.3.1、192.168.6.2、192.168.7.2、192.168.8.1</p>
+<pre><code class="language-verilog">Router(config)#router rip
+Router(config-router)#network 192.168.3.1
+Router(config-router)#network 192.168.6.2
+Router(config-router)#network 192.168.7.2
+Router(config-router)#network 192.168.8.1
+Router(config-router)#end
+</code></pre>
+</li>
+<li>
+<p>RouterD：192.168.4.1、192.168.8.2</p>
+<pre><code class="language-verilog">Router(config)#router rip
+Router(config-router)#network 192.168.4.1
+Router(config-router)#network 192.168.8.2
+Router(config-router)#end
+</code></pre>
+</li>
+</ul>
+<p>（4）利用Ping指令验证各个主机之间是否可以互相访问</p>
+<h3 id="44-lab2_2">4.4 Lab2_2</h3>
+<blockquote>
+<p>● 将 PC1 设置在 192.168.1.0/24 网段；<br>
+● 将 PC2 设置在 192.168.2.0/24 网段；<br>
+● 将 PC3 设置在 192.168.3.0/24 网段；<br>
+● 将 PC4 设置在 192.168.4.0/24 网段<br>
+● 设置路由器端口的 IP 地址<br>
+● 在路由器上配置 OSPF 协议，使各 PC 机能互相访问</p>
+</blockquote>
+<p>在Lab2_1的基础上，将RIP协议改为OSPF协议：</p>
+<ul>
+<li>
+<p>RouterA：</p>
+<pre><code class="language-verilog">Router(config)#router ospf 1
+Router(config-router)#network 192.168.1.0 0.0.0.255 area 0
+Router(config-router)#network 192.168.5.0 0.0.0.255 area 0
+Router(config-router)#network 192.168.6.0 0.0.0.255 area 0
+Router(config-router)#end
+</code></pre>
+</li>
+<li>
+<p>RouterB：</p>
+<pre><code class="language-verilog">Router(config)#router ospf 1
+Router(config-router)#network 192.168.2.0 0.0.0.255 area 0
+Router(config-router)#network 192.168.5.0 0.0.0.255 area 0
+Router(config-router)#network 192.168.7.0 0.0.0.255 area 0
+Router(config-router)#end
+</code></pre>
+</li>
+<li>
+<p>RouterC：</p>
+<pre><code class="language-verilog">Router(config)#router ospf 1
+Router(config-router)#network 192.168.3.0 0.0.0.255 area 0
+Router(config-router)#network 192.168.6.0 0.0.0.255 area 0
+Router(config-router)#network 192.168.7.0 0.0.0.255 area 0
+Router(config-router)#network 192.168.8.0 0.0.0.255 area 0
+Router(config-router)#end
+</code></pre>
+</li>
+<li>
+<p>RouterD：</p>
+<pre><code class="language-verilog">Router(config)#router ospf 1
+Router(config-router)#network 192.168.4.0 0.0.0.255 area 0
+Router(config-router)#network 192.168.8.0 0.0.0.255 area 0
+Router(config-router)#end
+</code></pre>
+</li>
+</ul>
+<p>（2）利用ping指令验证PC机之间的互访</p>
+<h3 id="45-lab2_3_1">4.5 Lab2_3_1</h3>
+<blockquote>
+<p>● 在基本内容 1 或者 2 的基础上，对路由器 A 进行访问控制配置，使得 PC1 无法访问其它 PC，也不能被其它 PC 机访问</p>
+</blockquote>
+<p>（1）我们需要配置RouterA的ACL：给RouterA的端口fa0/0配置“拒绝PC1的流量，接收其他PC的流量”</p>
+<pre><code class="language-verilog">Router(config)#access-list 10 deny 192.168.1.0 0.0.0.255
+Router(config)#access-list 10 permit any
+Router(config)#interface fa0/0
+Router(config-if)#ip access-group 10 in
+</code></pre>
+<h3 id="46-lab2_3_2">4.6 Lab2_3_2</h3>
+<blockquote>
+<p>●  在基本内容 1 或者 2 的基础上，对路由器 A 进行访问控制配置，使得 PC1 不能访问 PC2，但能访问其它 PC 机</p>
+</blockquote>
+<p>（1）我们需要配置RouterB的ACL：给RouterB的端口serial0/1/0配置“拒绝PC1的流量，接收其他PC的流量”</p>
+<pre><code class="language-verilog">Router(config)#access-list 10 deny host 192.168.1.2
+Router(config)#access-list 10 permit any
+Router(config)#interface serial0/1/0
+Router(config-if)#ip access-group 10 in
+</code></pre>
+<p>配置完之后PC1和PC2之间不能互通</p>
+<h3 id="47-lab3">4.7 Lab3</h3>
+<p>某学校申请了一个前缀为 211.69.4.0/22 的地址块，准备将整个学校连入网络。该学校有 4 个学院，1 个图书馆，3个学生宿舍。每个学院有 20 台主机，图书馆有 100 台主机，每个学生宿舍拥有 200 台主机。</p>
+<p>组网要求：</p>
+<blockquote>
+<p>● 图书馆能够无线上网<br>
+● 学院之间可以相互访问<br>
+● 学生宿舍之间可以相互访问<br>
+● 学院和学生宿舍之间不能相互访问<br>
+● 学院和学生宿舍皆可访问图书馆</p>
+</blockquote>
+<p>（1）首先根据主机数分配IP地址：从主机号多的开始分配</p>
+<blockquote>
+<p>DormitoryA：211.69.4.0/24<br>
+DormitoryB：211.69.5.0/24<br>
+DormitoryC：211.69.6.0/24<br>
+Library：211.69.7.0/25<br>
+DepartmentA：211.69.7.128/27<br>
+DepartmentB：211.69.7.160/27<br>
+DepartmentC：211.69.7.192/27<br>
+DepartmentD：211.69.7.224/27</p>
+</blockquote>
+<p>（2）我们将网络划分为4大部分：学院、图书馆、宿舍，利用三台路由器作为这三部分的网关路由器，利用交换机将各个网段中的主机相连，4大部分中共有8个小部分，每个小部分中布置3台主机作为示例</p>
+<ul>
+<li>
+<p>学院部分：（<s>Department写成Dormitory了。。。</s>）</p>
+<img src="http://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/202212101815137.png" style="zoom:67%;" />
+<p>配置路由器4个端口和各个子网中的主机IP地址：</p>
+<pre><code class="language-verilog">Router(config)# interface Fa0/0
+Router(config-if)# ip addr 211.69.7.129 255.255.255.224
+Router(config-if)# exit
+
+Router(config)# interface Fa1/0
+Router(config-if)# ip addr 211.69.7.161 255.255.255.224
+Router(config-if)# exit
+
+Router(config)# interface Fa2/0
+Router(config-if)# ip addr 211.69.7.193 255.255.255.224
+Router(config-if)# exit
+
+Router(config)# interface Fa3/0
+Router(config-if)# ip addr 211.69.7.225 255.255.255.224
+Router(config-if)# exit
+</code></pre>
+</li>
+<li>
+<p>图书馆部分：</p>
+<img src="https://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/202212102114224.png" style="zoom:70%;" />
+<p>我们为主机和无线路由配置IP，注意三台笔记本用于验证无线通信的效果，需要将它们的网卡替换为无线网卡。</p>
+<p>首先为网关路由器配置端口IP：</p>
+<pre><code class="language-verilog">Router(config)# interface Fa0/0
+Router(config-if)# ip addr 211.69.7.1 255.255.255.128
+Router(config-if)# exit
+</code></pre>
+<p>为无线路由配置IP和网关路由器：</p>
+<img src="https://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/202212102120022.png" style="zoom:67%;" />
+<p>设置好网关路由器之后链接类型选择自动获取（即DHCP服务），可以为无线主机自动分配IP（无线主机网关设置为211.69.7.5，IP地址设置为自动获取，由此可以通过DHCP服务得到自己的IP）</p>
+<img src="https://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/202212102121153.png" style="zoom:67%;" />
+</li>
+<li>
+<p>学生宿舍部分：</p>
+<img src="http://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/202212102140693.png" style="zoom:67%;" />
+<p>为网关路由器配置端口：</p>
+<pre><code class="language-verilog">Router(config)# interface Fa0/0
+Router(config-if)# ip addr 211.69.4.1 255.255.255.0
+Router(config-if)# exit
+
+Router(config)# interface Fa1/0
+Router(config-if)# ip addr 211.69.5.1 255.255.255.0
+Router(config-if)# exit
+
+Router(config)# interface Fa2/0
+Router(config-if)# ip addr 211.69.6.1 255.255.255.0
+Router(config-if)# exit
+</code></pre>
+<p>为主机配置相应的IP和网关路由器</p>
+</li>
+</ul>
+<p>（3）利用DCE链接三个路由器，同时为这三个路由器互相连接的端口配置IP地址</p>
+<img src="https://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/202212102147350.png"/>
+<ul>
+<li>
+<p>Router0：</p>
+<pre><code class="language-verilog">Router(config)# interface serial5/0
+Router(config-if)# ip addr 192.168.0.1 255.255.255.0
+Router(config-if)# exit
+
+Router(config)# interface serial4/0
+Router(config-if)# ip addr 192.168.1.1 255.255.255.0
+Router(config-if)# exit
+</code></pre>
+</li>
+<li>
+<p>Router2：</p>
+<pre><code class="language-verilog">Router(config)# interface serial1/0
+Router(config-if)# ip addr 192.168.0.2 255.255.255.0
+Router(config-if)# exit
+
+Router(config)# interface serial2/0
+Router(config-if)# ip addr 192.168.2.1 255.255.255.0
+Router(config-if)# exit
+</code></pre>
+</li>
+<li>
+<p>Router3：</p>
+<pre><code class="language-verilog">Router(config)# interface serial3/0
+Router(config-if)# ip addr 192.168.1.2 255.255.255.0
+Router(config-if)# exit
+
+Router(config)# interface serial4/0
+Router(config-if)# ip addr 192.168.2.2 255.255.255.0
+Router(config-if)# exit
+</code></pre>
+</li>
+</ul>
+<p>（4）为三个路由器配置OSPF协议：</p>
+<ul>
+<li>
+<p>Router0：</p>
+<pre><code class="language-verilog">Router(config)#router ospf 1
+Router(config-router)#network 211.69.7.128 0.0.0.31 area 0
+Router(config-router)#network 211.69.7.160 0.0.0.31 area 0
+Router(config-router)#network 211.69.7.192 0.0.0.31 area 0
+Router(config-router)#network 211.69.7.224 0.0.0.31 area 0
+Router(config-router)#network 192.168.1.0 0.0.0.255 area 0
+Router(config-router)#network 192.168.0.0 0.0.0.255 area 0
+Router(config-router)#end
+</code></pre>
+</li>
+<li>
+<p>Router2：</p>
+<pre><code class="language-verilog">Router(config)#router ospf 1
+Router(config-router)#network 211.69.7.0 0.0.0.127 area 0
+Router(config-router)#network 192.168.0.0 0.0.0.255 area 0
+Router(config-router)#network 192.168.2.0 0.0.0.255 area 0
+Router(config-router)#end
+</code></pre>
+</li>
+<li>
+<p>Router3：</p>
+<pre><code class="language-verilog">Router(config)#router ospf 1
+Router(config-router)#network 211.69.4.0 0.0.0.255 area 0
+Router(config-router)#network 211.69.5.0 0.0.0.255 area 0
+Router(config-router)#network 211.69.6.0 0.0.0.255 area 0
+Router(config-router)#network 192.168.1.0 0.0.0.255 area 0
+Router(config-router)#network 192.168.2.0 0.0.0.255 area 0
+Router(config-router)#end
+</code></pre>
+</li>
+</ul>
+<p>（5）访问控制：</p>
+<p>● 图书馆能够无线上网：无线主机Laptop1（211.69.7.101）可以ping成功图书馆内的有线主机（211.69.7.3）✔</p>
+<img src="https://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/202212102155201.png" style="zoom:67%;" />
+<p>● 学院之间可以相互访问：211.69.7.129 可以 ping 成功 211.69.7.228✔</p>
+<img src="https://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/202212102158660.png" style="zoom:67%;" />
+<p>● 学生宿舍之间可以相互访问：211.69.6.4 可以 ping 成功 211.69.4.1✔</p>
+<img src="https://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/202212102200510.png" style="zoom:67%;" />
+<p>● 学院和学生宿舍之间不能相互访问：</p>
+<p>配置Router3的ACL，阻断来自学院的流量：</p>
+<pre><code class="language-verilog">Router(config)#access-list 10 deny 211.69.7.128 0.0.0.31
+Router(config)#access-list 10 deny 211.69.7.160 0.0.0.31
+Router(config)#access-list 10 deny 211.69.7.192 0.0.0.31
+Router(config)#access-list 10 deny 211.69.7.224 0.0.0.31
+Router(config)#access-list 10 permit any
+
+Router(config)#interface serial3/0
+Router(config-if)#ip access-group 10 in
+Router(config-if)#exit
+</code></pre>
+<p>配置Router0的ACL，阻断来自宿舍的流量：</p>
+<pre><code class="language-verilog">Router(config)#access-list 10 deny 211.69.4.0 0.0.0.255
+Router(config)#access-list 10 deny 211.69.5.0 0.0.0.255
+Router(config)#access-list 10 deny 211.69.6.0 0.0.0.255
+Router(config)#access-list 10 permit any
+
+Router(config)#interface serial4/0
+Router(config-if)#ip access-group 10 in
+Router(config-if)#exit
+</code></pre>
+<p>学生宿舍无法访问学院：211.69.6.4 无法 ping 成功 211.69.7.194✔</p>
+<img src="https://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/202212102249877.png" style="zoom: 67%;" />
+<p>学院无法访问学生宿舍：211.69.7.228 无法 ping 成功 211.69.5.3✔</p>
+<img src="https://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/202212102251133.png" style="zoom:67%;" />
+<p>● 学院和学生宿舍皆可访问图书馆：</p>
+<p>学院访问图书馆：211.69.7.163 可以 ping 成功 211.69.7.101✔</p>
+<img src="https://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/202212102253654.png" style="zoom:67%;" />
+<p>学生宿舍访问图书馆：211.69.5.3 可以 ping 成功 211.69.7.103✔</p>
+<img src="https://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/202212102256490.png" style="zoom:67%;" />
+
+            </div>
+            <hr style="width: 80%;">
+            
+            <div class="postfooter">
+                <ul class="post-copyright">
+                    <li><strong>文章作者：</strong>w_CS</li>
+            <li><strong>原文链接：</strong>https://2006wzt.github.io/post/基于CPT的组网实验/</li>
+            <li><strong>版权声明：</strong>本博客所有文章除特别声明外，均采用<i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA
+                许可协议。转载请注明出处！</li>
+            </ul>
+        </div>
+        
+            <div class="shareContainer">
+                <div class="share" style="height:30px;">
+                    <a class="qq" href=""><i><img class="shareicon"
+                                src="https://2006wzt.github.io/media/images/qqs.png" alt=""></i></a>
+                    <a class="wechat" href=""><i><img class="shareicon"
+                                src="https://2006wzt.github.io/media/images/wechats.png" alt=""></i></a>
+                    <a class="weibo" href=""><i><img class="shareicon"
+                                src="https://2006wzt.github.io/media/images/weibos.png" alt=""></i></a>
+                    <a class="qzone" href=""><i><img class="shareicon"
+                                src="https://2006wzt.github.io/media/images/qzones.png" alt=""></i></a>
+                    <a class="douban" href=""><i><img class="shareicon"
+                                src="https://2006wzt.github.io/media/images/doubans.png" alt=""></i></a>
+                    <a class="facebook" href=""><i><img class="shareicon"
+                                src="https://2006wzt.github.io/media/images/facebooks.png" alt=""></i></a>
+                    <a class="twitter" href=""><i><img class="shareicon"
+                                src="https://2006wzt.github.io/media/images/twitter.png" alt=""></i></a>
+                </div>
+            </div>
+            
+        <div id="otherpost">
+            
+            
+            <a data-pjax class="next-post-pc" href="https://2006wzt.github.io/post/可靠数据传输协议/"  style="color: black;">
+                <div id="npcontainer">
+                    
+                    <img src="https://2006wzt.github.io/post-images/可靠数据传输协议.jpeg" style="width: 100%;" class="opimg">
+                    
+                    <h4 class="optitle">可靠数据传输协议实验</h4>
+                </div>
+            </a>
+            <div class="next-post">
+                下一篇 <a  data-pjax href="https://2006wzt.github.io/post/可靠数据传输协议/">可靠数据传输协议实验</a>
+            </div>
+            
+        </div>
+    </div>
+    </div>
+    </div>
+    <!-- 弹窗 -->
+    <div id="myModal" class="modal">
+        <img class="modal-content" id="img01">
+    </div>
+</body>
+<script>
+    //文章阅读热度
+    var pl = $("#pl").html();
+    var rootaddr = $("#rootaddr").html();
+    pl = pl.replace(rootaddr, "");
+    $("#hotnum").attr('id', pl);
+</script>
+                    <div class="toc-container">
+                        <ul class="markdownIt-TOC">
+<li><a href="#%E5%9F%BA%E4%BA%8Ecpt%E7%9A%84%E7%BB%84%E7%BD%91%E5%AE%9E%E9%AA%8C">基于CPT的组网实验</a>
+<ul>
+<li><a href="#%E4%B8%80-%E5%AE%9E%E9%AA%8C%E7%9B%AE%E6%A0%87%E5%92%8C%E5%86%85%E5%AE%B9">一、实验目标和内容</a>
+<ul>
+<li><a href="#11-%E5%AE%9E%E9%AA%8C%E7%9B%AE%E7%9A%84">1.1 实验目的</a></li>
+<li><a href="#12-%E5%AE%9E%E9%AA%8C%E7%8E%AF%E5%A2%83">1.2 实验环境</a></li>
+<li><a href="#13-%E5%AE%9E%E9%AA%8C%E8%A6%81%E6%B1%82">1.3 实验要求</a></li>
+<li><a href="#14-%E5%AE%9E%E9%AA%8C%E5%86%85%E5%AE%B9%E5%9F%BA%E6%9C%AC%E9%83%A8%E5%88%86">1.4 实验内容（基本部分）</a></li>
+<li><a href="#15-%E5%AE%9E%E9%AA%8C%E5%86%85%E5%AE%B9%E7%BB%BC%E5%90%88%E9%83%A8%E5%88%86">1.5 实验内容（综合部分）</a></li>
+<li><a href="#16-%E6%A3%80%E6%9F%A5%E8%A1%A8">1.6 检查表</a></li>
+</ul>
+</li>
+<li><a href="#%E4%BA%8C-cisco-packet-tracer-%E8%BD%AF%E4%BB%B6%E5%8C%85%E6%A6%82%E8%A7%88">二、Cisco Packet Tracer 软件包概览</a>
+<ul>
+<li><a href="#21-%E6%80%BB%E8%BF%B0">2.1 总述</a></li>
+<li><a href="#22-%E6%8B%93%E6%89%91%E5%9B%BE%E8%AE%BE%E8%AE%A1">2.2 拓扑图设计</a>
+<ul>
+<li><a href="#221-%E8%AE%BE%E5%A4%87%E7%9A%84%E9%80%89%E6%8B%A9">2.2.1 设备的选择</a></li>
+<li><a href="#222-%E8%AE%BE%E5%A4%87%E6%B7%BB%E5%8A%A0%E6%A8%A1%E5%9D%97">2.2.2 设备添加模块</a></li>
+<li><a href="#223-%E8%AE%BE%E5%A4%87%E7%9A%84%E8%BF%9E%E6%8E%A5">2.2.3 设备的连接</a></li>
+</ul>
+</li>
+<li><a href="#23-%E8%AE%BE%E5%A4%87%E7%9A%84%E9%85%8D%E7%BD%AE%E4%B8%8E%E6%B5%8B%E8%AF%95">2.3 设备的配置与测试</a>
+<ul>
+<li><a href="#231-%E8%B7%AF%E7%94%B1%E5%99%A8%E4%BA%A4%E6%8D%A2%E6%9C%BA%E6%B7%BB%E5%8A%A0%E7%BD%91%E7%BB%9C%E9%85%8D%E7%BD%AE">2.3.1 路由器/交换机添加网络配置</a></li>
+<li><a href="#232-%E7%BB%88%E7%AB%AF%E6%B7%BB%E5%8A%A0%E7%BD%91%E7%BB%9C%E9%85%8D%E7%BD%AE">2.3.2 终端添加网络配置</a></li>
+<li><a href="#233-%E5%AF%B9%E8%AE%BE%E5%A4%87%E8%BF%9B%E8%A1%8C%E7%BC%96%E8%BE%91%E6%9F%A5%E7%9C%8B">2.3.3 对设备进行编辑/查看</a></li>
+<li><a href="#234-realtime-mode%E5%AE%9E%E6%97%B6%E6%A8%A1%E5%BC%8F%E5%92%8C-simulation-mode%E6%A8%A1%E6%8B%9F%E6%A8%A1%E5%BC%8F">2.3.4 Realtime mode（实时模式）和 Simulation mode（模拟模式）</a></li>
+</ul>
+</li>
+<li><a href="#24-%E7%BD%91%E7%BB%9C%E6%8B%93%E6%89%91%E7%9A%84%E6%89%93%E5%BC%80%E4%B8%8E%E4%BF%9D%E5%AD%98">2.4 网络拓扑的打开与保存</a></li>
+</ul>
+</li>
+<li><a href="#%E4%B8%89-cpt%E7%A4%BA%E4%BE%8B">三、CPT示例</a>
+<ul>
+<li><a href="#31-%E4%BA%A4%E6%8D%A2%E6%9C%BA%E9%85%8D%E7%BD%AE">3.1 交换机配置</a>
+<ul>
+<li><a href="#311-%E7%BD%91%E7%BB%9C%E6%8B%93%E6%9C%B4%E5%9B%BE">3.1.1 网络拓朴图</a></li>
+<li><a href="#312-%E8%AE%BE%E5%A4%87%E9%80%89%E5%9E%8B%E5%92%8C-ip-%E5%9C%B0%E5%9D%80%E8%A7%84%E5%88%92">3.1.2 设备选型和 IP 地址规划</a></li>
+<li><a href="#313-%E5%AE%9E%E9%AA%8C%E7%9B%AE%E6%A0%87">3.1.3 实验目标</a></li>
+<li><a href="#314-vlan-%E5%88%92%E5%88%86">3.1.4 VLan 划分</a></li>
+<li><a href="#315-vlan-%E4%B9%8B%E9%97%B4%E7%9A%84%E8%B7%AF%E7%94%B1%E9%85%8D%E7%BD%AE">3.1.5 VLAN 之间的路由配置</a></li>
+</ul>
+</li>
+<li><a href="#32-%E8%B7%AF%E7%94%B1%E5%99%A8%E9%85%8D%E7%BD%AE">3.2 路由器配置</a>
+<ul>
+<li><a href="#321-%E7%BD%91%E7%BB%9C%E6%8B%93%E6%9C%B4%E5%9B%BE">3.2.1 网络拓朴图</a></li>
+<li><a href="#322-%E5%AE%9E%E9%AA%8C%E7%9B%AE%E6%A0%87">3.2.2 实验目标</a></li>
+<li><a href="#323-rip-%E5%8D%8F%E8%AE%AE%E9%85%8D%E7%BD%AE">3.2.3 RIP 协议配置</a></li>
+<li><a href="#324-ospf-%E5%8D%8F%E8%AE%AE%E7%9A%84%E9%85%8D%E7%BD%AE">3.2.4 OSPF 协议的配置</a></li>
+<li><a href="#325-acl-%E9%85%8D%E7%BD%AE">3.2.5 ACL 配置</a></li>
+</ul>
+</li>
+<li><a href="#33-%E7%AE%80%E5%8D%95%E7%9A%84%E6%8E%92%E9%94%99">3.3 简单的排错</a>
+<ul>
+<li><a href="#331-%E4%BD%BF%E7%94%A8-ping-%E6%B5%8B%E8%AF%95%E8%BF%9E%E6%8E%A5">3.3.1 使用 Ping 测试连接</a></li>
+<li><a href="#332-%E4%BD%BF%E7%94%A8-ipconfigall-%E6%9F%A5%E7%9C%8B%E9%85%8D%E7%BD%AE">3.3.2 使用 ipconfig/all 查看配置</a></li>
+<li><a href="#333-tracert">3.3.3 tracert</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#%E5%9B%9B-%E5%AE%9E%E9%AA%8C%E8%BF%87%E7%A8%8B">四、实验过程</a>
+<ul>
+<li><a href="#41-lab1_1">4.1 Lab1_1</a></li>
+<li><a href="#42-lab1_2">4.2 Lab1_2</a></li>
+<li><a href="#43-lab2_1">4.3 Lab2_1</a></li>
+<li><a href="#44-lab2_2">4.4 Lab2_2</a></li>
+<li><a href="#45-lab2_3_1">4.5 Lab2_3_1</a></li>
+<li><a href="#46-lab2_3_2">4.6 Lab2_3_2</a></li>
+<li><a href="#47-lab3">4.7 Lab3</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+                    </div>
+                    <div class="tog">
+                        <div class="toggleContainer">
+                            <div class="toggle">
+                                <i class="fas fa-angle-double-up"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <!---------------------------- 评论系统👇 ------------------------->
+                    <div id="comment" class="comment">
+                        <div class="commentcontainer">
+                            
+                                
+                            
+                        </div>
+                    </div>
+                    <!---------------------------- 评论系统👆 ------------------------->
+                </div>
+                <!-- main标签，pjax渲染时加载以上内容👆 -->
+                <div class="col-md-1 col-lg-2"></div>
+                <div id="bg">
+                </div>
+            </div>
+            <!-- ----------------左侧菜单栏html 👆-------------------------------------->
+            
+        </div>
+        <!-- aplayer播放器加载👇 -->
+            
+        <!-- aplayer播放器加载👆 -->
+    </div>
+    <!-- 背景图加载方式👇 -->
+    <div id="bgchoice" style="display: none">link
+                </div>
+                
+                <div id="bgurl" style="display:none">https://raw.githubusercontent.com/2006wzt/PicGo_images/master/images/background.png</div>
+                
+    <!-- 背景图加载方式👆 -->
+</body>
+
+<script>
+    //初始化
+    //更换twikoo头像
+    setTimeout(replaceAvatar,1000);
+    setTimeout(replaceAvatar,2000);
+    setTimeout(replaceAvatar,8000);
+    // --------为每张图片添加懒加载（lazyload）标签-->懒加载功能 👇------------
+    lazyload();
+    //为文章内所有代码块添加代码复制功能 👇
+    codeinit();
+    // ------代码高亮显示功能-------------
+    hljs.initHighlightingOnLoad();
+    if (shareChoice)
+        shareInit();
+    if (donateChoice)
+        donateInit();
+</script>
+
+<!------------------ 加载live2d模型功能（看板娘）👇 ---------------->
+
+<script type="text/javascript">
+    var message_Path = '/live2d/'
+    var home_Path = document.getElementById("domainname").innerHTML + "/"; //此处修改为你的域名，必须带斜杠
+</script>
+<script type="text/javascript" src="https://2006wzt.github.io/media/js/live2d.js"></script>
+<script type="text/javascript" src="https://2006wzt.github.io/media/live2d/js/message.js"></script>
+<script type="text/javascript">
+    loadlive2d("live2d", "https://2006wzt.github.io/media/live2d/assets/tororo.model.json");
+</script>
+
+<!------------------ 加载live2d模型功能（看板娘）👆 ---------------->
+
+
+<!----------------------- 返回顶部按钮功能👇 --------------------->
+<script>
+    $(function () {
+        $('.toggleContainer').click(function () {
+            $('html,body').animate({
+                scrollTop: '0px'
+            }, 800);
+        });
+        $(window).scroll(function () {
+            var st = $(window).scrollTop();
+            if (st > 30) {
+                $(".toggleContainer").fadeIn(400);
+            } else {
+                $(".toggleContainer").fadeOut(100);
+            }
+        });
+    });
+</script>
+<!----------------------- 返回顶部按钮功能👆 --------------------->
+
+
+<!------------ 加载全局背景图功能👇（开始时没有写好，这功能有点鸡肋/(ㄒoㄒ)/~~） -->
+<script>
+    var bgchoice = "link"
+    var bg = $('#bg');
+    var bgurl = document.getElementById("bgurl").innerHTML;
+    if (bgchoice == 'default')
+    {
+        for (var i = 0; i < 3; i++)
+            bgurl = bgurl.replace("\\", "/");
+        bgurl = "https://2006wzt.github.io/" + bgurl;
+    }
+    bg.css("background", "url('" + bgurl + "')");
+
+    window.onload = function () {
+        aplayerbtnInit();
+    }
+</script>
+<!------------ 加载全局背景图功能👆（开始时没有写好，这功能有点鸡肋/(ㄒoㄒ)/~~） -->
+
+
+
+
+<script src="https://2006wzt.github.io/media/js/index.js"></script>
+
+
+<script>
+    //加载后的事件同步（阅读量、移动端评论等
+    window.onload = function () {
+    //代码块高亮渲染
+    document.querySelectorAll('pre code').forEach((block) => {
+            hljs.highlightBlock(block);
+    });
+        getHotnum();
+        var sharepc = $(".share").eq(0).html();
+        $(".share").eq(1).html(sharepc);   //插件只会寻找一个分享标签渲染，所以需要手动添加到移动端
+        aplayerbtnInit();
+        $(".hljs").css({
+            "padding": "20px"
+        })
+    }
+</script>
+
+<!-- <script src="https://2006wzt.github.io/media/js/av-min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/leancloud-storage@3.13.0/dist/av-min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/leancloud-storage@4.6.1/dist/av-live-query-min.js"></script> -->
